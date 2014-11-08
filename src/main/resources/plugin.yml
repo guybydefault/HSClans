@@ -1,0 +1,14 @@
+name: HSClans
+version: 0.1
+main: ru.lexmint.HSClans
+authors: [Lexmint]
+softdepent: []
+commands:
+  factions:
+    description: Базовая команда кланов.
+    aliases: [f]
+  commasda:
+    description: fsd
+  afas:
+    description: fdssdfsdf
+permissions:
