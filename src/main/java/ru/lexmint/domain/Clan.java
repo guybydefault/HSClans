@@ -21,6 +21,10 @@ public class Clan {
      */
     private List<CPLayer> members;
 
+    public Clan(String name, String tag) {
+
+    }
+
     /**
      * Returns full name of a clan.
      * @return The string containing full name of a clan.

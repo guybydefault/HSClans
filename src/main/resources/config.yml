@@ -1,0 +1,5 @@
+mysql-use: true
+mysql-host: '37.187.71.101:3306'
+mysql-user: test
+mysql-password: test
+mysql-database: test
