@@ -12,11 +12,11 @@ import java.util.concurrent.Executors;
 /**
  * Class which responses for managing sql connection and providing plugin with it.
  */
-public class SQLManager {
+public class MySQL {
     private Connection connection = null;
     private ExecutorService executor = null;
 
-    public static final SQLManager instance = new SQLManager();
+    public static final MySQL instance = new MySQL();
 
     /**
      * Connect to SQL server.

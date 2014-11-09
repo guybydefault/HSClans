@@ -1,28 +1,33 @@
 package ru.lexmint.domain;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class which describes a clan.
  */
 public class Clan {
     /**
-     * Full name of a clan.
+     * Name of a clan, tag.
      */
     private String name;
 
     /**
-     * Short name of a clan.
+     * Description of a clan.
      */
-    private String tag;
+    private String description;
 
     /**
-     * List of all clan's members.
+     * Set of all clan's members.
      */
-    private List<CPLayer> members;
+    private Set<CPLayer> members = new HashSet<>();
 
-    public Clan(String name, String tag) {
-
+    /**
+     * Basic constructor for creating a clan.
+     * @param name Name of a clan.
+     */
+    public Clan(String name) {
+        this.name = name;
     }
 
     /**
@@ -34,18 +39,34 @@ public class Clan {
     }
 
     /**
-     * Returns tag of a clan.
-     * @return The string containing short name (tag) of a clan.
+     * Returns description of a clan.
+     * @return The string containing description of a clan.
      */
-    public String getTag() {
-        return tag;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * Returns list of all clan's members (offline and online).
-     * @return The list containing all of the clan's members.
+     * Sets description of a clan.
+     * @param description A string containing description.
      */
-    public List<CPLayer> getMembers() {
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Returns set of all clan's members (offline and online).
+     * @return The set containing all of the clan's members.
+     */
+    public Set<CPLayer> getMembers() {
         return members;
+    }
+
+    /**
+     * Adds player to clan if he was not in it.
+     * @param player CPLayer object of a player.
+     */
+    public void addPlayer(CPLayer player) {
+        members.add(player);
     }
 }

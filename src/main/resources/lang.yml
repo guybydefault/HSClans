@@ -1,0 +1,6 @@
+messages:
+  clan-roles:
+    newbie: Новичок
+    user: Боец
+    moderator: Заместитель
+    leader: Лидер
