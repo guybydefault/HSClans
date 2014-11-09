@@ -30,6 +30,7 @@ public class CPLayer {
      */
     public CPLayer(String name) {
         this.name = name;
+        clanRole = ClanRole.OUTLAW;
     }
 
     /**
@@ -64,7 +65,7 @@ public class CPLayer {
      * Sets clan for this CPLayer.
      * @param clan Player's clan.
      */
-    public void setClan(Clan clan) {
+    void setClan(Clan clan) {
         this.clan = clan;
     }
 
@@ -74,29 +75,5 @@ public class CPLayer {
      */
     public ClanRole getClanRole() {
         return clanRole;
-    }
-
-
-    /**
-     * Class describing role of a player in clan.
-     */
-    public enum ClanRole {
-        NEWBIE(HSClans.instance.langConfig.getString("messages.clan-roles.newbie")),
-        USER(HSClans.instance.langConfig.getString("messages.clan-roles.user")),
-        MODERATOR(HSClans.instance.langConfig.getString("messages.clan-roles.moderator")),
-        LEADER(HSClans.instance.langConfig.getString("messages.clan-roles.leader"));
-
-        /**
-         * Localized name of ClanRole.
-         */
-        private final String name;
-
-        /**
-         * Basic constructor for creating enums with localized names.
-         * @param name Localized name of ClanRole.
-         */
-        ClanRole(String name) {
-            this.name = name;
-        }
     }
 }

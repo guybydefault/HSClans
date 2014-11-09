@@ -46,9 +46,9 @@ public class Config extends YamlConfiguration {
                 save(configFile);
             }
         } catch (IOException e) {
-            HSClans.debug.error("Can't load configuration " + configName + " (IOException): " + e.getMessage());
+            HSClans.instance.getDebug().error("Can't load configuration " + configName + " (IOException): " + e.getMessage());
         } catch (InvalidConfigurationException e) {
-            HSClans.debug.error("Can't load configuration " + configName + " (Invalid configuration): " + e.getMessage());
+            HSClans.instance.getDebug().error("Can't load configuration " + configName + " (Invalid configuration): " + e.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class Config extends YamlConfiguration {
         try {
             save(configFile);
         } catch (IOException e) {
-            HSClans.debug.error("Error while saving config " + configFile.getPath() + " " + e.getMessage());
+            HSClans.instance.getDebug().error("Error while saving config " + configFile.getPath() + " " + e.getMessage());
         }
     }
 

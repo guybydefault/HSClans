@@ -1,6 +1,5 @@
 package ru.lexmint.domain;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,20 +25,34 @@ public class ClanManager {
 
     public ClanManager(StorageManager storageManager) {
         this.storageManager = storageManager;
-        loadClans();
     }
 
     /**
      * Retrieves clans from MySQL storage (using StorageManager).
      */
-    private void loadClans() {
+    public void loadData() {
         List<Clan> clanList = storageManager.importClans();
+
         for (Clan clan : clanList) {
             for (CPLayer clanMember : clan.getMembers()) {
                 clanPlayersByName.put(clanMember.getName(), clanMember);
             }
             clansByName.put(clan.getName(), clan);
         }
+    }
+
+    // TODO DOCS
+    public void addClan(String clanName) {
+        Clan clan = new Clan(clanName);
+        storageManager.addClan(clan);
+        clansByName.put(clanName, clan);
+    }
+
+    //TODO DOCS
+    public void addPlayer(String playerName) {
+        CPLayer cpLayer = new CPLayer(playerName);
+        clanPlayersByName.put(playerName, cpLayer);
+        storageManager.addClanPlayer(cpLayer);
     }
 
     /**

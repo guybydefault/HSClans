@@ -15,6 +15,7 @@ public class Clan {
     /**
      * Description of a clan.
      */
+    // TODO Default description of a clan
     private String description;
 
     /**
@@ -50,7 +51,7 @@ public class Clan {
      * Sets description of a clan.
      * @param description A string containing description.
      */
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
@@ -66,7 +67,7 @@ public class Clan {
      * Adds player to clan if he was not in it.
      * @param player CPLayer object of a player.
      */
-    public void addPlayer(CPLayer player) {
+    void addPlayer(CPLayer player) {
         members.add(player);
     }
 }

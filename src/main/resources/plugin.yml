@@ -2,13 +2,10 @@ name: HSClans
 version: 0.1
 main: ru.lexmint.HSClans
 authors: [Lexmint]
-softdepent: []
+# TODO Only for last loading to easily debug
+softdepent: [Vault, HSJail, NoCheatPlus]
 commands:
   factions:
-    description: Базовая команда кланов.
+    description: Базовая команда плагина.
     aliases: [f]
-  commasda:
-    description: fsd
-  afas:
-    description: fdssdfsdf
 permissions:

@@ -34,7 +34,7 @@ public class MySQL {
             properties.setProperty("user", user);
             properties.setProperty("password", password);
             properties.setProperty("useUnicode", "true");
-            properties.setProperty("characterEncoding", "utf8");
+            properties.setProperty("characterEncoding", "utf-8");
 
             connection = DriverManager.getConnection(url, properties);
             connection.setAutoCommit(false);
@@ -42,7 +42,7 @@ public class MySQL {
             return true;
         }
         catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            HSClans.instance.getLogger().severe("Error while connecting to MySQL server. " + e.getMessage());
+            HSClans.instance.getDebug().error("Error while connecting to MySQL server. " + e.getMessage());
         }
         return false;
     }
@@ -69,5 +69,13 @@ public class MySQL {
     public ExecutorService getExecutor()
     {
         return executor;
+    }
+
+    public void disconnect() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            HSClans.instance.getDebug().error("Error while disconnecting from MySQL. " + e);
+        }
     }
 }
