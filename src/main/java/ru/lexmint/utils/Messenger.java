@@ -11,8 +11,8 @@ import ru.lexmint.HSClans;
 public class Messenger {
     private final Config lang;
 
-    public Messenger() {
-        lang = HSClans.instance.getLangConfig();
+    public Messenger(Config lang) {
+        this.lang = lang;
     }
 
     /**
@@ -24,6 +24,10 @@ public class Messenger {
      */
     public void broadcastToAll(String path, String... replaces) {
         String msg = lang.getString(path);
+        if (msg == null) {
+            HSClans.instance.getDebug().error("Message in language file not found. Path: " + path);
+            return;
+        }
         StringBuilder sb = new StringBuilder(msg);
         sb.insert(0, lang.getString("chat.default-prefix"));
         String m = sb.toString();
@@ -32,6 +36,20 @@ public class Messenger {
         }
         m = ChatColor.translateAlternateColorCodes('&', m);
         HSClans.instance.getServer().broadcastMessage(m);
+    }
+
+    /**
+     * Message with unbounded number of replacements. Every argument (replaces) will be replaced on letter %s% in a message
+     * in order you will send them.
+     *
+     * @param path     path (key) to message in file
+     * @param clanName name of the clan which players will see this message
+     * @param replaces things you want to replace in a message
+     */
+    public void broadcastToClan(String path, String clanName, String... replaces) {
+        for (String member : HSClans.instance.getClanManager().getClan(clanName).getMembers()) {
+            message(path, HSClans.instance.getServer().getPlayer(member));
+        }
     }
 
 
@@ -45,6 +63,10 @@ public class Messenger {
      */
     public void message(String path, Player receiver, String... replaces) {
         String msg = lang.getString(path);
+        if (msg == null) {
+            HSClans.instance.getDebug().error("Message in language file not found. Path: " + path);
+            return;
+        }
         for (String replacement : replaces) {
             msg = msg.replaceFirst("%s%", replacement);
         }
@@ -55,11 +77,22 @@ public class Messenger {
     /**
      * Sends message to given receiver. Translates all alternative color codes to color.
      * Is used in response to player's and console's commands.
-     * @param msg Message.
+     * @param path path (key) to message in file.
      * @param receiver Receiver of the message.
+     * @param replaces things you want to replace in a message
      */
-    public void message(String msg, CommandSender receiver) {
+    public void message(String path, CommandSender receiver, String... replaces) {
+        String msg = lang.getString(path);
+        if (msg == null) {
+            HSClans.instance.getDebug().error("Message in language file not found. Path: " + path);
+            return;
+        }
+        for (String replacement : replaces) {
+            msg = msg.replaceFirst("%s%", replacement);
+        }
         msg = ChatColor.translateAlternateColorCodes('&', msg);
         receiver.sendMessage(msg);
     }
+
+
 }

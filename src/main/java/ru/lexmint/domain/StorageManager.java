@@ -1,13 +1,9 @@
 package ru.lexmint.domain;
 
-import com.sun.javafx.beans.annotations.NonNull;
-import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import ru.lexmint.HSClans;
-import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.io.MySQL;
 import ru.lexmint.utils.Utils;
 
-import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -88,12 +84,9 @@ public class StorageManager {
                 clan.setDescription(description);
 
                 String members = rs.getString("Members");
-                for (String member : members.split(",")) {
-                    CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(member);
-                    if (cpLayer != null) {
-                        clan.addPlayer(cpLayer);
-                    } else {
-                        HSClans.instance.getDebug().error("CPLayer (importClans() is null! Check code.");
+                if (!members.isEmpty()) {
+                    for (String member : members.split(",")) {
+                        clan.addPlayer(member);
                     }
                 }
                 clanList.add(clan);
@@ -116,7 +109,7 @@ public class StorageManager {
     public CPLayer importClanPlayer(String playerName) {
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement("SELECT * FROM " + tablePrefix + "players WHERE Name='?'");
+            ps = connection.prepareStatement("SELECT * FROM " + tablePrefix + "players WHERE Name=?");
             ps.setString(1, playerName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -132,8 +125,8 @@ public class StorageManager {
             HSClans.instance.getDebug().error("SQL Error while getting clan player in ClanSQLManager. " + e);
         } finally {
             closeStatement(ps);
-            return null;
         }
+        return null;
     }
 
     /**
@@ -152,7 +145,11 @@ public class StorageManager {
                             "VALUES (?, ?, ?)");
                     ps.setString(1, cpLayer.getName());
                     ps.setString(2, cpLayer.getClanRole().toString());
-                    ps.setString(3, cpLayer.getClan().getName());
+                    if (cpLayer.getClan() != null) {
+                        ps.setString(3, cpLayer.getClan().getName());
+                    } else {
+                        ps.setString(3, null);
+                    }
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -178,7 +175,11 @@ public class StorageManager {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "players SET " +
                             "Role=?, Clan=? WHERE Name=?");
                     ps.setString(1, cpLayer.getClanRole().toString());
-                    ps.setString(2, cpLayer.getClan().getName());
+                    if (cpLayer.getClan() != null) {
+                        ps.setString(2, cpLayer.getClan().getName());
+                    } else {
+                        ps.setString(2, null);
+                    }
                     ps.setString(3, cpLayer.getName());
                     ps.execute();
                     connection.commit();
@@ -204,7 +205,11 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
                             "Description=?, Members=? WHERE Name=?");
-                    ps.setString(1, clan.getDescription());
+                    if (clan.getDescription() != null) {
+                        ps.setString(1, clan.getDescription());
+                    } else {
+                        ps.setString(1, null);
+                    }
                     ps.setString(2, Utils.convertToString(clan.getMembers()));
                     ps.setString(3, clan.getName());
                     ps.execute();
@@ -222,6 +227,7 @@ public class StorageManager {
      * Inserts new clan to database.
      *
      * @param clan Clan object which needs to be updated.
+     * @return True whether insert has been successful, otherwise false.
      */
     public void addClan(final Clan clan) {
         MySQL.instance.getExecutor().submit(new Runnable() {
@@ -240,6 +246,46 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new clan player in ClanSQLManager. " + e);
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+    }
+
+    public void removeClan(final Clan clan) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("DELETE FROM " + tablePrefix + "clans " +
+                            "WHERE Name=? ");
+                    ps.setString(1, clan.getName());
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while deleting clan in ClanSQLManager. " + e);
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+    }
+
+    public void removeClanPlayer(final CPLayer cpLayer) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("DELETE FROM " + tablePrefix + "players " +
+                            "WHERE Name=? ");
+                    ps.setString(1, cpLayer.getName());
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while deleting clan player in ClanSQLManager. " + e);
                 } finally {
                     closeStatement(ps);
                 }

@@ -5,6 +5,7 @@ import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
+import ru.lexmint.listener.PlayerListener;
 import ru.lexmint.utils.Config;
 import ru.lexmint.utils.Debug;
 import ru.lexmint.utils.Messenger;
@@ -58,7 +59,6 @@ public class HSClans extends JavaPlugin {
 
         /* Preparing debug and messaging */
         debug = new Debug(getDescription().getName());
-        messenger = new Messenger();
         /* Preparing debug and messaging */
 
         /* Config initialization */
@@ -67,6 +67,9 @@ public class HSClans extends JavaPlugin {
         langConfig = new Config("lang.yml");
        /* Config initialization */
 
+        /* Messaging */
+        messenger = new Messenger(langConfig);
+        /* Messaging */
 
         /* Storage Managing */
         storageManager = new StorageManager();
@@ -80,6 +83,10 @@ public class HSClans extends JavaPlugin {
             getCommand(command).setExecutor(new CommandManager());
         }
         /* Registering command handling to CommandManager */
+
+        /* Registering listeners */
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        /* Registering listeners */
 
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been successfully enabled! (" + (System.currentTimeMillis() - startingTime) + "ms)");
     }
