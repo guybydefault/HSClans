@@ -34,7 +34,7 @@ public class InviteCommand extends BaseCommand {
             Clan clan = clanManager.getPlayer(sender.getName(), true).getClan();
             if (clan.containsMember(player.getName())) {
                 HSClans.instance.getMessenger().message("commands.invite.already-joined", sender, player.getName());
-            } else if (clanManager.addInvite(player.getName(), clan.getName())) {
+            } else if (clan.addInvite(player.getName())) {
                 CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
                 Clan playerClan = cpLayer.getClan();
                 if (playerClan != null) {

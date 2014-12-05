@@ -26,9 +26,9 @@ public class MySQL {
     private boolean connect() throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            String url = "jdbc:mysql://" + HSClans.instance.getConfig().getString("mysql-host") + '/' + HSClans.instance.getConfig().getString("mysql-database");
-            String user = HSClans.instance.getConfig().getString("mysql-user");
-            String password = HSClans.instance.getConfig().getString("mysql-password");
+            String url = "jdbc:mysql://" + HSClans.instance.getConfig().getString("mysql.host") + '/' + HSClans.instance.getConfig().getString("mysql.database");
+            String user = HSClans.instance.getConfig().getString("mysql.user");
+            String password = HSClans.instance.getConfig().getString("mysql.password");
 
             Properties properties = new Properties();
             properties.setProperty("user", user);
@@ -40,8 +40,7 @@ public class MySQL {
             connection.setAutoCommit(false);
 
             return true;
-        }
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             HSClans.instance.getDebug().error("Error while connecting to MySQL server. " + e.getMessage());
         }
         return false;
@@ -50,32 +49,42 @@ public class MySQL {
 
     /**
      * Get MySQL connection. If it is not set, it connects with MySQL and returns ready connection.
+     *
      * @return Connection.
      */
     public Connection getConnection() throws SQLException {
-            if (connection == null) {
-                connect();
-                executor = Executors.newSingleThreadExecutor();
-            } else if (connection.isClosed()) {
-                connect();
-            }
-            return connection;
+        if (connection == null) {
+            connect();
+            executor = Executors.newSingleThreadExecutor();
+        } else if (connection.isClosed()) {
+            connect();
+        }
+        return connection;
     }
 
     /**
      * Get ExecutorService for executing SQL queries.
+     *
      * @return Executor for executing SQL queries.
      */
-    public ExecutorService getExecutor()
-    {
+    public ExecutorService getExecutor() {
         return executor;
     }
 
+    /**
+     * Disconnects from MySQL server. This method will run in single threaded ExecutorService, which guarantees that
+     * all previous operations with database will be finished and only then connection will close.
+     */
     public void disconnect() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            HSClans.instance.getDebug().error("Error while disconnecting from MySQL. " + e);
-        }
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("Error while disconnecting from MySQL. " + e);
+                }
+            }
+        });
     }
 }

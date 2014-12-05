@@ -1,6 +1,15 @@
-mysql-use: true
-mysql-host: '37.187.71.101:3306'
-mysql-user: test
-mysql-password: test
-mysql-database: test
-mysql-table-prefix: 'hsc_'
+mysql:
+  host: '37.187.71.101:3306'
+  user: test
+  password: test
+  database: test
+  table-prefix: 'hsc_'
+power:
+  regen-offline: false
+  per-minute: 0.2
+  max-value: 10.0
+  min-value: -10.0
+  loss-per-death: 5.0
+  offline:
+    loss-per-day: 5.0
+    loss-limit: -10.0

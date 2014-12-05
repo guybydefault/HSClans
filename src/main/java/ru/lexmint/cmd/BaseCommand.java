@@ -64,7 +64,7 @@ public abstract class BaseCommand {
      *
      * @return Message showing right syntax of the command.
      */
-    public String getUsage() {
+    public final String getUsage() {
         return usage;
     }
 
@@ -73,7 +73,7 @@ public abstract class BaseCommand {
      *
      * @return String containing permission.
      */
-    public String getPermission() {
+    public final String getPermission() {
         return permission;
     }
 
@@ -82,7 +82,7 @@ public abstract class BaseCommand {
      *
      * @return True if sender has to be a player, otherwise - false (for console, for example).
      */
-    public boolean getSenderIsPlayer() {
+    public final boolean getSenderIsPlayer() {
         return senderIsPlayer;
     }
 
@@ -90,7 +90,7 @@ public abstract class BaseCommand {
      * Returns minimal required clan role for executing this command by a player.
      * @return Minimal required ClanRole.
      */
-    public ClanRole getRequiredClanRole() {
+    public final ClanRole getRequiredClanRole() {
         return requiredClanRole;
     }
 
@@ -98,7 +98,7 @@ public abstract class BaseCommand {
      * Returns minimal required number of arguments for executing this command.
      * @return Minimal required number of arguments.
      */
-    public int getArguments() {
+    public final int getArguments() {
         return arguments;
     }
 }

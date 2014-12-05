@@ -51,25 +51,13 @@ public class ClanManager {
      * @param leaderName Name of clan's leader who will be added to the clan firstly.
      */
     public void createClan(String clanName, String leaderName) {
-        Clan clan = new Clan(clanName);
+        CPLayer leader = getPlayer(leaderName, true);
+        Clan clan = new Clan(clanName, leader.getClanLeague());
         clansByName.put(clanName, clan);
         storageManager.addClan(clan);
 
-        CPLayer leader = getPlayer(leaderName, true);
         leader.setClanRole(ClanRole.LEADER);
         addPlayerToClan(clan, leader);
-    }
-
-    /**
-     * Adds player to clan.
-     *
-     * @param clanName   Name (tag) of the clan.
-     * @param playerName Name of the player.
-     */
-    public void addPlayerToClan(String clanName, String playerName) {
-        Clan clan = getClan(clanName);
-        CPLayer cpLayer = getPlayer(playerName, true);
-        addPlayerToClan(clan, cpLayer);
     }
 
     /**
@@ -182,25 +170,18 @@ public class ClanManager {
     }
 
     /**
-     * Adds invitation to clan for given playerName.
-     *
-     * @param playerName Name of a player.
-     * @param clanName Name (tag) of the clan which has invited this player.
-     * @return Returns true if invitation for this player has been added. False if he has been already
-     * invited to this clan.
+     * Makes an update (synchronise) of player's info to the database.
+     * @param cpLayer player which is needed to be updated
      */
-    public boolean addInvite(String playerName, String clanName) {
-        return getClan(clanName).addInvite(playerName);
+    public void updatePlayer(CPLayer cpLayer) {
+        storageManager.updateClanPlayer(cpLayer);
     }
 
     /**
-     * Removes invitation for given player.
-     * @param playerName Name of a player.
-     * @return True if invitation has been successfully removed. If invitation for given player has not existed
-     * in invitations set it returns false.
+     * Makes an update (synchronise) of clan's info to the database.
+     * @param clan clan which is needed to be updated
      */
-    public boolean pullInvite(String playerName, String clanName) {
-        return getClan(clanName).pullInvitation(playerName);
+    public void updateClan(Clan clan) {
+        storageManager.updateClan(clan);
     }
-
 }
