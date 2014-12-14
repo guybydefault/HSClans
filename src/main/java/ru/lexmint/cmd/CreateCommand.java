@@ -6,6 +6,8 @@ import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
 
+import java.util.regex.Pattern;
+
 /**
  * Command for creating clan.
  */
@@ -27,6 +29,11 @@ public class CreateCommand extends BaseCommand {
     @Override
     public void perform(CommandSender sender, String[] subargs) {
         ClanManager clanManager = HSClans.instance.getClanManager();
+        Pattern pattern = Pattern.compile("[A-Z][A-Za-z]+");
+        if (!pattern.matcher(subargs[1]).matches() && subargs[1].length() <= 8 && subargs[1].length() >= 2) {
+            HSClans.instance.getMessenger().message("commands.create.wrong-name", sender);
+            return;
+        }
         CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
         if (cpLayer.getClanRole() == ClanRole.OUTLAW) {
             if (!clanManager.containsClan(subargs[1])) {

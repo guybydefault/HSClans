@@ -12,4 +12,4 @@ power:
   loss-per-death: 5.0
   offline:
     loss-per-day: 5.0
-    loss-limit: -10.0
+    loss-limit: 0.0

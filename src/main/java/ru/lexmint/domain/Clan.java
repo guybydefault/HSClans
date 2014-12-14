@@ -30,6 +30,11 @@ public class Clan {
     private Set<String> invites = new HashSet<>();
 
     /**
+     * Claims of the clan.
+     */
+    private Set<Claim> claims = new HashSet<>();
+
+    /**
      * League of the clan.
      */
     private ClanLeague clanLeague;
@@ -38,11 +43,6 @@ public class Clan {
      * Power of a clan, has an influence on territory claim.
      */
     private double power;
-
-    /**
-     * Power bonus which is added to basic power of all players in a clan (basic power of a player is configured in config).
-     */
-    private double powerBoost;
 
     /**
      * Basic constructor for creating a clan.
@@ -62,6 +62,7 @@ public class Clan {
     public String getName() {
         return name;
     }
+
 
     /**
      * Returns description of a clan.
@@ -212,5 +213,57 @@ public class Clan {
      */
     public int getPowerMinRounded() {
         return (int) Math.round(getPowerMin());
+    }
+
+    /**
+     * @return Number of clan claims.
+     */
+    public int getClaimsNumber() {
+        return claims.size();
+    }
+
+
+    /**
+     * @return If clan can hold claim (means that power of this clan is equal or higher than their claimed land
+     * size) it returns true. Otherwise, false.
+     */
+    public boolean canHoldClaim() {
+        return getPower() >= getClaimsNumber();
+    }
+
+    /**
+     * @param claimsSize Number of claim lands.
+     * @return If power of this clan is equal or higher than increased (by claimSize) value of claimed land number,
+     * it returns true. Otherwise, false.
+     */
+    public boolean canClaim(int claimsSize) {
+        return getPower() >= (getClaimsNumber() + claimsSize);
+    }
+
+    /**
+     * Adds claim to clan's claims' list.
+     *
+     * @param claim The claim which is supposed to be added.
+     * @return True if a claim has been successfully added and false if it has already been in clan's claim list.
+     */
+    boolean addClaim(Claim claim) {
+        return claims.add(claim);
+    }
+
+    /**
+     * Removes claim from its claims list.
+     * @param claim The claim which is supposed to be removed.
+     * @return True if a claim has been found and successfully removed. If not found - false.
+     */
+    boolean removeClaim(Claim claim) {
+        return claims.remove(claim);
+    }
+
+    /**
+     *
+     * @return Set of clan's claims.
+     */
+    public Set<Claim> getClaims() {
+        return claims;
     }
 }

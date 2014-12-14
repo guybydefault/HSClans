@@ -213,10 +213,13 @@ public class CPLayer {
             lastPowerUpdateTime = now;
 
             double loss = millisPassed * powerOfflineLossPerDay / (24 * 60 * 60 * 1000);
-            if (this.power - loss < powerOfflineLossLimit) {
-                loss = this.power;
+
+            if (power - loss < powerOfflineLossLimit) {
+                power = powerOfflineLossLimit;
+            } else {
+                alterPower(-loss);
             }
-            this.alterPower(-loss);
+
         }
     }
 

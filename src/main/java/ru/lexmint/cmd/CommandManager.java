@@ -22,6 +22,8 @@ public class CommandManager implements CommandExecutor {
     InviteCommand invite;
     LeaveCommand leave;
     UninviteCommand uninvite;
+    ShowCommand show;
+    ClaimCommand claim;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -30,6 +32,8 @@ public class CommandManager implements CommandExecutor {
         help = new HelpCommand(false, ClanRole.OUTLAW, "hsclans.command.help", 0, "commands.help.usage");
         leave = new LeaveCommand(true, ClanRole.NEWBIE, "hsclans.command.leave", 0, "commands.leave.usage");
         uninvite = new UninviteCommand(true, ClanRole.MODERATOR, "hsclans.command.uninvite", 1, "commands.uninvite.usage");
+        show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
+        claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
 
         commandHashMap.put("create", create);
         commandHashMap.put("join", join);
@@ -37,6 +41,8 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("help", help);
         commandHashMap.put("leave", leave);
         commandHashMap.put("uninvite", uninvite);
+        commandHashMap.put("show", show);
+        commandHashMap.put("claim", claim);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class JoinCommand extends BaseCommand {
                     HSClans.instance.getMessenger().message("commands.join.wrong-league", sender, clan.getClanLeague().getName());
                 } else if (clan.pullInvitation(sender.getName())) {
                     clanManager.addPlayerToClan(clan, cpLayer);
-                    HSClans.instance.getMessenger().broadcastToClan("commands.join.broadcast-to-clan", clan.getName(), sender.getName(), clan.getName());
+                    HSClans.instance.getMessenger().broadcastToClan("commands.join.broadcast-to-clan", clan, sender.getName(), clan.getName());
                 } else {
                     HSClans.instance.getMessenger().message("commands.join.not-invited", sender, clan.getName());
                 }

@@ -5,8 +5,8 @@ import ru.lexmint.domain.io.MySQL;
 import ru.lexmint.utils.Utils;
 
 import java.sql.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class used to interact with MySQL Database more easily.
@@ -45,22 +45,29 @@ public class StorageManager {
             Statement statement = connection.createStatement();
 
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "clans (" +
-                    "Name VARCHAR(16) NOT NULL, " +
+                    "Name VARCHAR(8) NOT NULL, " +
                     "Description VARCHAR(96), " +
                     "Members VARCHAR(1000) NOT NULL, " +
                     "League VARCHAR(16) NOT NULL, " +
+                    "ClaimsNumber SMALLINT NOT NULL, " +
                     "PRIMARY KEY (Name)" +
                     ") CHARACTER SET utf8");
 
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "players (" +
                     "Name VARCHAR(24) NOT NULL, " +
-                    "Clan VARCHAR(16)," +
+                    "Clan VARCHAR(8)," +
                     "Role VARCHAR(16)," +
                     "League VARCHAR(16) NOT NULL, " +
                     "Power REAL NOT NULL, " +
                     "PowerBoost REAL NOT NULL, " +
                     "LastPowerUpdate BIGINT(16) NOT NULL, " +
                     "PRIMARY KEY (Name)" +
+                    ") CHARACTER SET utf8");
+
+            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "claims (" +
+                    "X SMALLINT NOT NULL, " +
+                    "Z SMALLINT NOT NULL, " +
+                    "Clan VARCHAR(8) NOT NULL" +
                     ") CHARACTER SET utf8");
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while preparing MySQL DB. " + e);
@@ -74,13 +81,13 @@ public class StorageManager {
      *
      * @return List containing all clans from MySQL table.
      */
-    public List<Clan> importClans() {
+    public Set<Clan> importClans() {
         PreparedStatement ps = null;
         try {
             ps = connection.prepareStatement
                     ("SELECT * FROM " + tablePrefix + "clans");
             ResultSet rs = ps.executeQuery();
-            List<Clan> clanList = new LinkedList<>();
+            Set<Clan> clanSet = new HashSet<>();
             while (rs.next()) {
                 String name = rs.getString("Name");
                 String description = rs.getString("Description");
@@ -95,13 +102,43 @@ public class StorageManager {
                         clan.addPlayer(member);
                     }
                 }
-                clanList.add(clan);
+                clanSet.add(clan);
             }
-            return clanList;
+            return clanSet;
         } catch (SQLException e) {
-            HSClans.instance.getDebug().error("SQL Error while getting CLANS in ClanSQLManager. " + e);
+            HSClans.instance.getDebug().error("SQL Error while importing CLANS in ClanSQLManager. " + e);
         } finally {
             closeStatement(ps);
+        }
+        return null;
+    }
+
+    /**
+     * Imports clan claims. Notice that clan have to be already initializated and loaded to cache.
+     *
+     * @return List of claims. May be null when SQLException has been thrown during the execution.
+     */
+    public Set<Claim> importClaims() {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement("SELECT * FROM " + tablePrefix + "claims");
+            ResultSet rs = ps.executeQuery();
+            Set<Claim> claimSet = new HashSet<>();
+            while (rs.next()) {
+                int x = rs.getInt("X");
+                int z = rs.getInt("Z");
+                String clanName = rs.getString("Clan");
+                Clan clan = HSClans.instance.getClanManager().getClan(clanName);
+                if (clan == null) {
+                    HSClans.instance.getDebug().error("Clan in method importClaims() (StorageManager) is null!");
+                    continue;
+                }
+                Claim claim = new Claim(x, z, clan);
+                claimSet.add(claim);
+            }
+            return claimSet;
+        } catch (SQLException e) {
+            HSClans.instance.getDebug().error("SQL Error while importing CLAIMS in ClanSQLManager. " + e);
         }
         return null;
     }
@@ -128,7 +165,6 @@ public class StorageManager {
                 long lastPowerUpdateTime = rs.getLong("LastPowerUpdate");
 
                 Clan clan = HSClans.instance.getClanManager().getClan(clanName);
-
                 CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), ClanLeague.valueOf(clanLeague), power, powerBoost, lastPowerUpdateTime);
                 return cpLayer;
             }
@@ -223,15 +259,16 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
-                            "Description=?, Members=?, League=? WHERE Name=?");
+                            "Description=?, Members=?, League=?, ClaimsNumber=? WHERE Name=?");
                     if (clan.getDescription() != null) {
                         ps.setString(1, clan.getDescription());
                     } else {
                         ps.setString(1, null);
                     }
-                    ps.setString(2, Utils.convertToString(clan.getMembers()));
+                    ps.setString(2, Utils.convertToString(clan.getMembers(), false));
                     ps.setString(3, clan.getClanLeague().toString());
-                    ps.setString(4, clan.getName());
+                    ps.setInt(4, clan.getClaimsNumber());
+                    ps.setString(5, clan.getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -256,13 +293,14 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "clans " +
-                            "(Name, Description, Members, League) " +
-                            "VALUES (?, ?, ?, ?)");
+                            "(Name, Description, Members, League, ClaimsNumber) " +
+                            "VALUES (?, ?, ?, ?, ?)");
 
                     ps.setString(1, clan.getName());
                     ps.setString(2, clan.getDescription());
-                    ps.setString(3, Utils.convertToString(clan.getMembers()));
+                    ps.setString(3, Utils.convertToString(clan.getMembers(), false));
                     ps.setString(4, clan.getClanLeague().toString());
+                    ps.setInt(5, clan.getClaimsNumber());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -294,6 +332,71 @@ public class StorageManager {
         });
     }
 
+    public void addClaim(final Claim claim) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "claims " +
+                            "(X, Z, Clan) " +
+                            "VALUES (?, ?, ?)");
+                    ps.setInt(1, claim.getClaimLocation().getX());
+                    ps.setInt(2, claim.getClaimLocation().getZ());
+                    ps.setString(3, claim.getClan().getName());
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while inserting new CLAIM in ClanSQLManager. " + e);
+                }
+            }
+        });
+    }
+
+    public void removeClaim(final Claim claim) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("DELETE FROM " + tablePrefix + "claims " +
+                            "WHERE X=? AND Z=?");
+                    ps.setInt(1, claim.getClaimLocation().getX());
+                    ps.setInt(2, claim.getClaimLocation().getZ());
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+    }
+
+    public void updateClaimClan(final Claim claim) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("UPDATE " + tablePrefix + "claims " +
+                            "SET Clan=? " +
+                            "WHERE X=? AND Z=?");
+                    ps.setString(1, claim.getClan().getName());
+                    ps.setInt(2, claim.getClaimLocation().getX());
+                    ps.setInt(3, claim.getClaimLocation().getZ());
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+    }
+
     public void removeClanPlayer(final CPLayer cpLayer) {
         MySQL.instance.getExecutor().submit(new Runnable() {
             @Override
@@ -313,6 +416,7 @@ public class StorageManager {
             }
         });
     }
+
 
     /**
      * Safely closes the statement and ResultSet, currently associated with statement (considering

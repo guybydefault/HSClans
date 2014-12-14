@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Class which controls all clans of the server, loads them, etc.
@@ -22,6 +22,11 @@ public class ClanManager {
     private final HashMap<String, CPLayer> clanPlayersByName = new HashMap<>();
 
     /**
+     * List of all clan claims.
+     */
+    private Set<Claim> claims;
+
+    /**
      * Object, which deals with MySQL interactions and queries.
      */
     private final StorageManager storageManager;
@@ -34,14 +39,22 @@ public class ClanManager {
      * Retrieves clans from MySQL storage (using StorageManager).
      */
     public void loadData() {
-        List<Clan> clanList = storageManager.importClans();
+        Set<Clan> clanSet = storageManager.importClans();
 
-        for (Clan clan : clanList) {
+        for (Clan clan : clanSet) {
             clansByName.put(clan.getName(), clan);
         }
+
+        claims = storageManager.importClaims();
+
+        for (Claim claim : claims) {
+            claim.getClan().addClaim(claim);
+        }
+
         for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
             storageManager.importClanPlayer(player.getName());
         }
+
     }
 
     /**
@@ -123,18 +136,23 @@ public class ClanManager {
                 storageManager.updateClan(clan);
             } else {
                 cpLayer.removeFromClan();
-                removeClan(clan.getName());
+                removeClan(clan);
             }
             storageManager.updateClanPlayer(cpLayer);
         }
     }
 
-    public void removeClan(String clanName) {
-        Clan clan = clansByName.get(clanName);
+    public void removeClan(Clan clan) {
         for (String memberName : clan.getMembers()) {
             removePlayerFromClan(memberName);
         }
-        clansByName.remove(clanName);
+
+        for (Claim claim : clan.getClaims()) {
+            claims.remove(claim);
+            storageManager.removeClaim(claim);
+        }
+
+        clansByName.remove(clan.getName());
         storageManager.removeClan(clan);
     }
 
@@ -171,6 +189,7 @@ public class ClanManager {
 
     /**
      * Makes an update (synchronise) of player's info to the database.
+     *
      * @param cpLayer player which is needed to be updated
      */
     public void updatePlayer(CPLayer cpLayer) {
@@ -179,9 +198,72 @@ public class ClanManager {
 
     /**
      * Makes an update (synchronise) of clan's info to the database.
+     *
      * @param clan clan which is needed to be updated
      */
     public void updateClan(Clan clan) {
         storageManager.updateClan(clan);
+    }
+
+    /**
+     * Adds claim to storage and cache.
+     *
+     * @param x X coordinate
+     * @param z Z coordinate
+     * @return Claim which has been created and storaged
+     */
+    public Claim addClaim(int x, int z, Clan clan) {
+        Claim claim = new Claim(x, z, clan);
+
+        claims.add(claim);
+        clan.addClaim(claim);
+
+        updateClan(clan);
+        storageManager.addClaim(claim);
+        return claim;
+    }
+
+    /**
+     * @param claim Claim which owner needs to be changed
+     * @param clan  Clan which given claim is supposed to be belonged to
+     */
+    public void changeClaimClan(Claim claim, Clan clan) {
+        claim.getClan().removeClaim(claim);
+        updateClan(claim.getClan());
+
+        claim.setClan(clan);
+        clan.addClaim(claim);
+        updateClan(clan);
+
+        storageManager.updateClaimClan(claim);
+    }
+
+    /**
+     * @param x X coordinate
+     * @param z Z coordinate
+     * @return Claim object
+     */
+    // TODO Rewrite using hashCode, equals
+    public Claim getClaim(int x, int z) {
+        for (Claim claim : claims) {
+            if (claim.getClaimLocation().getX() == x && claim.getClaimLocation().getZ() == z) {
+                return claim;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes claim from cache and storage.
+     *
+     * @param x X coordinate
+     * @param z Z coordinate
+     */
+    public void removeClaim(int x, int z) {
+        Claim claim = getClaim(x, z);
+        claim.getClan().removeClaim(claim);
+        updateClan(claim.getClan());
+        claims.remove(claim);
+        storageManager.removeClaim(claim);
     }
 }
