@@ -83,8 +83,9 @@ public class ClanManager {
         clan.addPlayer(cPlayer.getName());
         cPlayer.setClan(clan);
 
-        storageManager.updateClanPlayer(cPlayer);
-        storageManager.updateClan(clan);
+        updatePlayer(cPlayer);
+        updateClan(clan);
+
     }
 
     /**
@@ -128,17 +129,28 @@ public class ClanManager {
      */
     public void removePlayerFromClan(String playerName) {
         CPLayer cpLayer = getPlayer(playerName, false);
+        removePlayerFromClan(cpLayer);
+    }
+
+    /**
+     * Removes a player from clan if he is a clan member.
+     * <p/>
+     * If clan member is a leader of this clan, clan will be disbanded.
+     *
+     * @param cpLayer CPLayer object describing this player.
+     */
+    public void removePlayerFromClan(CPLayer cpLayer) {
         Clan clan = cpLayer.getClan();
         if (clan != null) {
             if (cpLayer.getClanRole() != ClanRole.LEADER) {
-                clan.removePlayer(playerName);
+                clan.removePlayer(cpLayer.getName());
                 cpLayer.removeFromClan();
-                storageManager.updateClan(clan);
+                updateClan(clan);
             } else {
                 cpLayer.removeFromClan();
                 removeClan(clan);
             }
-            storageManager.updateClanPlayer(cpLayer);
+            updatePlayer(cpLayer);
         }
     }
 
@@ -235,6 +247,15 @@ public class ClanManager {
         clan.addClaim(claim);
         updateClan(clan);
 
+        updateClaim(claim);
+    }
+
+    /**
+     * Updates information about the claim in the database.
+     *
+     * @param claim Claim which needs to be updated.
+     */
+    public void updateClaim(Claim claim) {
         storageManager.updateClaimClan(claim);
     }
 
@@ -266,4 +287,48 @@ public class ClanManager {
         claims.remove(claim);
         storageManager.removeClaim(claim);
     }
+
+    /**
+     * @param cpLayer1 First player
+     * @param cpLayer2 Second player
+     * @return True if player 1 is in the same clan as player 2. Otherwise, false. If they are not members of any clan - returns false.
+     */
+    public boolean areInTheSameClan(CPLayer cpLayer1, CPLayer cpLayer2) {
+        Clan clan1 = cpLayer1.getClan();
+        Clan clan2 = cpLayer2.getClan();
+        return clan1 != null && clan2 != null && clan1 == clan2;
+    }
+
+    /**
+     * @param cpLayer CPLayer which will be promoted.
+     * @return True if a player has been successfully promoted or false if it can not be promoted because he is on the highest rank
+     * in the clan (highest clan role).
+     */
+    public boolean promoteClanPlayer(CPLayer cpLayer) {
+        ClanRole newClanRole = ClanRole.getClanRoleByLevel(cpLayer.getClanRole().getLevel() + 1);
+        if (newClanRole != null) {
+            cpLayer.setClanRole(newClanRole);
+            updatePlayer(cpLayer);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param cpLayer CPLayer which will be demoted.
+     * @return True if a player has been successfully demoted or false if it can not be demoted because he is on the lowest rank
+     * in the clan (lowest clan role).
+     */
+    public boolean demoteClanPlayer(CPLayer cpLayer) {
+        ClanRole newClanRole = ClanRole.getClanRoleByLevel(cpLayer.getClanRole().getLevel() - 1);
+        if (newClanRole != null) {
+            cpLayer.setClanRole(newClanRole);
+            updatePlayer(cpLayer);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

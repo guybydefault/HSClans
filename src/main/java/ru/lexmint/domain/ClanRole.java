@@ -53,4 +53,18 @@ public enum ClanRole {
         return name;
     }
 
+    /**
+     *
+     * @param level Level of the ClanRole.
+     * @return First appearance of the ClanRole among all ClanRole values by given level. If not found - returns null.
+     */
+    public static ClanRole getClanRoleByLevel(int level) {
+        for (ClanRole clanRole : ClanRole.values()) {
+            if (clanRole.getLevel() == level) {
+                return clanRole;
+            }
+        }
+        return null;
+    }
+
 }

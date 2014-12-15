@@ -24,6 +24,9 @@ public class CommandManager implements CommandExecutor {
     UninviteCommand uninvite;
     ShowCommand show;
     ClaimCommand claim;
+    KickCommand kick;
+    PromoteCommand promote;
+    DemoteCommand demote;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -34,6 +37,9 @@ public class CommandManager implements CommandExecutor {
         uninvite = new UninviteCommand(true, ClanRole.MODERATOR, "hsclans.command.uninvite", 1, "commands.uninvite.usage");
         show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
         claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
+        kick = new KickCommand(true, ClanRole.MODERATOR, "hsclans.command.kick", 1, "commands.kick.usage");
+        promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.commands.promote", 1, "commands.promote.usage");
+        demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.commands.demote", 1, "commands.demote.usage");
 
         commandHashMap.put("create", create);
         commandHashMap.put("join", join);
@@ -43,6 +49,9 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("uninvite", uninvite);
         commandHashMap.put("show", show);
         commandHashMap.put("claim", claim);
+        commandHashMap.put("kick", kick);
+        commandHashMap.put("promote", promote);
+        commandHashMap.put("demote", demote);
     }
 
     @Override
