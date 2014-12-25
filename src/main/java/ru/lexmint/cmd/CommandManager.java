@@ -31,7 +31,7 @@ public class CommandManager implements CommandExecutor {
     DemoteCommand demote;
     DescriptionCommand description;
     HomeCommand home;
-    SetHomeCommand setHome;
+    SethomeCommand setHome;
     ChatCommand chat;
     RegenCommand regen;
 
@@ -52,7 +52,7 @@ public class CommandManager implements CommandExecutor {
         promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.command.promote", 1, "commands.promote.usage");
         demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.command.demote", 1, "commands.demote.usage");
         home = new HomeCommand(true, ClanRole.NEWBIE, "hsclans.command.home", 0, "commands.home.usage");
-        setHome = new SetHomeCommand(true, ClanRole.MODERATOR, "hsclans.command.sethome", 0, "commands.sethome.usage");
+        setHome = new SethomeCommand(true, ClanRole.MODERATOR, "hsclans.command.sethome", 0, "commands.sethome.usage");
         chat = new ChatCommand(true, ClanRole.NEWBIE, "hsclans.command.chat", 1, "commands.chat.usage");
         regen = new RegenCommand(false, ClanRole.OUTLAW, "hsclans.command.regen", 1, "commands.regen.usage");
 
