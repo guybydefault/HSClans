@@ -26,8 +26,9 @@ public class Claim {
 
     /**
      * Main constructor for creating a clam object.
-     * @param x X coordinate
-     * @param z Z coordinate
+     *
+     * @param x    X coordinate
+     * @param z    Z coordinate
      * @param clan Clan which this claim is belonged to
      */
     Claim(int x, int z, Clan clan) {
@@ -49,22 +50,31 @@ public class Claim {
         return clan;
     }
 
-    /**
-     * Checks whether given coordinates are equal to the claim's coordinates (if locations are the same).
-     *
-     * @param x X coordinate
-     * @param z Z coordinate
-     * @return True if locations are equal. Otherwise, false.
-     */
-    public boolean isInClaim(int x, int z) {
-        return claimLocation.getX() == x && claimLocation.getZ() == z;
-    }
 
     /**
      * @param clan Clan which this claim is belonged to
      */
     void setClan(Clan clan) {
         this.clan = clan;
+    }
+
+    /**
+     * @param cpLayer Player for which we need to check right to teleport.
+     * @return True if player has permission to teleport to this claim (if he is a member of the clan, owner of this land or
+     * he is a member of its academy). Otherwise, false.
+     */
+    public boolean canTeleportTo(CPLayer cpLayer) {
+        return cpLayer.getClan() == getClan();
+    }
+
+    /**
+     *
+     * @param cpLayer Player for which we need to check right to teleport.
+     * @return True if player has permission to teleport from this claim (if he is a member of the clan, owner of this land or
+     * he is a member of its academy). Otherwise, false.
+     */
+    public boolean canTeleportFrom(CPLayer cpLayer) {
+        return cpLayer.getClan() == getClan();
     }
 
     class ClaimLocation {

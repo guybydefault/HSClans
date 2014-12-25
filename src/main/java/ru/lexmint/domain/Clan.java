@@ -1,6 +1,12 @@
 package ru.lexmint.domain;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
+import ru.lexmint.domain.stats.ClanStats;
+import ru.lexmint.domain.stats.PlayerStats;
+import ru.lexmint.domain.stats.Stats;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,17 +28,22 @@ public class Clan {
     /**
      * Set of all clan's members.
      */
-    private Set<String> members = new HashSet<>();
+    private final Set<String> members = new HashSet<>();
 
     /**
      * Set of all players invited to the clan.
      */
-    private Set<String> invites = new HashSet<>();
+    private final Set<String> invites = new HashSet<>();
 
     /**
-     * Claims of the clan.
+     * Claims of a clan.
      */
-    private Set<Claim> claims = new HashSet<>();
+    private final Set<Claim> claims = new HashSet<>();
+
+    /**
+     * Time when a clan was created.
+     */
+    private final long createdTime;
 
     /**
      * League of the clan.
@@ -45,13 +56,38 @@ public class Clan {
     private double power;
 
     /**
+     * Home location of a clan.
+     */
+    private Location home;
+
+    /**
+     * Statistics of a clan (kills, deaths, kdr, etc).
+     */
+    private final ClanStats clanStats;
+
+
+    /**
      * Basic constructor for creating a clan.
      *
      * @param name Name of a clan.
      */
-    Clan(String name, ClanLeague clanLeague) {
+    Clan(String name, ClanLeague clanLeague, long createdTime) {
         this.name = name;
         this.clanLeague = clanLeague;
+        this.createdTime = createdTime;
+        clanStats = new ClanStats(getMembersStats());
+    }
+
+    /**
+     * @return Set which contains pvp statistics of the members of the clan.
+     */
+    private Set<PlayerStats> getMembersStats() {
+        Set<PlayerStats> playerStats = new HashSet<>();
+        for (String member : members) {
+            CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(member, false);
+            playerStats.add(cpLayer.getStats());
+        }
+        return playerStats;
     }
 
     /**
@@ -67,9 +103,13 @@ public class Clan {
     /**
      * Returns description of a clan.
      *
-     * @return The string containing description of a clan.
+     * @return The string containing description of a clan. If clan has not set a description - it will return default
+     * description which is configured in language config.
      */
     public String getDescription() {
+        if (description == null) {
+            return HSClans.instance.getLangConfig().getString("clan.description");
+        }
         return description;
     }
 
@@ -78,7 +118,7 @@ public class Clan {
      *
      * @param description A string containing description.
      */
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -198,7 +238,7 @@ public class Clan {
      * @return Rounded to int value of clan's power.
      */
     public int getPowerRounded() {
-        return (int) Math.round(getPower());
+        return (int) getPower();
     }
 
     /**
@@ -252,6 +292,7 @@ public class Clan {
 
     /**
      * Removes claim from its claims list.
+     *
      * @param claim The claim which is supposed to be removed.
      * @return True if a claim has been found and successfully removed. If not found - false.
      */
@@ -260,10 +301,87 @@ public class Clan {
     }
 
     /**
-     *
      * @return Set of clan's claims.
      */
     public Set<Claim> getClaims() {
         return claims;
+    }
+
+    /**
+     * @return Home location of a clan. May be null if a clan has not set its home.
+     */
+    public Location getHome() {
+        return home;
+    }
+
+    /**
+     * @param home New home location for a clan.
+     */
+    public void setHome(Location home) {
+        this.home = home;
+    }
+
+    /**
+     * @return True if a clan has got home. Otherwise, if it has not been set, false.
+     */
+    public boolean hasHome() {
+        return home != null;
+    }
+
+    /**
+     * @return Time when a clan was created.
+     */
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    /**
+     * @return Number of days passed since a clan was created.
+     */
+    public int getDaysSinceCreated() {
+        return (int) (System.currentTimeMillis() - createdTime) / 1000 / 60 / 60 / 24;
+    }
+
+    /**
+     * @return True if a clan has a leader, otherwise false.
+     */
+    public boolean hasLeader() {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        for (String member : members) {
+            if (clanManager.getPlayer(member, false).getClanRole() == ClanRole.LEADER) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return Number of clan members.
+     */
+    public int getMembersSize() {
+        return members.size();
+    }
+
+    /**
+     * @return Statistics of the clan (kills, deaths, kdr, etc).
+     */
+    public Stats getStatistics() {
+        clanStats.reloadStats(getMembersStats());
+        return clanStats;
+    }
+
+    /**
+     *
+     * @return Set of Players (clan members) who is online on server now.
+     */
+    public Set<Player> getMembersOnline() {
+        Set<Player> playerSet = new HashSet<>();
+        for (String member : members) {
+            Player player = Bukkit.getPlayerExact(member);
+            if (player != null) {
+                playerSet.add(player);
+            }
+        }
+        return playerSet;
     }
 }

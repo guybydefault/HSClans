@@ -1,10 +1,14 @@
 package ru.lexmint;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
+import ru.lexmint.listener.ChatListener;
+import ru.lexmint.listener.ExploitListener;
+import ru.lexmint.listener.MonitorListener;
 import ru.lexmint.listener.PlayerListener;
 import ru.lexmint.utils.Config;
 import ru.lexmint.utils.Debug;
@@ -50,6 +54,24 @@ public class HSClans extends JavaPlugin {
      */
     private ClanManager clanManager;
 
+    /**
+     * Listener which logs info, updates player's power and something important stats.
+     */
+    private MonitorListener monitorListener;
+    /**
+     * Listens to chat, manages with formatting.
+     */
+    private ChatListener chatListener;
+    /**
+     * Fixes some annoying bugs and glitches.
+     */
+    private ExploitListener exploitListener;
+
+    /**
+     * Deals with player respawn and other things connected with player.
+     */
+    private PlayerListener playerListener;
+
     @Override
     public void onEnable() {
         getLogger().info("***** ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " *****");
@@ -79,13 +101,20 @@ public class HSClans extends JavaPlugin {
 
 
         /* Registering command handling to CommandManager */
-        for(String command : getDescription().getCommands().keySet()) {
+        for (String command : getDescription().getCommands().keySet()) {
             getCommand(command).setExecutor(new CommandManager());
         }
         /* Registering command handling to CommandManager */
 
         /* Registering listeners */
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        monitorListener = new MonitorListener();
+        chatListener = new ChatListener();
+        exploitListener = new ExploitListener();
+        playerListener = new PlayerListener();
+        getServer().getPluginManager().registerEvents(monitorListener, this);
+        getServer().getPluginManager().registerEvents(chatListener, this);
+        getServer().getPluginManager().registerEvents(exploitListener, this);
+        getServer().getPluginManager().registerEvents(playerListener, this);
         /* Registering listeners */
 
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been successfully enabled! (" + (System.currentTimeMillis() - startingTime) + "ms)");
@@ -93,12 +122,16 @@ public class HSClans extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (Player player : getServer().getOnlinePlayers()) {
+            monitorListener.onPlayerLeave(player);
+        }
         MySQL.instance.disconnect();
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been disabled!");
     }
 
     /**
      * Gets storage manager which works with MySQL.
+     *
      * @return StorageManager object.
      */
     public StorageManager getStorageManager() {
@@ -107,6 +140,7 @@ public class HSClans extends JavaPlugin {
 
     /**
      * Gets clan manager which operates with clan logic.
+     *
      * @return ClanManager object.
      */
     public ClanManager getClanManager() {
@@ -115,6 +149,7 @@ public class HSClans extends JavaPlugin {
 
     /**
      * Gets settings config.
+     *
      * @return Config.
      */
     public Config getSettings() {
@@ -123,6 +158,7 @@ public class HSClans extends JavaPlugin {
 
     /**
      * Returns plugin's language (localisation) config.
+     *
      * @return Config.
      */
     public Config getLangConfig() {
@@ -131,6 +167,7 @@ public class HSClans extends JavaPlugin {
 
     /**
      * Gets debug object which manages plugin's log file.
+     *
      * @return Debug object.
      */
     public Debug getDebug() {
@@ -139,6 +176,7 @@ public class HSClans extends JavaPlugin {
 
     /**
      * Returns Messenger object.
+     *
      * @return Messenger object, manages with all plugin's broadcasting, chatting and other stuff.
      */
     public Messenger getMessenger() {

@@ -1,16 +1,15 @@
 package ru.lexmint.cmd;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
-import ru.lexmint.domain.CPLayer;
-import ru.lexmint.domain.Clan;
-import ru.lexmint.domain.ClanManager;
-import ru.lexmint.domain.ClanRole;
+import ru.lexmint.domain.*;
 
 /**
- * Leave a clan.
+ * Teleport to clan's home location.
  */
-public class LeaveCommand extends BaseCommand {
+public class HomeCommand extends BaseCommand {
     /**
      * Main constructor for creating a command.
      *
@@ -21,7 +20,7 @@ public class LeaveCommand extends BaseCommand {
      * @param arguments        Minimal number of sub arguments (command label is not included),
      * @param usage            String which contains information how to use this command.
      */
-    public LeaveCommand(boolean senderIsPlayer, ClanRole requiredClanRole, String permission, int arguments, String usage) {
+    public HomeCommand(boolean senderIsPlayer, ClanRole requiredClanRole, String permission, int arguments, String usage) {
         super(senderIsPlayer, requiredClanRole, permission, arguments, usage);
     }
 
@@ -30,16 +29,20 @@ public class LeaveCommand extends BaseCommand {
         ClanManager clanManager = HSClans.instance.getClanManager();
         CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
         Clan clan = cpLayer.getClan();
-        clanManager.removePlayerFromClan(sender.getName());
 
-        if (clan.hasLeader()) {
-            HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
+        if (clan.hasHome()) {
+            Player player = (Player) sender;
+            Location homeLocation = clan.getHome();
+            Claim claimTo = clanManager.getClaim(homeLocation.getChunk().getX(), homeLocation.getChunk().getZ());
+            if (claimTo == null || !claimTo.canTeleportTo(cpLayer)) {
+                HSClans.instance.getMessenger().message("commands.home.not-owned", player);
+                return;
+            }
+            if (player.teleport(homeLocation)) {
+                HSClans.instance.getMessenger().message("commands.home.success", sender);
+            }
         } else {
-            clanManager.removeClan(clan);
-            HSClans.instance.getMessenger().broadcastToAll("commands.leave.disband-broadcast", cpLayer.getName(), clan.getName());
-
+            HSClans.instance.getMessenger().message("commands.home.not-set", sender);
         }
-
-
     }
 }

@@ -7,9 +7,13 @@ mysql:
 power:
   regen-offline: false
   per-minute: 0.2
+  start-value: 0.0
   max-value: 10.0
   min-value: -10.0
   loss-per-death: 5.0
   offline:
     loss-per-day: 5.0
     loss-limit: 0.0
+performance:
+  # Cache all players (when plugin tries to get player info from MySQL, it caches it so that future requests to this info will be faster)
+  cache-all: true

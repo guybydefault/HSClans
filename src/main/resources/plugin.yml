@@ -1,5 +1,5 @@
 name: HSClans
-version: 0.1
+version: 0.3
 main: ru.lexmint.HSClans
 authors: [Lexmint]
 # TODO Only for last loading to easily debug

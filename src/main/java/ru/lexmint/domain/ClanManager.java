@@ -65,12 +65,11 @@ public class ClanManager {
      */
     public void createClan(String clanName, String leaderName) {
         CPLayer leader = getPlayer(leaderName, true);
-        Clan clan = new Clan(clanName, leader.getClanLeague());
+        Clan clan = new Clan(clanName, leader.getClanLeague(), System.currentTimeMillis());
         clansByName.put(clanName, clan);
         storageManager.addClan(clan);
 
-        leader.setClanRole(ClanRole.LEADER);
-        addPlayerToClan(clan, leader);
+        addPlayerToClan(clan, leader, ClanRole.LEADER);
     }
 
     /**
@@ -79,9 +78,10 @@ public class ClanManager {
      * @param clan    Clan object.
      * @param cPlayer CPlayer object of player.
      */
-    public void addPlayerToClan(Clan clan, CPLayer cPlayer) {
+    public void addPlayerToClan(Clan clan, CPLayer cPlayer, ClanRole clanRole) {
         clan.addPlayer(cPlayer.getName());
         cPlayer.setClan(clan);
+        cPlayer.setClanRole(clanRole);
 
         updatePlayer(cPlayer);
         updateClan(clan);
@@ -94,7 +94,7 @@ public class ClanManager {
      * @param playerName Name of the player.
      */
     public void createPlayer(String playerName) {
-        CPLayer cpLayer = new CPLayer(playerName);
+        CPLayer cpLayer = new CPLayer(playerName, HSClans.instance.getSettings().getDouble("power.start-value"));
         clanPlayersByName.put(playerName, cpLayer);
         storageManager.addClanPlayer(cpLayer);
     }
@@ -105,18 +105,18 @@ public class ClanManager {
      * - it returns it, otherwise returns null;
      *
      * @param playerName Name of the player.
-     * @param cache      Whether or not player should be cached in memory or not.
+     * @param cache      Whether or not player should be cached in memory or not. Notice that if setting cache-all in
+     *                   plugin configuration is set to true, player will always be cached in memory.
      * @return CPLayer if it was found. Otherwise, null.
      */
     public CPLayer getPlayer(String playerName, boolean cache) {
         CPLayer cpLayer = clanPlayersByName.get(playerName);
         if (cpLayer == null) {
             cpLayer = storageManager.importClanPlayer(playerName);
-            if (cache && cpLayer != null) {
+            if ((HSClans.instance.getSettings().getBoolean("performance.cache-all") || cache) && cpLayer != null) {
                 clanPlayersByName.put(playerName, cpLayer);
             }
         }
-
         return cpLayer;
     }
 
@@ -135,23 +135,18 @@ public class ClanManager {
     /**
      * Removes a player from clan if he is a clan member.
      * <p/>
-     * If clan member is a leader of this clan, clan will be disbanded.
      *
      * @param cpLayer CPLayer object describing this player.
      */
     public void removePlayerFromClan(CPLayer cpLayer) {
         Clan clan = cpLayer.getClan();
-        if (clan != null) {
-            if (cpLayer.getClanRole() != ClanRole.LEADER) {
-                clan.removePlayer(cpLayer.getName());
-                cpLayer.removeFromClan();
-                updateClan(clan);
-            } else {
-                cpLayer.removeFromClan();
-                removeClan(clan);
-            }
-            updatePlayer(cpLayer);
-        }
+
+        clan.removePlayer(cpLayer.getName());
+        cpLayer.removeFromClan();
+        updateClan(clan);
+
+        updatePlayer(cpLayer);
+
     }
 
     public void removeClan(Clan clan) {
@@ -262,7 +257,7 @@ public class ClanManager {
     /**
      * @param x X coordinate
      * @param z Z coordinate
-     * @return Claim object
+     * @return Claim object. Returns null if it has not been found (means that nobody has claimed this land).
      */
     // TODO Rewrite using hashCode, equals
     public Claim getClaim(int x, int z) {
@@ -322,7 +317,7 @@ public class ClanManager {
      */
     public boolean demoteClanPlayer(CPLayer cpLayer) {
         ClanRole newClanRole = ClanRole.getClanRoleByLevel(cpLayer.getClanRole().getLevel() - 1);
-        if (newClanRole != null) {
+        if (newClanRole != null && newClanRole != ClanRole.OUTLAW) {
             cpLayer.setClanRole(newClanRole);
             updatePlayer(cpLayer);
             return true;
@@ -330,5 +325,6 @@ public class ClanManager {
             return false;
         }
     }
+
 
 }

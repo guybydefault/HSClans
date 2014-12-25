@@ -2,6 +2,7 @@ package ru.lexmint.domain;
 
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
+import ru.lexmint.domain.stats.PlayerStats;
 
 /**
  * Class, describing a player who is or was in a clan.
@@ -42,27 +43,53 @@ public class CPLayer {
      */
     private long lastPowerUpdateTime;
 
+    /**
+     * Contains player kills, deaths and counts kdr.
+     */
+    private PlayerStats stats;
+
+    /**
+     * Time when player joined the server first.
+     */
+    private final long firstPlayed;
+
+    /**
+     * Hours of time while player has been playing on server.
+     */
+    private double hoursPlayed;
+
 
     /**
      * Constructor for player without clan.
      *
-     * @param name Name of the player.
+     * @param name  Name of the player.
+     * @param power Starting value of player's power.
      */
-    CPLayer(String name) {
+    CPLayer(String name, double power) {
         this.name = name;
         clanRole = ClanRole.OUTLAW;
         clanLeague = ClanLeague.LOW;
+        this.power = power;
+        lastPowerUpdateTime = System.currentTimeMillis();
+        stats = new PlayerStats(0, 0);
+        firstPlayed = System.currentTimeMillis();
+        hoursPlayed = 0;
     }
 
     /**
      * Standard constructor for creating a CPLayer.
      *
-     * @param name       Name of the player.
-     * @param clan       Player's clan.
-     * @param clanRole   Player's role in the given clan.
-     * @param clanLeague League of the player.
+     * @param name                Name of the player.
+     * @param clan                Player's clan.
+     * @param clanRole            Player's role in the given clan.
+     * @param clanLeague          League of the player.
+     * @param power               Power of the player.
+     * @param powerBoost          Boost which is added to player's basic power.
+     * @param lastPowerUpdateTime Last time when player's power was updated.
+     * @param kills               Number of kills this player has made.
+     * @param deaths              Number of player's deaths.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, ClanLeague clanLeague, double power, double powerBoost, long lastPowerUpdateTime) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, ClanLeague clanLeague, double power, double powerBoost, long lastPowerUpdateTime, int kills, int deaths, long firstPlayed, double hoursPlayed) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -70,6 +97,9 @@ public class CPLayer {
         this.power = power;
         this.powerBoost = powerBoost;
         this.lastPowerUpdateTime = lastPowerUpdateTime;
+        this.stats = new PlayerStats(kills, deaths);
+        this.firstPlayed = firstPlayed;
+        this.hoursPlayed = hoursPlayed;
     }
 
     /**
@@ -127,12 +157,19 @@ public class CPLayer {
     }
 
     /**
-     * Returns player's status in a clan.
+     * Returns if player can join clan.
      *
-     * @return True if player is in clan. Otherwise, false.
+     * @return True if player can join clan. Otherwise (if he is not allowed to or he is already in clan), false.
      */
-    public boolean isInClan() {
+    public boolean canJoinClan() {
         return (clanRole == ClanRole.OUTLAW);
+    }
+
+    /**
+     * @return True if player has clan, otherwise false.
+     */
+    public boolean hasClan() {
+        return clan != null;
     }
 
     /**
@@ -286,6 +323,49 @@ public class CPLayer {
     public long getLastPowerUpdateTime() {
         return lastPowerUpdateTime;
     }
+
+    /**
+     * @return Object which contains player kills, deaths, count KDR (KillDeath rate).
+     */
+    public PlayerStats getStats() {
+        return stats;
+    }
+
+    /**
+     * @return Time when player joined server for the first time.
+     */
+    public long getFirstPlayed() {
+        return firstPlayed;
+    }
+
+    /**
+     * @return Days which have passed since this player joined server for the first time.
+     */
+    public int getDaysSinceFirstPlayed() {
+        return (int) (System.currentTimeMillis() - firstPlayed) / 1000 / 60 / 60 / 24;
+    }
+
+    /**
+     * Increases/decreases player's time on server.
+     *
+     * @param alter Hours which will be added to player's summary hours played.
+     */
+    public void alterHoursPlayed(double alter) {
+        hoursPlayed += alter;
+    }
+
+    /**
+     * @return Hours of time while player has been playing on server.
+     */
+    public double getHoursPlayed() {
+        return hoursPlayed;
+    }
+
+    /**
+     *
+     * @return Rounded time while player has been playing on server.
+     */
+    public int getHoursPlayedRounded() {return (int) Math.round(hoursPlayed); }
 
 
 }

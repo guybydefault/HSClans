@@ -1,6 +1,8 @@
 package ru.lexmint.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
@@ -30,6 +32,10 @@ public class UninviteCommand extends BaseCommand {
         ClanManager clanManager = HSClans.instance.getClanManager();
         Clan clan = clanManager.getPlayer(sender.getName(), true).getClan();
         if (clan.pullInvitation(subargs[1])) {
+            Player player = Bukkit.getPlayerExact(subargs[1]);
+            if (player != null) {
+                HSClans.instance.getMessenger().message("commands.uninvite.to-uninvited", player, sender.getName(), clan.getName());
+            }
             HSClans.instance.getMessenger().message("commands.uninvite.success", sender, subargs[1]);
         } else {
             HSClans.instance.getMessenger().message("commands.uninvite.player-not-found", sender, subargs[1]);

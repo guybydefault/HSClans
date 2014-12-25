@@ -3,10 +3,7 @@ package ru.lexmint.cmd;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
-import ru.lexmint.domain.Claim;
-import ru.lexmint.domain.Clan;
-import ru.lexmint.domain.ClanManager;
-import ru.lexmint.domain.ClanRole;
+import ru.lexmint.domain.*;
 
 public class ClaimCommand extends BaseCommand {
     /**
@@ -31,7 +28,8 @@ public class ClaimCommand extends BaseCommand {
 
         ClanManager clanManager = HSClans.instance.getClanManager();
 
-        Clan clan = clanManager.getPlayer(sender.getName(), true).getClan();
+        CPLayer cPlayer = clanManager.getPlayer(sender.getName(), true);
+        Clan clan = cPlayer.getClan();
         Claim claim = clanManager.getClaim(chunkX, chunkZ);
 
         if (claim != null) {
@@ -42,15 +40,15 @@ public class ClaimCommand extends BaseCommand {
                 HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
             } else {
                 clanManager.changeClaimClan(claim, clan);
-                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, sender.getName(),
+                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
                         clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
-                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan,
-                        sender.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
+                        cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
             }
         } else {
             if (clan.canClaim(1)) {
                 clanManager.addClaim(chunkX, chunkZ, clan);
-                HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, sender.getName(), String.valueOf(chunkX),
+                HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
                         String.valueOf(chunkZ));
             } else {
                 HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender,

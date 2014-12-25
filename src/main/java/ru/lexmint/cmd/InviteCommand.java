@@ -42,7 +42,7 @@ public class InviteCommand extends BaseCommand {
                     HSClans.instance.getMessenger().message("commands.invite.invitation-busy", player, sender.getName(), clan.getName());
                 } else {
                     HSClans.instance.getMessenger().message("commands.invite.success", sender, player.getName());
-                    HSClans.instance.getMessenger().message("commands.invite.invitation", player, sender.getName(), clan.getName());
+                    HSClans.instance.getMessenger().message("commands.invite.invitation", player, sender.getName(), clan.getName(), clan.getName());
                 }
             } else {
                 HSClans.instance.getMessenger().message("commands.invite.already-invited", sender, player.getName());

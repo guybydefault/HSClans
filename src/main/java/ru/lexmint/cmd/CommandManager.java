@@ -23,35 +23,66 @@ public class CommandManager implements CommandExecutor {
     LeaveCommand leave;
     UninviteCommand uninvite;
     ShowCommand show;
+    PlayerCommand player;
     ClaimCommand claim;
+    UnclaimCommand unclaim;
     KickCommand kick;
     PromoteCommand promote;
     DemoteCommand demote;
+    DescriptionCommand description;
+    HomeCommand home;
+    SetHomeCommand setHome;
+    ChatCommand chat;
+    RegenCommand regen;
+
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
+        description = new DescriptionCommand(true, ClanRole.MODERATOR, "hsclans.command.description", 1, "commands.description.usage");
         join = new JoinCommand(true, ClanRole.OUTLAW, "hsclans.command.join", 1, "commands.join.usage");
         invite = new InviteCommand(true, ClanRole.MODERATOR, "hsclans.command.invite", 1, "commands.invite.usage");
         help = new HelpCommand(false, ClanRole.OUTLAW, "hsclans.command.help", 0, "commands.help.usage");
         leave = new LeaveCommand(true, ClanRole.NEWBIE, "hsclans.command.leave", 0, "commands.leave.usage");
         uninvite = new UninviteCommand(true, ClanRole.MODERATOR, "hsclans.command.uninvite", 1, "commands.uninvite.usage");
         show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
+        player = new PlayerCommand(false, ClanRole.OUTLAW, "hsclans.command.player", 1, "commands.player.usage");
         claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
+        unclaim = new UnclaimCommand(true, ClanRole.MODERATOR," hsclans.command.unclaim", 0, "commands.unclaim.usage");
         kick = new KickCommand(true, ClanRole.MODERATOR, "hsclans.command.kick", 1, "commands.kick.usage");
-        promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.commands.promote", 1, "commands.promote.usage");
-        demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.commands.demote", 1, "commands.demote.usage");
+        promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.command.promote", 1, "commands.promote.usage");
+        demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.command.demote", 1, "commands.demote.usage");
+        home = new HomeCommand(true, ClanRole.NEWBIE, "hsclans.command.home", 0, "commands.home.usage");
+        setHome = new SetHomeCommand(true, ClanRole.MODERATOR, "hsclans.command.sethome", 0, "commands.sethome.usage");
+        chat = new ChatCommand(true, ClanRole.NEWBIE, "hsclans.command.chat", 1, "commands.chat.usage");
+        regen = new RegenCommand(false, ClanRole.OUTLAW, "hsclans.command.regen", 1, "commands.regen.usage");
 
         commandHashMap.put("create", create);
+
+        commandHashMap.put("description", description);
+        commandHashMap.put("desc", description);
+
         commandHashMap.put("join", join);
         commandHashMap.put("invite", invite);
         commandHashMap.put("help", help);
         commandHashMap.put("leave", leave);
         commandHashMap.put("uninvite", uninvite);
         commandHashMap.put("show", show);
+
+        commandHashMap.put("player", player);
+        commandHashMap.put("p", player);
+
         commandHashMap.put("claim", claim);
+        commandHashMap.put("unclaim", unclaim);
         commandHashMap.put("kick", kick);
         commandHashMap.put("promote", promote);
         commandHashMap.put("demote", demote);
+        commandHashMap.put("home", home);
+        commandHashMap.put("sethome", setHome);
+
+        commandHashMap.put("chat", chat);
+        commandHashMap.put("c", chat);
+
+        commandHashMap.put("regen", regen);
     }
 
     @Override

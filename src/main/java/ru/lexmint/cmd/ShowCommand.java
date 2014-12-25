@@ -58,18 +58,21 @@ public class ShowCommand extends BaseCommand {
 
         HSClans.instance.getMessenger().message("commands.show.header", sender, clan.getName());
         HSClans.instance.getMessenger().message("commands.show.description", sender, description);
-        HSClans.instance.getMessenger().message("commands.show.league-and-power", sender, clan.getClanLeague().getName(), String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
+        HSClans.instance.getMessenger().message("commands.show.league-and-size", sender, clan.getClanLeague().getName(), String.valueOf(clan.getMembersSize()));
+        HSClans.instance.getMessenger().message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));
+        HSClans.instance.getMessenger().message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
+        HSClans.instance.getMessenger().message("commands.show.kdr", sender, String.valueOf(clan.getStatistics().getKDRRounded()), String.valueOf(clan.getStatistics().getKills()), String.valueOf(clan.getStatistics().getDeaths()));
 
         StringBuilder sb = new StringBuilder();
         Iterator<String> it = clan.getMembers().iterator();
         while (it.hasNext()) {
             String member = it.next();
-            sb.append(ChatColor.GOLD).append(member).append(ChatColor.RESET);
+            CPLayer memberPlayer = clanManager.getPlayer(member, true);
+            sb.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
             if (it.hasNext()) {
-                sb.append(", ");
+                sb.append(ChatColor.YELLOW).append(", ");
             }
         }
         HSClans.instance.getMessenger().message("commands.show.members", sender, sb.toString());
-
     }
 }
