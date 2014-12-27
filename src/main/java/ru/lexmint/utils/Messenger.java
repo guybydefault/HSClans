@@ -29,7 +29,7 @@ public class Messenger {
     public void broadcastToAll(String path, String... replaces) {
         String msg = lang.getString(path);
 
-        msg = appendPrefix(msg, "chat.broadcast-prefix");
+        msg = appendPrefix(msg, lang.getString("chat.broadcast-prefix"));
         for (String replacement : replaces) {
             msg = msg.replaceFirst("%s%", replacement);
         }
