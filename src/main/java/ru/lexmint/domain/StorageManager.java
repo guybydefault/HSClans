@@ -50,7 +50,6 @@ public class StorageManager {
                     "name VARCHAR(8) NOT NULL, " +
                     "description VARCHAR(92), " +
                     "members VARCHAR(1000) NOT NULL, " +
-                    "league VARCHAR(16) NOT NULL, " +
                     "claims_number SMALLINT NOT NULL, " +
                     "time_created BIGINT(16) NOT NULL, " +
                     "home_x DOUBLE, " +
@@ -104,11 +103,10 @@ public class StorageManager {
             while (rs.next()) {
                 String name = rs.getString("name");
                 String description = rs.getString("description");
-                ClanLeague clanLeague = ClanLeague.valueOf(rs.getString("league"));
                 long timeCreated = rs.getLong("time_created");
                 String homeWorld = rs.getString("home_world");
 
-                Clan clan = new Clan(name, clanLeague, timeCreated);
+                Clan clan = new Clan(name, timeCreated);
                 clan.setDescription(description);
                 if (homeWorld != null) {
                     double homeX = rs.getDouble("home_x");
@@ -311,7 +309,7 @@ public class StorageManager {
                         ps.setString(11, clan.getName());
                     } else {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
-                                "description=?, members=?, league=?, claims_number=? WHERE name=?");
+                                "description=?, members=?, claims_number=? WHERE name=?");
 
                         ps.setString(5, clan.getName());
                     }
@@ -322,8 +320,7 @@ public class StorageManager {
                         ps.setString(1, null);
                     }
                     ps.setString(2, Utils.convertToString(clan.getMembers(), false));
-                    ps.setString(3, clan.getClanLeague().toString());
-                    ps.setInt(4, clan.getClaimsNumber());
+                    ps.setInt(3, clan.getClaimsNumber());
 
                     ps.execute();
                     connection.commit();
@@ -349,15 +346,14 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "clans " +
-                            "(name, description, members, league, claims_number, time_created) " +
+                            "(name, description, members, claims_number, time_created) " +
                             "VALUES (?, ?, ?, ?, ?, ?)");
 
                     ps.setString(1, clan.getName());
                     ps.setString(2, clan.getDescription());
                     ps.setString(3, Utils.convertToString(clan.getMembers(), false));
-                    ps.setString(4, clan.getClanLeague().toString());
-                    ps.setInt(5, clan.getClaimsNumber());
-                    ps.setLong(6, clan.getCreatedTime());
+                    ps.setInt(4, clan.getClaimsNumber());
+                    ps.setLong(5, clan.getCreatedTime());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {

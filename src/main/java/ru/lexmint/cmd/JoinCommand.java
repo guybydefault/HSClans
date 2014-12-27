@@ -32,9 +32,7 @@ public class JoinCommand extends BaseCommand {
         if (cpLayer.getClanRole() == ClanRole.OUTLAW) {
             Clan clan = clanManager.getClan(subargs[1]);
             if (clan != null) {
-                if (clan.getClanLeague() != cpLayer.getClanLeague()) {
-                    HSClans.instance.getMessenger().message("commands.join.wrong-league", sender, clan.getClanLeague().getName());
-                } else if (clan.pullInvitation(sender.getName())) {
+                if (clan.pullInvitation(sender.getName())) {
                     clanManager.addPlayerToClan(clan, cpLayer, ClanRole.NEWBIE);
                     HSClans.instance.getMessenger().broadcastToClan("commands.join.broadcast-to-clan", clan, sender.getName(), clan.getName());
                 } else {

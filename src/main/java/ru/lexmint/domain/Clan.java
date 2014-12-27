@@ -2,6 +2,7 @@ package ru.lexmint.domain;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.stats.ClanStats;
@@ -46,11 +47,6 @@ public class Clan {
     private final long createdTime;
 
     /**
-     * League of the clan.
-     */
-    private ClanLeague clanLeague;
-
-    /**
      * Power of a clan, has an influence on territory claim.
      */
     private double power;
@@ -71,9 +67,8 @@ public class Clan {
      *
      * @param name Name of a clan.
      */
-    Clan(String name, ClanLeague clanLeague, long createdTime) {
+    Clan(String name, long createdTime) {
         this.name = name;
-        this.clanLeague = clanLeague;
         this.createdTime = createdTime;
         clanStats = new ClanStats(getMembersStats());
     }
@@ -179,13 +174,6 @@ public class Clan {
      */
     public boolean containsMember(String memberName) {
         return members.contains(memberName);
-    }
-
-    /**
-     * @return league of the clan
-     */
-    public ClanLeague getClanLeague() {
-        return clanLeague;
     }
 
     /**
@@ -343,6 +331,14 @@ public class Clan {
     }
 
     /**
+     *
+     * @return Clan level (based on days passed since clan's date of creation).
+     */
+    public ClanLevel getClanLevel() {
+        return ClanLevel.getClanLevelByDays(getDaysSinceCreated());
+    }
+
+    /**
      * @return True if a clan has a leader, otherwise false.
      */
     public boolean hasLeader() {
@@ -371,7 +367,6 @@ public class Clan {
     }
 
     /**
-     *
      * @return Set of Players (clan members) who is online on server now.
      */
     public Set<Player> getMembersOnline() {
@@ -379,6 +374,20 @@ public class Clan {
         for (String member : members) {
             Player player = Bukkit.getPlayerExact(member);
             if (player != null) {
+                playerSet.add(player);
+            }
+        }
+        return playerSet;
+    }
+
+    /**
+     * @return Set of Players (clan membersr) who is offline now.
+     */
+    public Set<OfflinePlayer> getMembersOffline() {
+        Set<OfflinePlayer> playerSet = new HashSet<>();
+        for (String member : members) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(member);
+            if (!player.isOnline()) {
                 playerSet.add(player);
             }
         }

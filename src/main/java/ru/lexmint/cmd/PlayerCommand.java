@@ -37,7 +37,7 @@ public class PlayerCommand extends BaseCommand {
             if (!cpLayer.hasClan()) {
                 HSClans.instance.getMessenger().message("commands.player.no-clan", sender, cpLayer.getClanRole().getName());
             } else {
-                HSClans.instance.getMessenger().message("commands.player.clan", sender, cpLayer.getClan().getName(), cpLayer.getClan().getClanLeague().getName(), cpLayer.getClanRole().getName());
+                HSClans.instance.getMessenger().message("commands.player.clan", sender, cpLayer.getClan().getName(), cpLayer.getClan().getClanLevel().getName(), cpLayer.getClanRole().getName());
             }
             HSClans.instance.getMessenger().message("commands.player.power", sender, String.valueOf(cpLayer.getPowerRounded()), String.valueOf(cpLayer.getPowerMaxRounded()));
             HSClans.instance.getMessenger().message("commands.player.kdr", sender, String.valueOf(cpLayer.getStats().getKDRRounded()), String.valueOf(cpLayer.getStats().getKills()), String.valueOf(cpLayer.getStats().getDeaths()));

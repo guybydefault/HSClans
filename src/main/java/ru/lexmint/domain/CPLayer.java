@@ -58,7 +58,6 @@ public class CPLayer {
      */
     private double hoursPlayed;
 
-
     /**
      * Constructor for player without clan.
      *
@@ -366,6 +365,5 @@ public class CPLayer {
      * @return Rounded time while player has been playing on server.
      */
     public int getHoursPlayedRounded() {return (int) Math.round(hoursPlayed); }
-
 
 }

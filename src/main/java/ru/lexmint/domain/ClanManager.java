@@ -83,7 +83,7 @@ public class ClanManager {
      */
     public void createClan(String clanName, String leaderName) {
         CPLayer leader = getPlayer(leaderName, true);
-        Clan clan = new Clan(clanName, leader.getClanLeague(), System.currentTimeMillis());
+        Clan clan = new Clan(clanName, System.currentTimeMillis());
         clansByName.put(clanName, clan);
         storageManager.addClan(clan);
 
