@@ -34,7 +34,7 @@ public class CommandManager implements CommandExecutor {
     SethomeCommand setHome;
     ChatCommand chat;
     RegenCommand regen;
-
+    ListCommand list;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -55,6 +55,7 @@ public class CommandManager implements CommandExecutor {
         setHome = new SethomeCommand(true, ClanRole.MODERATOR, "hsclans.command.sethome", 0, "commands.sethome.usage");
         chat = new ChatCommand(true, ClanRole.NEWBIE, "hsclans.command.chat", 1, "commands.chat.usage");
         regen = new RegenCommand(false, ClanRole.OUTLAW, "hsclans.command.regen", 1, "commands.regen.usage");
+        list = new ListCommand(false, ClanRole.OUTLAW, "hsclans.command.list", 0, "commands.list.usage");
 
         commandHashMap.put("create", create);
 
@@ -83,6 +84,7 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("c", chat);
 
         commandHashMap.put("regen", regen);
+        commandHashMap.put("list", list);
     }
 
     @Override
