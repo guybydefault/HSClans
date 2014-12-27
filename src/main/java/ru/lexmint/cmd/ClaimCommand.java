@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.*;
+import ru.lexmint.utils.Integration;
 
 public class ClaimCommand extends BaseCommand {
     /**
@@ -46,6 +47,10 @@ public class ClaimCommand extends BaseCommand {
                         cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
             }
         } else {
+            if (Integration.checkForRegionsInChunk(player.getLocation().getChunk())) {
+                HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
+                return;
+            }
             if (clan.canClaim(1)) {
                 clanManager.addClaim(chunkX, chunkZ, clan);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
