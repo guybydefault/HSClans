@@ -2,6 +2,7 @@ package ru.lexmint.cmd;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
@@ -43,7 +44,12 @@ public class ShowCommand extends BaseCommand {
                 }
             }
         } else {
-            clan = clanManager.getPlayer(sender.getName(), true).getClan();
+            if (sender instanceof Player) {
+                clan = clanManager.getPlayer(sender.getName(), true).getClan();
+            } else {
+                HSClans.instance.getMessenger().message("commands.show.console-without-arg", sender);
+                return;
+            }
         }
 
         if (clan == null) {
