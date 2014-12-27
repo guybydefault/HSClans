@@ -3,6 +3,7 @@ package ru.lexmint.domain;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -324,6 +325,14 @@ public class ClanManager {
         } else {
             return false;
         }
+    }
+
+    /**
+     *
+     * @return Collection of all clans.
+     */
+    public Collection<Clan> getClans() {
+        return clansByName.values();
     }
 
 
