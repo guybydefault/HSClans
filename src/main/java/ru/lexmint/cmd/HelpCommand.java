@@ -39,6 +39,7 @@ public class HelpCommand extends BaseCommand {
                 pageNumber = Integer.valueOf(subargs[1]);
             } catch (NumberFormatException exc) {
                 HSClans.instance.getMessenger().message("commands.help.wrong-page-number", sender);
+                return;
             }
         }
 
