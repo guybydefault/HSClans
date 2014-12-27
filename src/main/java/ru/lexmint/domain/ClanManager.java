@@ -43,19 +43,36 @@ public class ClanManager {
         Set<Clan> clanSet = storageManager.importClans();
 
         for (Clan clan : clanSet) {
-            clansByName.put(clan.getName(), clan);
+            clansByName.put(clan.getName().toLowerCase(), clan);
         }
 
         claims = storageManager.importClaims();
 
+        /**
+         * All imported claims are added to clans' local cache.
+         */
         for (Claim claim : claims) {
             claim.getClan().addClaim(claim);
         }
 
+        /**
+         * Adds players online to player cache for performance needs.
+         */
         for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
-            storageManager.importClanPlayer(player.getName());
+            CPLayer cpLayer = storageManager.importClanPlayer(player.getName());
+            addCPlayerToCache(cpLayer);
         }
 
+    }
+
+    /**
+     * Puts clan player to cache (HashMap which contains players and returns it by their name) using
+     * player's name in lower case as a key.
+     *
+     * @param cpLayer CPLayer which will be cached.
+     */
+    private void addCPlayerToCache(CPLayer cpLayer) {
+        clanPlayersByName.put(cpLayer.getName().toLowerCase(), cpLayer);
     }
 
     /**
@@ -96,26 +113,26 @@ public class ClanManager {
      */
     public void createPlayer(String playerName) {
         CPLayer cpLayer = new CPLayer(playerName, HSClans.instance.getSettings().getDouble("power.start-value"));
-        clanPlayersByName.put(playerName, cpLayer);
+        addCPlayerToCache(cpLayer);
         storageManager.addClanPlayer(cpLayer);
     }
 
     /**
-     * Return clan player by name. If player with given name has not been found
+     * Return clan player by name (case insensitive). If player with given name has not been found
      * in storage, it tries to import CPlayer object from MySQL database. If there is one
-     * - it returns it, otherwise returns null;
+     * - it returns it, otherwise returns null.
      *
-     * @param playerName Name of the player.
+     * @param playerName Name of the player (no matter in which case, method is case insensitive).
      * @param cache      Whether or not player should be cached in memory or not. Notice that if setting cache-all in
      *                   plugin configuration is set to true, player will always be cached in memory.
      * @return CPLayer if it was found. Otherwise, null.
      */
     public CPLayer getPlayer(String playerName, boolean cache) {
-        CPLayer cpLayer = clanPlayersByName.get(playerName);
+        CPLayer cpLayer = clanPlayersByName.get(playerName.toLowerCase());
         if (cpLayer == null) {
             cpLayer = storageManager.importClanPlayer(playerName);
             if ((HSClans.instance.getSettings().getBoolean("performance.cache-all") || cache) && cpLayer != null) {
-                clanPlayersByName.put(playerName, cpLayer);
+                addCPlayerToCache(cpLayer);
             }
         }
         return cpLayer;
@@ -171,7 +188,7 @@ public class ClanManager {
      * @return True if clan contains in memory, otherwise false.
      */
     public boolean containsClan(String clanName) {
-        return clansByName.containsKey(clanName);
+        return clansByName.containsKey(clanName.toLowerCase());
     }
 
 
@@ -182,7 +199,7 @@ public class ClanManager {
      * @return Clan object.
      */
     public Clan getClan(String clanName) {
-        return clansByName.get(clanName);
+        return clansByName.get(clanName.toLowerCase());
     }
 
     /**
@@ -192,7 +209,7 @@ public class ClanManager {
      * @return CPlayer object which has been removed.
      */
     public CPLayer clearPlayerCache(String playerName) {
-        return clanPlayersByName.remove(playerName);
+        return clanPlayersByName.remove(playerName.toLowerCase());
     }
 
     /**
@@ -328,7 +345,6 @@ public class ClanManager {
     }
 
     /**
-     *
      * @return Collection of all clans.
      */
     public Collection<Clan> getClans() {
