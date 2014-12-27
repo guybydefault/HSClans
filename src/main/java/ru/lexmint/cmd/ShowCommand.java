@@ -1,6 +1,7 @@
 package ru.lexmint.cmd;
 
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
@@ -62,23 +63,36 @@ public class ShowCommand extends BaseCommand {
             description = HSClans.instance.getLangConfig().getString("commands.show.default-description");
         }
 
+
         HSClans.instance.getMessenger().message("commands.show.header", sender, clan.getName());
-        HSClans.instance.getMessenger().message("commands.show.description", sender, description);
-        HSClans.instance.getMessenger().message("commands.show.league-and-size", sender, clan.getClanLeague().getName(), String.valueOf(clan.getMembersSize()));
-        HSClans.instance.getMessenger().message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));
         HSClans.instance.getMessenger().message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
+        HSClans.instance.getMessenger().message("commands.show.description", sender, description);
+        HSClans.instance.getMessenger().message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
+        HSClans.instance.getMessenger().message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));
         HSClans.instance.getMessenger().message("commands.show.kdr", sender, String.valueOf(clan.getStatistics().getKDRRounded()), String.valueOf(clan.getStatistics().getKills()), String.valueOf(clan.getStatistics().getDeaths()));
 
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> it = clan.getMembers().iterator();
-        while (it.hasNext()) {
-            String member = it.next();
-            CPLayer memberPlayer = clanManager.getPlayer(member, true);
-            sb.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
-            if (it.hasNext()) {
-                sb.append(ChatColor.YELLOW).append(", ");
+        StringBuilder membersOnline = new StringBuilder();
+        Iterator<Player> onIt = clan.getMembersOnline().iterator();
+        while (onIt.hasNext()) {
+            Player player = onIt.next();
+            CPLayer memberPlayer = clanManager.getPlayer(player.getName(), true);
+            membersOnline.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
+            if (onIt.hasNext()) {
+                membersOnline.append(ChatColor.YELLOW).append(", ");
             }
         }
-        HSClans.instance.getMessenger().message("commands.show.members", sender, sb.toString());
+        HSClans.instance.getMessenger().message("commands.show.members-online", sender, !membersOnline.toString().isEmpty() ? membersOnline.toString() : "-");
+
+        StringBuilder membersOffline = new StringBuilder();
+        Iterator<OfflinePlayer> offIt = clan.getMembersOffline().iterator();
+        while (offIt.hasNext()) {
+            OfflinePlayer player = offIt.next();
+            CPLayer memberPlayer = clanManager.getPlayer(player.getName(), true);
+            membersOffline.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
+            if (offIt.hasNext()) {
+                membersOffline.append(ChatColor.YELLOW).append(", ");
+            }
+        }
+        HSClans.instance.getMessenger().message("commands.show.members-offline", sender, !membersOffline.toString().isEmpty() ? membersOffline.toString() : "-");
     }
 }
