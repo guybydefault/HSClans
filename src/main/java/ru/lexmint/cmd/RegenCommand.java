@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
+import ru.lexmint.utils.Integration;
 
 /**
  * Created by lexmint on 22.12.14.
@@ -32,7 +33,7 @@ public class RegenCommand extends BaseCommand {
 
     @Override
     public void perform(CommandSender sender, String[] subargs) {
-        WorldBorder worldBorder = (WorldBorder) Bukkit.getPluginManager().getPlugin("WorldBorder");
+        WorldBorder worldBorder = Integration.getWorldBorder();
         if (worldBorder == null) {
             HSClans.instance.getMessenger().message("commands.regen.plugin-not-found", sender);
             return;
@@ -49,7 +50,6 @@ public class RegenCommand extends BaseCommand {
             HSClans.instance.getMessenger().message("commands.regen.no-border-set", sender, world.getName());
             return;
         }
-
         // If border is square
         if (borderData.getShape() == null || borderData.getShape() == true) {
             if (regenTask == null || !regenTask.isActive()) {
@@ -71,6 +71,7 @@ public class RegenCommand extends BaseCommand {
                 int chunkStartZ = startLocation.getChunk().getZ();
                 int chunkEndX = endLocation.getChunk().getX();
                 int chunkEndZ = endLocation.getChunk().getZ();
+
 
                 regenTask = new RegenTask(world, chunkStartX, chunkStartZ, chunkEndX, chunkEndZ);
                 int taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(HSClans.instance, regenTask, 5, 1);
@@ -124,7 +125,8 @@ public class RegenCommand extends BaseCommand {
             while (currentChunkX <= chunkEndX) {
                 while (currentChunkZ <= chunkEndZ) {
                     chunks++;
-                    if (clanManager.getClaim(currentChunkX, currentChunkZ) == null) {
+                    if (clanManager.getClaim(currentChunkX, currentChunkZ) == null
+                            && !Integration.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
                         if (world.regenerateChunk(currentChunkX, currentChunkZ)) {
                             chunksGen++;
                         }
@@ -146,4 +148,5 @@ public class RegenCommand extends BaseCommand {
         }
 
     }
+
 }
