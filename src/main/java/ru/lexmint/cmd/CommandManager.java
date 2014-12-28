@@ -35,6 +35,7 @@ public class CommandManager implements CommandExecutor {
     ChatCommand chat;
     RegenCommand regen;
     ListCommand list;
+    AllyCommand ally;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -47,7 +48,7 @@ public class CommandManager implements CommandExecutor {
         show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
         player = new PlayerCommand(false, ClanRole.OUTLAW, "hsclans.command.player", 1, "commands.player.usage");
         claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
-        unclaim = new UnclaimCommand(true, ClanRole.MODERATOR," hsclans.command.unclaim", 0, "commands.unclaim.usage");
+        unclaim = new UnclaimCommand(true, ClanRole.MODERATOR, " hsclans.command.unclaim", 0, "commands.unclaim.usage");
         kick = new KickCommand(true, ClanRole.MODERATOR, "hsclans.command.kick", 1, "commands.kick.usage");
         promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.command.promote", 1, "commands.promote.usage");
         demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.command.demote", 1, "commands.demote.usage");
@@ -56,6 +57,7 @@ public class CommandManager implements CommandExecutor {
         chat = new ChatCommand(true, ClanRole.NEWBIE, "hsclans.command.chat", 1, "commands.chat.usage");
         regen = new RegenCommand(false, ClanRole.OUTLAW, "hsclans.command.regen", 1, "commands.regen.usage");
         list = new ListCommand(false, ClanRole.OUTLAW, "hsclans.command.list", 0, "commands.list.usage");
+        ally = new AllyCommand(true, ClanRole.MODERATOR, "hsclans.command.ally", 1, "commands.ally.usage");
 
         commandHashMap.put("create", create);
 
@@ -67,13 +69,17 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("help", help);
         commandHashMap.put("leave", leave);
         commandHashMap.put("uninvite", uninvite);
+
         commandHashMap.put("show", show);
+        commandHashMap.put("f", show);
 
         commandHashMap.put("player", player);
         commandHashMap.put("p", player);
 
         commandHashMap.put("claim", claim);
+
         commandHashMap.put("unclaim", unclaim);
+
         commandHashMap.put("kick", kick);
         commandHashMap.put("promote", promote);
         commandHashMap.put("demote", demote);
@@ -85,6 +91,7 @@ public class CommandManager implements CommandExecutor {
 
         commandHashMap.put("regen", regen);
         commandHashMap.put("list", list);
+        commandHashMap.put("ally", ally);
     }
 
     @Override
@@ -110,7 +117,6 @@ public class CommandManager implements CommandExecutor {
         } else {
             HSClans.instance.getMessenger().message("messages.errors.no-command", sender);
         }
-
         return true;
     }
 }

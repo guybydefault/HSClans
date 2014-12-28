@@ -65,7 +65,7 @@ public class ShowCommand extends BaseCommand {
 
 
         HSClans.instance.getMessenger().message("commands.show.header", sender, clan.getName());
-        HSClans.instance.getMessenger().message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
+        HSClans.instance.getMessenger().message("commands.show.age", sender, clan.getClanLevel().getName(), String.valueOf(clan.getDaysSinceCreated()));
         HSClans.instance.getMessenger().message("commands.show.description", sender, description);
         HSClans.instance.getMessenger().message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
         HSClans.instance.getMessenger().message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));

@@ -5,6 +5,7 @@ import ru.lexmint.HSClans;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,7 +16,7 @@ public class ClanManager {
     /**
      * Map of all clans existing on the server by their name.
      */
-    private final HashMap<String, Clan> clansByName = new HashMap<>();
+    private Map<String, Clan> clansByName = new HashMap<>();
 
     /**
      * Map of all clan players existing on the server by their name.
@@ -40,12 +41,7 @@ public class ClanManager {
      * Retrieves clans from MySQL storage (using StorageManager).
      */
     public void loadData() {
-        Set<Clan> clanSet = storageManager.importClans();
-
-        for (Clan clan : clanSet) {
-            clansByName.put(clan.getName().toLowerCase(), clan);
-        }
-
+        clansByName = storageManager.importClans(true);
         claims = storageManager.importClaims();
 
         /**
@@ -167,6 +163,11 @@ public class ClanManager {
 
     }
 
+    /**
+     * Removes clan completely, removes player from this clan, disclaims all clan's claims.
+     *
+     * @param clan Clan which will be removed.
+     */
     public void removeClan(Clan clan) {
         for (String memberName : clan.getMembers()) {
             removePlayerFromClan(memberName);
@@ -179,6 +180,23 @@ public class ClanManager {
 
         clansByName.remove(clan.getName());
         storageManager.removeClan(clan);
+    }
+
+    /**
+     * Disclaims all clan claims.
+     *
+     * @param clan Clan which claim will be disclaimed.
+     * @return Number of claims disclaimed.
+     */
+    public int removeAllClaims(Clan clan) {
+        int disclaims = 0;
+        for (Claim claim : clan.getClaims()) {
+            claims.remove(claim);
+            storageManager.removeClaim(claim);
+            disclaims++;
+        }
+        updateClan(clan);
+        return disclaims;
     }
 
     /**
@@ -200,6 +218,7 @@ public class ClanManager {
      */
     public Clan getClan(String clanName) {
         return clansByName.get(clanName.toLowerCase());
+
     }
 
     /**
@@ -350,6 +369,4 @@ public class ClanManager {
     public Collection<Clan> getClans() {
         return clansByName.values();
     }
-
-
 }

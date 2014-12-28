@@ -61,6 +61,10 @@ public class Clan {
      */
     private final ClanStats clanStats;
 
+    /**
+     * Set which contains clan allies (clans which are requested to be allies with this clan).
+     */
+    private final Set<Clan> alliances;
 
     /**
      * Basic constructor for creating a clan.
@@ -71,6 +75,7 @@ public class Clan {
         this.name = name;
         this.createdTime = createdTime;
         clanStats = new ClanStats(getMembersStats());
+        alliances = new HashSet<>();
     }
 
     /**
@@ -331,7 +336,6 @@ public class Clan {
     }
 
     /**
-     *
      * @return Clan level (based on days passed since clan's date of creation).
      */
     public ClanLevel getClanLevel() {
@@ -392,5 +396,57 @@ public class Clan {
             }
         }
         return playerSet;
+    }
+
+    /**
+     * @param clan Clan which will be allied with this.
+     * @return True if clan has been added to alliances. False, if clan has more than 3 or 3 allies already or
+     * if set of this clan's alliances has already
+     * contained given clan.
+     */
+    public boolean addAlliance(Clan clan) {
+        // TODO: Alliances size. I must think about it!
+        if (alliances.size() >= 3) {
+            return false;
+        }
+        return alliances.add(clan);
+    }
+
+    /**
+     * @param clan Clan which will be removed from this clan's alliances.
+     * @return True if clan has been successfully removed from this clan's alliances. False, if it has not
+     * existed in alliances.
+     */
+    public boolean removeAlliance(Clan clan) {
+        return alliances.remove(clan);
+    }
+
+    /**
+     * @param clan Clan which needs to be checked for ally with this.
+     * @return True if the clan is allied with given clan. Otherwise, false.
+     */
+    public boolean isAlliedWith(Clan clan) {
+        return alliances.contains(clan) && clan.isRequestingAllyWith(this);
+    }
+
+    /**
+     * @param clan Clan which needs to be checked for ally request with this.
+     * @return True if this clan is requesting alliance with given. Otherwise (if not requesting or already allied), false.
+     */
+    public boolean isRequestingAllyWith(Clan clan) {
+        return alliances.contains(clan) && !clan.isRequestingAllyWith(this);
+    }
+
+    /**
+     * @return Set of clans which this clan is actually (two sides has accepted an ally) allied with.
+     */
+    public Set<Clan> getAlliances() {
+        Set<Clan> allies = new HashSet<>();
+        for (Clan clan : alliances) {
+            if (isAlliedWith(clan)) {
+                allies.add(clan);
+            }
+        }
+        return allies;
     }
 }

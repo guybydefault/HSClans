@@ -1,6 +1,11 @@
 package ru.lexmint.cmd;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import ru.lexmint.HSClans;
+import ru.lexmint.domain.CPLayer;
+import ru.lexmint.domain.Claim;
+import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
 
 /**
@@ -23,6 +28,34 @@ public class UnclaimCommand extends BaseCommand {
 
     @Override
     public void perform(CommandSender sender, String[] subargs) {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
 
+        if (subargs.length >= 2 && subargs[1].equalsIgnoreCase("all")) {
+            int unclaimedLand = clanManager.removeAllClaims(cpLayer.getClan());
+            if (unclaimedLand != 0) {
+                HSClans.instance.getMessenger().broadcastToClan("commands.unclaim.success-all", cpLayer.getClan(),
+                        cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(unclaimedLand));
+            } else {
+                HSClans.instance.getMessenger().message("commands.unclaim.no-claims", sender);
+            }
+        } else {
+            Player player = (Player) sender;
+
+            int chunkX = player.getLocation().getChunk().getX();
+            int chunkZ = player.getLocation().getChunk().getZ();
+
+            Claim claim = clanManager.getClaim(chunkX, chunkZ);
+
+            if (claim == null) {
+                HSClans.instance.getMessenger().message("commands.unclaim.wilderness", sender);
+            } else if (claim.getClan() != cpLayer.getClan()) {
+                HSClans.instance.getMessenger().message("commands.unclaim.not-owned", sender, claim.getClan().getName());
+            } else {
+                clanManager.removeClaim(chunkX, chunkZ);
+                HSClans.instance.getMessenger().broadcastToClan("commands.unclaim.success", cpLayer.getClan(),
+                        cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+            }
+        }
     }
 }

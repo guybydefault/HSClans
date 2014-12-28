@@ -45,10 +45,7 @@ public class MonitorListener implements Listener {
         }
 
         if (to != null) {
-            StringBuilder clanInfo = new StringBuilder(to.getClan().getClanLevel().getName())
-                    .append(" ")
-                    .append(to.getClan().getName());
-            HSClans.instance.getMessenger().message("land.clan", player, clanInfo.toString(), to.getClan().getDescription());
+            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getClanLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
         } else {
             HSClans.instance.getMessenger().message("land.wilderness", player);
 
