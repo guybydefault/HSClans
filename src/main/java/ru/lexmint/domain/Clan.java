@@ -231,7 +231,7 @@ public class Clan {
      * @return Rounded to int value of clan's power.
      */
     public int getPowerRounded() {
-        return (int) getPower();
+        return (int) Math.round(getPower());
     }
 
     /**
@@ -382,6 +382,19 @@ public class Clan {
             }
         }
         return playerSet;
+    }
+
+    /**
+     * @return True if even though one player of this clan is online.
+     */
+    public boolean hasPlayersOnline() {
+        for (String member : members) {
+            Player player = Bukkit.getPlayerExact(member);
+            if (player != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

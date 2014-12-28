@@ -18,11 +18,88 @@ power:
     # Minimal value of power which can be set if player has been offline for a couple of days.
     loss-limit: 0.0
 clan:
+  home:
+    respawn: true
   levels:
     medium:
       days: 1
     high:
       days: 2
+claims:
+  deny-usage:
+    # Usage of these items will be blocked when clan is online.
+    online:
+    - BUCKET
+    - WATER_BUCKET
+    - LAVA_BUCKET
+    # Usage of these items will be blocked when clan is offline.
+    offline:
+    - FIREBALL
+    - FLINT_AND_STEEL
+    - BUCKET
+    - WATER_BUCKET
+    - LAVA_BUCKET
+    # Usage of these items will be blocked for newbie (player whose clan role is the lowest in clan).
+    newbie:
+    - WATER_BUCKET
+    - LAVA_BUCKET
+  deny-interact:
+    # Interaction with these items will be blocked when clan is online.
+    online:
+    - WOODEN_DOOR
+    - TRAP_DOOR
+    - FENCE_GATE
+    - DISPENSER
+    - CHEST
+    - FURNACE
+    - BURNING_FURNACE
+    - DIODE_BLOCK_OFF
+    - DIODE_BLOCK_ON
+    - JUKEBOX
+    - BREWING_STAND
+    - ENCHANTMENT_TABLE
+    - CAULDRON
+    - SOIL
+    - BEACON
+    - ANVIL
+    - TRAPPED_CHEST
+    - DROPPER
+    - HOPPER
+    # Interaction with these items will be blocked when clan is online.
+    offline:
+    - WOODEN_DOOR
+    - TRAP_DOOR
+    - FENCE_GATE
+    - DISPENSER
+    - CHEST
+    - FURNACE
+    - BURNING_FURNACE
+    - DIODE_BLOCK_OFF
+    - DIODE_BLOCK_ON
+    - JUKEBOX
+    - BREWING_STAND
+    - ENCHANTMENT_TABLE
+    - CAULDRON
+    - SOIL
+    - BEACON
+    - ANVIL
+    - TRAPPED_CHEST
+    - DROPPER
+    - HOPPER
+    # Interaction with these items will be blocked when clan is online.
+    newbie:
+    - DISPENSER
+    - CHEST
+    - FURNACE
+    - BURNING_FURNACE
+    - JUKEBOX
+    - BREWING_STAND
+    - CAULDRON
+    - SOIL
+    - BEACON
+    - TRAPPED_CHEST
+    - DROPPER
+    - HOPPER
 performance:
   # Cache all players (when plugin tries to get player info from MySQL, it caches it so that future requests to this info will be faster)
   cache-all: true

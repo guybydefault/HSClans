@@ -1,9 +1,12 @@
 package ru.lexmint.utils;
 
+import org.bukkit.Material;
+import ru.lexmint.HSClans;
 import ru.lexmint.domain.Clan;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,5 +48,22 @@ public class Utils {
             clanNames.add(clan.getName());
         }
         return clanNames;
+    }
+
+    /**
+     * @param path Path to material list in config.
+     * @return Set of materials from material list in config.
+     */
+    public static Set<Material> getMaterialsSet(String path) {
+        List<String> stringMaterials = HSClans.instance.getSettings().getStringList(path);
+        Set<Material> materials = new HashSet<>();
+        for (String material : stringMaterials) {
+            if (material != null) {
+                materials.add(Material.getMaterial(material));
+            } else {
+                HSClans.instance.getDebug().error("Material " + material + " is null. Path in config: " + path);
+            }
+        }
+        return materials;
     }
 }

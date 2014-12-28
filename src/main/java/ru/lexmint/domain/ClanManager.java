@@ -14,24 +14,21 @@ import java.util.Set;
  */
 public class ClanManager {
     /**
-     * Map of all clans existing on the server by their name.
-     */
-    private Map<String, Clan> clansByName = new HashMap<>();
-
-    /**
      * Map of all clan players existing on the server by their name.
      */
     private final HashMap<String, CPLayer> clanPlayersByName = new HashMap<>();
-
-    /**
-     * List of all clan claims.
-     */
-    private Set<Claim> claims;
-
     /**
      * Object, which deals with MySQL interactions and queries.
      */
     private final StorageManager storageManager;
+    /**
+     * Map of all clans existing on the server by their name.
+     */
+    private Map<String, Clan> clansByName = new HashMap<>();
+    /**
+     * List of all clan claims.
+     */
+    private Set<Claim> claims;
 
     public ClanManager(StorageManager storageManager) {
         this.storageManager = storageManager;
@@ -55,8 +52,10 @@ public class ClanManager {
          * Adds players online to player cache for performance needs.
          */
         for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
-            CPLayer cpLayer = storageManager.importClanPlayer(player.getName());
-            addCPlayerToCache(cpLayer);
+            CPLayer cpLayer = getPlayer(player.getName(), true);
+            if (cpLayer == null) {
+                createPlayer(player.getName());
+            }
         }
 
     }
@@ -80,7 +79,7 @@ public class ClanManager {
     public void createClan(String clanName, String leaderName) {
         CPLayer leader = getPlayer(leaderName, true);
         Clan clan = new Clan(clanName, System.currentTimeMillis());
-        clansByName.put(clanName, clan);
+        clansByName.put(clanName.toLowerCase(), clan);
         storageManager.addClan(clan);
 
         addPlayerToClan(clan, leader, ClanRole.LEADER);
@@ -106,11 +105,14 @@ public class ClanManager {
      * Adds new player to database.
      *
      * @param playerName Name of the player.
+     * @return Created CPlayer object.
      */
-    public void createPlayer(String playerName) {
+    public CPLayer createPlayer(String playerName) {
+        HSClans.instance.getDebug().info("Creating player " + playerName);
         CPLayer cpLayer = new CPLayer(playerName, HSClans.instance.getSettings().getDouble("power.start-value"));
         addCPlayerToCache(cpLayer);
         storageManager.addClanPlayer(cpLayer);
+        return cpLayer;
     }
 
     /**
@@ -126,10 +128,12 @@ public class ClanManager {
     public CPLayer getPlayer(String playerName, boolean cache) {
         CPLayer cpLayer = clanPlayersByName.get(playerName.toLowerCase());
         if (cpLayer == null) {
+            HSClans.instance.getDebug().info("Importing player " + playerName);
             cpLayer = storageManager.importClanPlayer(playerName);
             if ((HSClans.instance.getSettings().getBoolean("performance.cache-all") || cache) && cpLayer != null) {
                 addCPlayerToCache(cpLayer);
             }
+            HSClans.instance.getDebug().info("Imported player " + cpLayer);
         }
         return cpLayer;
     }
@@ -178,7 +182,7 @@ public class ClanManager {
             storageManager.removeClaim(claim);
         }
 
-        clansByName.remove(clan.getName());
+        clansByName.remove(clan.getName().toLowerCase());
         storageManager.removeClan(clan);
     }
 
@@ -191,6 +195,7 @@ public class ClanManager {
     public int removeAllClaims(Clan clan) {
         int disclaims = 0;
         for (Claim claim : clan.getClaims()) {
+            clan.removeClaim(claim);
             claims.remove(claim);
             storageManager.removeClaim(claim);
             disclaims++;

@@ -322,18 +322,18 @@ public class StorageManager {
                 try {
                     if (clan.getHome() != null) {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
-                                "description=?, members=?, league=?, claims_number=?, alliances=?, " +
+                                "description=?, members=?, claims_number=?, alliances=?, " +
                                 "home_x=?, home_y=?, home_z=?, home_pitch=?," +
                                 "home_yaw=?, home_world=? WHERE name=?");
 
                         Location homeLocation = clan.getHome();
-                        ps.setDouble(6, homeLocation.getX());
-                        ps.setDouble(7, homeLocation.getY());
-                        ps.setDouble(8, homeLocation.getZ());
-                        ps.setFloat(9, homeLocation.getPitch());
-                        ps.setFloat(10, homeLocation.getYaw());
-                        ps.setString(11, homeLocation.getWorld().getName());
-                        ps.setString(12, clan.getName());
+                        ps.setDouble(5, homeLocation.getX());
+                        ps.setDouble(6, homeLocation.getY());
+                        ps.setDouble(7, homeLocation.getZ());
+                        ps.setFloat(8, homeLocation.getPitch());
+                        ps.setFloat(9, homeLocation.getYaw());
+                        ps.setString(10, homeLocation.getWorld().getName());
+                        ps.setString(11, clan.getName());
                     } else {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
                                 "description=?, members=?, claims_number=?, alliances=? WHERE name=?");

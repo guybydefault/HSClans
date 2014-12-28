@@ -6,10 +6,7 @@ import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
-import ru.lexmint.listener.ChatListener;
-import ru.lexmint.listener.ExploitListener;
-import ru.lexmint.listener.MonitorListener;
-import ru.lexmint.listener.PlayerListener;
+import ru.lexmint.listener.*;
 import ru.lexmint.utils.Config;
 import ru.lexmint.utils.Debug;
 import ru.lexmint.utils.Messenger;
@@ -72,6 +69,11 @@ public class HSClans extends JavaPlugin {
      */
     private PlayerListener playerListener;
 
+    /**
+     * Protects clans' claims from block destroying/placing and etc.
+     */
+    private BlockListener blockListener;
+
     @Override
     public void onEnable() {
         getLogger().info("***** ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " *****");
@@ -111,10 +113,12 @@ public class HSClans extends JavaPlugin {
         chatListener = new ChatListener();
         exploitListener = new ExploitListener();
         playerListener = new PlayerListener();
+        blockListener = new BlockListener();
         getServer().getPluginManager().registerEvents(monitorListener, this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(exploitListener, this);
         getServer().getPluginManager().registerEvents(playerListener, this);
+        getServer().getPluginManager().registerEvents(blockListener, this);
         /* Registering listeners */
 
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been successfully enabled! (" + (System.currentTimeMillis() - startingTime) + "ms)");

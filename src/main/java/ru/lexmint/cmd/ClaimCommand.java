@@ -39,6 +39,8 @@ public class ClaimCommand extends BaseCommand {
                 HSClans.instance.getMessenger().message("commands.claim.already-own", sender);
             } else if (owner.canHoldClaim()) {
                 HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
+            } else if (clan.isAlliedWith(owner)) {
+                HSClans.instance.getMessenger().message("commands.claim.ally", sender, owner.getName());
             } else {
                 clanManager.changeClaimClan(claim, clan);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
@@ -49,9 +51,7 @@ public class ClaimCommand extends BaseCommand {
         } else {
             if (Integration.checkForRegionsInChunk(player.getLocation().getChunk())) {
                 HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
-                return;
-            }
-            if (clan.canClaim(1)) {
+            } else if (clan.canClaim(1)) {
                 clanManager.addClaim(chunkX, chunkZ, clan);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
                         String.valueOf(chunkZ));

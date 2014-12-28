@@ -1,10 +1,199 @@
 package ru.lexmint.listener;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import ru.lexmint.HSClans;
+import ru.lexmint.domain.*;
+import ru.lexmint.utils.Utils;
+
+import java.util.Set;
+
 
 /**
  * Deals with player respawn at faction's land and other things.
  */
 public class PlayerListener implements Listener {
+    private final Set<Material> deniedUsageOffline;
+    private final Set<Material> deniedUsage;
+    private final Set<Material> deniedUsageNewbie;
 
+    private final Set<Material> deniedInteractOffline;
+    private final Set<Material> deniedInteract;
+    private final Set<Material> deniedInteractNewbie;
+
+    // TODO: Interaction spam
+    // for handling people who repeatedly spam attempts to open a door (or similar) in another faction's territory
+//    private Map<String, InteractAttemptSpam> interactSpammers = new HashMap<String, InteractAttemptSpam>();
+
+
+    public PlayerListener() {
+        deniedUsage = Utils.getMaterialsSet("claims.deny-usage.online");
+        deniedUsageOffline = Utils.getMaterialsSet("claims.deny-usage.offline");
+        deniedUsageNewbie = Utils.getMaterialsSet("claims.deny-usage.newbie");
+        deniedInteract = Utils.getMaterialsSet("claims.deny-interact.online");
+        deniedInteractOffline = Utils.getMaterialsSet("claims.deny-interact.offline");
+        deniedInteractNewbie = Utils.getMaterialsSet("claims.deny-interact.newbie");
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        if (HSClans.instance.getSettings().getBoolean("clan.home.respawn")) {
+            ClanManager clanManager = HSClans.instance.getClanManager();
+            CPLayer cpLayer = clanManager.getPlayer(event.getPlayer().getName(), true);
+            if (cpLayer.hasClan()) {
+                Clan clan = cpLayer.getClan();
+                if (clan.hasHome()) {
+                    HSClans.instance.getDebug().info("Respawn location for player " + event.getPlayer().getName() + " changed to clan's home");
+                    event.setRespawnLocation(clan.getHome());
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        /** Only need to check right-clicks and physical as of MC 1.4+; good performance boost. **/
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.PHYSICAL
+                && event.getAction() != Action.RIGHT_CLICK_AIR) {
+            return;
+        }
+
+        Block block = event.getClickedBlock();
+        Player player = event.getPlayer();
+
+        if (!canPlayerUseBlock(player, block)) {
+            event.setCancelled(true);
+            // TODO: Interaction spam
+//            if (Conf.handleExploitInteractionSpam) {
+//                String name = player.getName();
+//                InteractAttemptSpam attempt = interactSpammers.get(name);
+//                if (attempt == null) {
+//                    attempt = new InteractAttemptSpam();
+//                    interactSpammers.put(name, attempt);
+//                }
+//                int count = attempt.increment();
+//                if (count >= 10) {
+//                    FPlayer me = FPlayers.i.get(name);
+//                    me.msg("<b>Ouch, that is starting to hurt. You should give it a rest.");
+//                    player.damage(NumberConversions.floor((double) count / 10));
+//                }
+//            }
+            return;
+        }
+
+        if (!canPlayerUseItem(player, block.getLocation(), event.getMaterial())) {
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    /**
+     * For some reason onPlayerInteract() sometimes misses bucket events depending on distance (something like 2-3 blocks
+     * away isn't detected), but these separate bucket events below always fire without fail. *
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (!canPlayerUseItem(event.getPlayer(), event.getBlockClicked().getLocation(), event.getBucket())) {
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+        if (!canPlayerUseItem(event.getPlayer(), event.getBlockClicked().getLocation(), event.getBucket())) {
+            event.setCancelled(true);
+            return;
+        }
+    }
+
+    // TODO: Interaction spam
+//    private static class InteractAttemptSpam {
+//        private int attempts = 0;
+//        private long lastAttempt = System.currentTimeMillis();
+//
+//        // returns the current attempt count
+//        public int increment() {
+//            long Now = System.currentTimeMillis();
+//            if (Now > lastAttempt + 2000) {
+//                attempts = 1;
+//            } else {
+//                attempts++;
+//            }
+//            lastAttempt = Now;
+//            return attempts;
+//        }
+//    }
+
+    private boolean canPlayerUseBlock(Player player, Block block) {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        Claim claim = clanManager.getClaim(block.getLocation().getChunk().getX(), block.getLocation().getChunk().getZ());
+
+        if (claim == null) {
+            return true;
+        }
+
+        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+        Clan owner = claim.getClan();
+        if (owner != cpLayer.getClan()) {
+            if (deniedInteract.contains(block.getType())) {
+                HSClans.instance.getMessenger().message("messages.interact.deny", player, owner.getName());
+                return false;
+            }
+            if (!owner.hasPlayersOnline()) {
+                if (deniedInteractOffline.contains(block.getType())) {
+                    HSClans.instance.getMessenger().message("messages.interact.deny-offline", player, owner.getName());
+                    return false;
+                }
+            }
+        } else {
+            if (deniedInteractNewbie.contains(block.getType())) {
+                HSClans.instance.getMessenger().message("messages.interact.newbie", player, owner.getName());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean canPlayerUseItem(Player player, Location location, Material material) {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
+
+        if (claim == null) {
+            return true;
+        } else if (claim.getClan() == cpLayer.getClan()) {
+            if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
+                if (deniedUsageNewbie.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.use.newbie", player, cpLayer.getClanRole().getName());
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            Clan owner = claim.getClan();
+            if (deniedUsage.contains(material)) {
+                HSClans.instance.getMessenger().message("messages.use.deny", player, owner.getName());
+                return false;
+            }
+            if (!owner.hasPlayersOnline()) {
+                if (deniedUsageOffline.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.use.deny-offline", player, owner.getName());
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

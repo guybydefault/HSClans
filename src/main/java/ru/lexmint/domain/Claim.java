@@ -60,8 +60,7 @@ public class Claim {
 
     /**
      * @param cpLayer Player for which we need to check right to teleport.
-     * @return True if player has permission to teleport to this claim (if he is a member of the clan, owner of this land or
-     * he is a member of its academy). Otherwise, false.
+     * @return True if player has permission to teleport to this claim (if he is a member of the clan, owner of this land). Otherwise, false.
      */
     public boolean canTeleportTo(CPLayer cpLayer) {
         return cpLayer.getClan() == getClan();
@@ -70,8 +69,7 @@ public class Claim {
     /**
      *
      * @param cpLayer Player for which we need to check right to teleport.
-     * @return True if player has permission to teleport from this claim (if he is a member of the clan, owner of this land or
-     * he is a member of its academy). Otherwise, false.
+     * @return True if player has permission to teleport from this claim (if he is a member of the clan, owner of this land). Otherwise, false.
      */
     public boolean canTeleportFrom(CPLayer cpLayer) {
         return cpLayer.getClan() == getClan();

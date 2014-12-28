@@ -29,7 +29,7 @@ public class JoinCommand extends BaseCommand {
     public void perform(CommandSender sender, String[] subargs) {
         ClanManager clanManager = HSClans.instance.getClanManager();
         CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
-        if (cpLayer.getClanRole() == ClanRole.OUTLAW) {
+        if (!cpLayer.hasClan()) {
             Clan clan = clanManager.getClan(subargs[1]);
             if (clan != null) {
                 if (clan.pullInvitation(sender.getName())) {

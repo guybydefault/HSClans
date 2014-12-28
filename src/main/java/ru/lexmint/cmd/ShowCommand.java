@@ -71,14 +71,25 @@ public class ShowCommand extends BaseCommand {
         HSClans.instance.getMessenger().message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));
         HSClans.instance.getMessenger().message("commands.show.kdr", sender, String.valueOf(clan.getStatistics().getKDRRounded()), String.valueOf(clan.getStatistics().getKills()), String.valueOf(clan.getStatistics().getDeaths()));
 
+        StringBuilder allies = new StringBuilder();
+        Iterator<Clan> allyIt = clan.getAlliances().iterator();
+        while (allyIt.hasNext()) {
+            Clan ally = allyIt.next();
+            allies.append(ChatColor.YELLOW).append(ally.getName());
+            if (allyIt.hasNext()) {
+                allies.append(ChatColor.GOLD).append(", ");
+            }
+        }
+        HSClans.instance.getMessenger().message("commands.show.alliances", sender, !allies.toString().isEmpty() ? allies.toString() : "-");
+
         StringBuilder membersOnline = new StringBuilder();
         Iterator<Player> onIt = clan.getMembersOnline().iterator();
         while (onIt.hasNext()) {
             Player player = onIt.next();
             CPLayer memberPlayer = clanManager.getPlayer(player.getName(), true);
-            membersOnline.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
+            membersOnline.append(ChatColor.GOLD).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.YELLOW).append(memberPlayer.getName());
             if (onIt.hasNext()) {
-                membersOnline.append(ChatColor.YELLOW).append(", ");
+                membersOnline.append(ChatColor.GOLD).append(", ");
             }
         }
         HSClans.instance.getMessenger().message("commands.show.members-online", sender, !membersOnline.toString().isEmpty() ? membersOnline.toString() : "-");
@@ -88,7 +99,7 @@ public class ShowCommand extends BaseCommand {
         while (offIt.hasNext()) {
             OfflinePlayer player = offIt.next();
             CPLayer memberPlayer = clanManager.getPlayer(player.getName(), true);
-            membersOffline.append(ChatColor.YELLOW).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.GOLD).append(memberPlayer.getName());
+            membersOffline.append(ChatColor.GOLD).append(memberPlayer.getClanRole().getName()).append(' ').append(ChatColor.YELLOW).append(memberPlayer.getName());
             if (offIt.hasNext()) {
                 membersOffline.append(ChatColor.YELLOW).append(", ");
             }
