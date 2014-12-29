@@ -37,12 +37,12 @@ public class PlayerListener implements Listener {
 
 
     public PlayerListener() {
-        deniedUsage = Utils.getMaterialsSet("claims.deny-usage.online");
-        deniedUsageOffline = Utils.getMaterialsSet("claims.deny-usage.offline");
-        deniedUsageNewbie = Utils.getMaterialsSet("claims.deny-usage.newbie");
-        deniedInteract = Utils.getMaterialsSet("claims.deny-interact.online");
-        deniedInteractOffline = Utils.getMaterialsSet("claims.deny-interact.offline");
-        deniedInteractNewbie = Utils.getMaterialsSet("claims.deny-interact.newbie");
+        deniedUsage = Utils.getMaterialsSet("claims.deny.usage.always");
+        deniedUsageOffline = Utils.getMaterialsSet("claims.deny.usage.offline");
+        deniedUsageNewbie = Utils.getMaterialsSet("claims.deny.usage.newbie");
+        deniedInteract = Utils.getMaterialsSet("claims.deny.interact.always");
+        deniedInteractOffline = Utils.getMaterialsSet("claims.deny.interact.offline");
+        deniedInteractNewbie = Utils.getMaterialsSet("claims.deny.interact.newbie");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -64,14 +64,14 @@ public class PlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         /** Only need to check right-clicks and physical as of MC 1.4+; good performance boost. **/
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.PHYSICAL
-                && event.getAction() != Action.RIGHT_CLICK_AIR) {
+                || event.getAction() == Action.RIGHT_CLICK_AIR) {
             return;
         }
 
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
 
-        if (!canPlayerUseBlock(player, block)) {
+        if (!canPlayerUseBlock(player, block.getLocation(), block.getType())) {
             event.setCancelled(true);
             // TODO: Interaction spam
 //            if (Conf.handleExploitInteractionSpam) {
@@ -91,6 +91,10 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        /** Below we need just right click actions. **/
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
         if (!canPlayerUseItem(player, block.getLocation(), event.getMaterial())) {
             event.setCancelled(true);
             return;
@@ -135,10 +139,20 @@ public class PlayerListener implements Listener {
 //        }
 //    }
 
-    private boolean canPlayerUseBlock(Player player, Block block) {
+    /**
+     * Checks whether player can interact with item of given material at given location.
+     *
+     * @param player   Player who has interacted with some item.
+     * @param location Location where player has interacted with some item.
+     * @param material Material of the item player interacted with.
+     * @return True if player has permission to interact with it there or false, otherwise.
+     */
+    private boolean canPlayerUseBlock(Player player, Location location, Material material) {
+        HSClans.instance.getDebug().info("Can " + player.getName() + " use block of type " + material + "?");
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(block.getLocation().getChunk().getX(), block.getLocation().getChunk().getZ());
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
 
+        /** Wilderness **/
         if (claim == null) {
             return true;
         }
@@ -146,18 +160,18 @@ public class PlayerListener implements Listener {
         CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         Clan owner = claim.getClan();
         if (owner != cpLayer.getClan()) {
-            if (deniedInteract.contains(block.getType())) {
+            if (deniedInteract.contains(material)) {
                 HSClans.instance.getMessenger().message("messages.interact.deny", player, owner.getName());
                 return false;
             }
             if (!owner.hasPlayersOnline()) {
-                if (deniedInteractOffline.contains(block.getType())) {
+                if (deniedInteractOffline.contains(material)) {
                     HSClans.instance.getMessenger().message("messages.interact.deny-offline", player, owner.getName());
                     return false;
                 }
             }
         } else {
-            if (deniedInteractNewbie.contains(block.getType())) {
+            if (deniedInteractNewbie.contains(material)) {
                 HSClans.instance.getMessenger().message("messages.interact.newbie", player, owner.getName());
                 return false;
             }
@@ -165,14 +179,28 @@ public class PlayerListener implements Listener {
         return true;
     }
 
+    /**
+     * Checks whether player can use item of given material at given location.
+     *
+     * @param player   Player who has used some item.
+     * @param location Location where player has used some item.
+     * @param material Material of the item used.
+     * @return True if player has permission to use it there or false, otherwise.
+     */
     private boolean canPlayerUseItem(Player player, Location location, Material material) {
+        HSClans.instance.getDebug().info("Can " + player.getName() + " use item of type " + material + "?");
+
         ClanManager clanManager = HSClans.instance.getClanManager();
-        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
 
+        /** Wilderness **/
         if (claim == null) {
             return true;
-        } else if (claim.getClan() == cpLayer.getClan()) {
+        }
+
+        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+
+        if (claim.getClan() == cpLayer.getClan()) {
             if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
                 if (deniedUsageNewbie.contains(material)) {
                     HSClans.instance.getMessenger().message("messages.use.newbie", player, cpLayer.getClanRole().getName());
@@ -196,4 +224,6 @@ public class PlayerListener implements Listener {
         }
         return true;
     }
+
+
 }

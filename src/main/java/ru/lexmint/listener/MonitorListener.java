@@ -52,7 +52,10 @@ public class MonitorListener implements Listener {
         }
     }
 
-    HashMap<String, Long> playTimes = new HashMap<>();
+    /**
+     * Stores players' join times. It is used to count their play time when they leave from server.
+     */
+    private final HashMap<String, Long> playTimes = new HashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {

@@ -337,6 +337,17 @@ public class ClanManager {
     }
 
     /**
+     * @param cpLayer1 First player
+     * @param cpLayer2 Second player
+     * @return True if player 1 is in the allied clan with clan of player 2. Otherwise, false. If they are not members of any clan - returns false.
+     */
+    public boolean areInAlliedClans(CPLayer cpLayer1, CPLayer cpLayer2) {
+        Clan clan1 = cpLayer1.getClan();
+        Clan clan2 = cpLayer2.getClan();
+        return clan1 != null && clan2 != null && clan1.isAlliedWith(clan2);
+    }
+
+    /**
      * @param cpLayer CPLayer which will be promoted.
      * @return True if a player has been successfully promoted or false if it can not be promoted because he is on the highest rank
      * in the clan (highest clan role).

@@ -1,8 +1,10 @@
 package ru.lexmint.utils;
 
 import org.bukkit.Material;
+import org.bukkit.potion.PotionEffectType;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.Clan;
+import ru.lexmint.listener.EntityListener;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,5 +67,40 @@ public class Utils {
             }
         }
         return materials;
+    }
+
+
+    /**
+     * @param path Path to potion list in config.
+     * @return Set of potions from potion list in config.
+     */
+    public static Set<PotionEffectType> getPotionsSet(String path) {
+        List<String> stringPotions = HSClans.instance.getSettings().getStringList(path);
+        Set<PotionEffectType> potions = new HashSet<>();
+        for (String potion : stringPotions) {
+            if (potion != null) {
+                potions.add(PotionEffectType.getByName(potion));
+            } else {
+                HSClans.instance.getDebug().error("Potion " + potion + " is null. Path in config: " + path);
+            }
+        }
+        return potions;
+    }
+
+    /**
+     * @param path Path to explosion list in config.
+     * @return Set of explosions from explosion list in config.
+     */
+    public static Set<EntityListener.ExplosionType> getExplosionsSet(String path) {
+        List<String> stringExplosions = HSClans.instance.getSettings().getStringList(path);
+        Set<EntityListener.ExplosionType> explosions = new HashSet<>();
+        for (String explosion : stringExplosions) {
+            if (explosion != null) {
+                explosions.add(EntityListener.ExplosionType.valueOf(explosion));
+            } else {
+                HSClans.instance.getDebug().error("Explosion " + explosion + " is null. Path in config: " + path);
+            }
+        }
+        return explosions;
     }
 }

@@ -3,11 +3,14 @@ package ru.lexmint.listener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
@@ -112,6 +115,26 @@ public class BlockListener implements Listener {
                 HSClans.instance.getMessenger().message("messages.build.not-owned", player, claim.getClan().getName());
                 return false;
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPaintingBreak(HangingBreakByEntityEvent event) {
+
+        Entity breaker = event.getRemover();
+        if (!(breaker instanceof Player)) {
+            return;
+        }
+
+        if (!canChangeBlock((Player) breaker, event.getEntity().getLocation())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPaintingPlace(HangingPlaceEvent event) {
+        if (!canChangeBlock(event.getPlayer(), event.getBlock().getLocation())) {
+            event.setCancelled(true);
         }
     }
 }

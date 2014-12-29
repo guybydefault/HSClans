@@ -74,9 +74,14 @@ public class HSClans extends JavaPlugin {
      */
     private BlockListener blockListener;
 
+    /**
+     * Deals with entities (enderman, for example) and PvP damage.
+     */
+    private EntityListener entityListener;
+
     @Override
     public void onEnable() {
-        getLogger().info("***** ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " *****");
+        getLogger().info("===== ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " =====");
         long startingTime = System.currentTimeMillis();
 
         instance = this;
@@ -114,14 +119,16 @@ public class HSClans extends JavaPlugin {
         exploitListener = new ExploitListener();
         playerListener = new PlayerListener();
         blockListener = new BlockListener();
+        entityListener = new EntityListener();
         getServer().getPluginManager().registerEvents(monitorListener, this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(exploitListener, this);
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(blockListener, this);
+        getServer().getPluginManager().registerEvents(entityListener, this);
         /* Registering listeners */
 
-        getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been successfully enabled! (" + (System.currentTimeMillis() - startingTime) + "ms)");
+        getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }
 
     @Override
