@@ -26,10 +26,12 @@ public class PlayerListener implements Listener {
     private final Set<Material> deniedUsageOffline;
     private final Set<Material> deniedUsage;
     private final Set<Material> deniedUsageNewbie;
+    private final Set<Material> deniedUsageAllie;
 
     private final Set<Material> deniedInteractOffline;
     private final Set<Material> deniedInteract;
     private final Set<Material> deniedInteractNewbie;
+    private final Set<Material> deniedInteractAllie;
 
     // TODO: Interaction spam
     // for handling people who repeatedly spam attempts to open a door (or similar) in another faction's territory
@@ -40,9 +42,12 @@ public class PlayerListener implements Listener {
         deniedUsage = Utils.getMaterialsSet("claims.deny.usage.always");
         deniedUsageOffline = Utils.getMaterialsSet("claims.deny.usage.offline");
         deniedUsageNewbie = Utils.getMaterialsSet("claims.deny.usage.newbie");
+        deniedUsageAllie = Utils.getMaterialsSet("claims.deny.usage.allie");
         deniedInteract = Utils.getMaterialsSet("claims.deny.interact.always");
         deniedInteractOffline = Utils.getMaterialsSet("claims.deny.interact.offline");
         deniedInteractNewbie = Utils.getMaterialsSet("claims.deny.interact.newbie");
+        deniedInteractAllie = Utils.getMaterialsSet("claims.deny.interact.allie");
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -160,19 +165,26 @@ public class PlayerListener implements Listener {
         CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         Clan owner = claim.getClan();
         if (owner != cpLayer.getClan()) {
-            if (deniedInteract.contains(material)) {
-                HSClans.instance.getMessenger().message("messages.interact.deny", player, owner.getName());
-                return false;
-            }
-            if (!owner.hasPlayersOnline()) {
-                if (deniedInteractOffline.contains(material)) {
-                    HSClans.instance.getMessenger().message("messages.interact.deny-offline", player, owner.getName());
+            if (owner.isAlliedWith(cpLayer.getClan())) {
+                if (deniedInteractAllie.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.interact.deny-allie", player, owner.getName());
                     return false;
+                }
+            } else {
+                if (deniedInteract.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.interact.deny", player, owner.getName());
+                    return false;
+                }
+                if (!owner.hasPlayersOnline()) {
+                    if (deniedInteractOffline.contains(material)) {
+                        HSClans.instance.getMessenger().message("messages.interact.deny-offline", player, owner.getName());
+                        return false;
+                    }
                 }
             }
         } else {
             if (deniedInteractNewbie.contains(material)) {
-                HSClans.instance.getMessenger().message("messages.interact.newbie", player, owner.getName());
+                HSClans.instance.getMessenger().message("messages.interact.deny-newbie", player, owner.getName());
                 return false;
             }
         }
@@ -203,7 +215,7 @@ public class PlayerListener implements Listener {
         if (claim.getClan() == cpLayer.getClan()) {
             if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
                 if (deniedUsageNewbie.contains(material)) {
-                    HSClans.instance.getMessenger().message("messages.use.newbie", player, cpLayer.getClanRole().getName());
+                    HSClans.instance.getMessenger().message("messages.use.deny-newbie", player, cpLayer.getClanRole().getName());
                     return false;
                 }
             } else {
@@ -211,14 +223,21 @@ public class PlayerListener implements Listener {
             }
         } else {
             Clan owner = claim.getClan();
-            if (deniedUsage.contains(material)) {
-                HSClans.instance.getMessenger().message("messages.use.deny", player, owner.getName());
-                return false;
-            }
-            if (!owner.hasPlayersOnline()) {
-                if (deniedUsageOffline.contains(material)) {
-                    HSClans.instance.getMessenger().message("messages.use.deny-offline", player, owner.getName());
+            if (owner.isAlliedWith(cpLayer.getClan())) {
+                if (deniedUsageAllie.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.use.deny-allie", player, owner.getName());
                     return false;
+                }
+            } else {
+                if (deniedUsage.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.use.deny", player, owner.getName());
+                    return false;
+                }
+                if (!owner.hasPlayersOnline()) {
+                    if (deniedUsageOffline.contains(material)) {
+                        HSClans.instance.getMessenger().message("messages.use.deny-offline", player, owner.getName());
+                        return false;
+                    }
                 }
             }
         }

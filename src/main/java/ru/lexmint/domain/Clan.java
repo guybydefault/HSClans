@@ -439,7 +439,7 @@ public class Clan {
      * @return True if the clan is allied with given clan. Otherwise, false.
      */
     public boolean isAlliedWith(Clan clan) {
-        return alliances.contains(clan) && clan.isRequestingAllyWith(this);
+        return clan != null && alliances.contains(clan) && clan.isRequestingAllyWith(this);
     }
 
     /**

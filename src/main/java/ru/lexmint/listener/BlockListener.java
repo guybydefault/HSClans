@@ -120,7 +120,6 @@ public class BlockListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPaintingBreak(HangingBreakByEntityEvent event) {
-
         Entity breaker = event.getRemover();
         if (!(breaker instanceof Player)) {
             return;
