@@ -7,7 +7,7 @@ chat:
   # Format of ally chat
   ally-format: '&7[&5Альянс&7] (&6%clan_role%&7 из &6%clan_name%&r) %name%&7 >> &r'
   # Format of public (standart) chat. Replace of tag {CLAN_INFO}
-  clan-info: '&7(&r%clan_role_tag%%clan%&7) [%player_level%&7]'
+  clan-info: '%clan_role_tag%%clan%&7[%player_level%&7]'
 clan:
   description: '- не установлено -'
   roles:

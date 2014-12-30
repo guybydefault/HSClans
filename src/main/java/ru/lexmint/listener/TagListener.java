@@ -26,9 +26,11 @@ public class TagListener implements Listener {
         CPLayer cPlayer = clanManager.getPlayer(player.getName(), true);
 
         if (clanManager.areInTheSameClan(cPlayer, cNamedPlayer)) {
-            event.setTag(ChatColor.LIGHT_PURPLE + namedPlayer.getName());
-        } else if (clanManager.areInAlliedClans(cPlayer, cNamedPlayer)) {
             event.setTag(ChatColor.GREEN + namedPlayer.getName());
+        } else if (clanManager.areInAlliedClans(cPlayer, cNamedPlayer)) {
+            event.setTag(ChatColor.LIGHT_PURPLE + namedPlayer.getName());
+        } else {
+            event.setTag(ChatColor.RED + namedPlayer.getName());
         }
     }
 }

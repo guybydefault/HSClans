@@ -20,7 +20,12 @@ public class ChatListener implements Listener {
 
         String clanInfo = HSClans.instance.getLangConfig().getString("chat.clan-info");
         clanInfo = clanInfo.replaceFirst("%clan_role_tag%", cpLayer.getClanRole().getTag());
-        clanInfo = clanInfo.replaceFirst("%clan%", cpLayer.getClan().getName());
+        if (cpLayer.hasClan()) {
+            clanInfo = clanInfo.replaceFirst("%clan%", cpLayer.getClan().getName());
+            clanInfo += " ";
+        } else {
+            clanInfo = clanInfo.replaceFirst("%clan%", "");
+        }
         clanInfo = clanInfo.replaceFirst("%player_level%", cpLayer.getLevel().getName());
         clanInfo = HSClans.instance.getMessenger().translateColorCodes(clanInfo);
         format = format.replace("{CLAN_INFO}", clanInfo);

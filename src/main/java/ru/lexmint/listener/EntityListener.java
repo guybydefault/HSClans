@@ -174,7 +174,8 @@ public class EntityListener implements Listener {
         }
         if (attacker instanceof Projectile) {
             attacker = (Entity) ((Projectile) attacker).getShooter();
-        } else if (!(attacker instanceof Player)) {
+        }
+        if (!(attacker instanceof Player)) {
             return true;
         }
 
