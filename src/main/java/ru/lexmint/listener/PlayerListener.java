@@ -183,9 +183,11 @@ public class PlayerListener implements Listener {
                 }
             }
         } else {
-            if (deniedInteractNewbie.contains(material)) {
-                HSClans.instance.getMessenger().message("messages.interact.deny-newbie", player, owner.getName());
-                return false;
+            if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
+                if (deniedInteractNewbie.contains(material)) {
+                    HSClans.instance.getMessenger().message("messages.interact.deny-newbie", player, owner.getName());
+                    return false;
+                }
             }
         }
         return true;
