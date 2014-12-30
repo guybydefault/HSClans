@@ -37,16 +37,20 @@ public class ClaimCommand extends BaseCommand {
             Clan owner = claim.getClan();
             if (owner == clan) {
                 HSClans.instance.getMessenger().message("commands.claim.already-own", sender);
-            } else if (owner.canHoldClaim()) {
-                HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
             } else if (clan.isAlliedWith(owner)) {
                 HSClans.instance.getMessenger().message("commands.claim.ally", sender, owner.getName());
+            } else if (owner.canHoldClaim()) {
+                HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
             } else {
-                clanManager.changeClaimClan(claim, clan);
-                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
-                        clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
-                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
-                        cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+                if (clan.canClaim(1)) {
+                    clanManager.changeClaimClan(claim, clan);
+                    HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
+                            clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+                    HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
+                            cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+                } else {
+                    HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()));
+                }
             }
         } else {
             if (Integration.checkForRegionsInChunk(player.getLocation().getChunk())) {
