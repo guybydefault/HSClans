@@ -33,6 +33,7 @@ public class LeaveCommand extends BaseCommand {
         clanManager.removePlayerFromClan(cpLayer.getName());
 
         if (clan.hasLeader()) {
+            HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());
             HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
         } else {
             clanManager.removeClan(clan);
