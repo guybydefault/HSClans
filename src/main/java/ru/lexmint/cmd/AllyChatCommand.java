@@ -11,9 +11,9 @@ import ru.lexmint.domain.ClanRole;
 import java.util.Set;
 
 /**
- * Send a message to clan's chat.
+ * Send a message to ally's chat.
  */
-public class ChatCommand extends BaseCommand {
+public class AllyChatCommand extends BaseCommand {
     /**
      * Main constructor for creating a command.
      *
@@ -24,7 +24,7 @@ public class ChatCommand extends BaseCommand {
      * @param arguments        Minimal number of sub arguments (command label is not included),
      * @param usage            String which contains information how to use this command.
      */
-    public ChatCommand(boolean senderIsPlayer, ClanRole requiredClanRole, String permission, int arguments, String usage) {
+    public AllyChatCommand(boolean senderIsPlayer, ClanRole requiredClanRole, String permission, int arguments, String usage) {
         super(senderIsPlayer, requiredClanRole, permission, arguments, usage);
     }
 
@@ -38,10 +38,13 @@ public class ChatCommand extends BaseCommand {
         CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(sender.getName(), true);
         Clan clan = cpLayer.getClan();
         Set<Player> recipients = clan.getMembersOnline();
+        for (Clan ally : clan.getAlliances()) {
+            recipients.addAll(ally.getMembersOnline());
+        }
         AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, (Player) sender, msg, recipients);
         HSClans.instance.getServer().getPluginManager().callEvent(playerChatEvent);
         if (!playerChatEvent.isCancelled()) {
-            HSClans.instance.getMessenger().chatToClan(msg, cpLayer, clan);
+            HSClans.instance.getMessenger().chatToAlly(msg, cpLayer, recipients);
         }
     }
 }

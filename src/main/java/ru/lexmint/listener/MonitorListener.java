@@ -45,7 +45,7 @@ public class MonitorListener implements Listener {
         }
 
         if (to != null) {
-            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getClanLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
         } else {
             HSClans.instance.getMessenger().message("land.wilderness", player);
 
@@ -96,13 +96,13 @@ public class MonitorListener implements Listener {
         // Updating power.
         cpLayer.onDeath();
         // Incrementing deaths
-        cpLayer.getStats().incrementDeaths();
+        cpLayer.incrementDeaths(); // TODO Points
         clanManager.updatePlayer(cpLayer);
 
         Player killer = event.getEntity().getKiller();
         if (killer != null) {
             CPLayer kPlayer = clanManager.getPlayer(killer.getName(), false);
-            kPlayer.getStats().incrementKills();
+            kPlayer.incrementKills();
             clanManager.updatePlayer(kPlayer);
         }
     }

@@ -57,13 +57,25 @@ public class Messenger {
     /**
      * Sends a message with no replacements but color changes to a group of players.
      *
-     * @param msg  Message which you want to be sent.
-     * @param clan clan which players will see this message
+     * @param msg        Message which you want to be sent.
+     * @param recipients Players (members of the clan) who will see this message
      */
-    public void chatToClan(String msg, CPLayer cpLayer, Clan clan) {
+    public void chatToClan(String msg, CPLayer cpLayer, Set<Player> recipients) {
         msg = appendPrefix(msg, lang.getString("chat.clan-format").replaceFirst("%clan_role%", cpLayer.getClanRole().getName()).replaceFirst("%name%", cpLayer.getName()));
         msg = translateColorCodes(msg);
-        sendToPlayers(msg, clan.getMembersOnline());
+        sendToPlayers(msg, recipients);
+    }
+
+    /**
+     * Sends a message with no replacements but color changes to a group of players.
+     *
+     * @param msg        Message which you want to be sent.
+     * @param recipients Players (members of the clan) who will see this message
+     */
+    public void chatToAlly(String msg, CPLayer cpLayer, Set<Player> recipients) {
+        msg = appendPrefix(msg, lang.getString("chat.ally-format").replaceFirst("%clan_role%", cpLayer.getClanRole().getName()).replaceFirst("%name%", cpLayer.getName()).replaceFirst("%clan_name%", cpLayer.getClan().getName()));
+        msg = translateColorCodes(msg);
+        sendToPlayers(msg, recipients);
     }
 
     /**

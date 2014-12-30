@@ -5,10 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
-import ru.lexmint.domain.stats.ClanStats;
-import ru.lexmint.domain.stats.PlayerStats;
-import ru.lexmint.domain.stats.Stats;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,11 +56,6 @@ public class Clan {
     private Location home;
 
     /**
-     * Statistics of a clan (kills, deaths, kdr, etc).
-     */
-    private final ClanStats clanStats;
-
-    /**
      * Set which contains clan allies (clans which are requested to be allies with this clan).
      */
     private final Set<Clan> alliances;
@@ -74,21 +68,9 @@ public class Clan {
     Clan(String name, long createdTime) {
         this.name = name;
         this.createdTime = createdTime;
-        clanStats = new ClanStats(getMembersStats());
         alliances = new HashSet<>();
     }
 
-    /**
-     * @return Set which contains pvp statistics of the members of the clan.
-     */
-    private Set<PlayerStats> getMembersStats() {
-        Set<PlayerStats> playerStats = new HashSet<>();
-        for (String member : members) {
-            CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(member, false);
-            playerStats.add(cpLayer.getStats());
-        }
-        return playerStats;
-    }
 
     /**
      * Returns full name of a clan.
@@ -336,13 +318,6 @@ public class Clan {
     }
 
     /**
-     * @return Clan level (based on days passed since clan's date of creation).
-     */
-    public ClanLevel getClanLevel() {
-        return ClanLevel.getClanLevelByDays(getDaysSinceCreated());
-    }
-
-    /**
      * @return True if a clan has a leader, otherwise false.
      */
     public boolean hasLeader() {
@@ -360,14 +335,6 @@ public class Clan {
      */
     public int getMembersSize() {
         return members.size();
-    }
-
-    /**
-     * @return Statistics of the clan (kills, deaths, kdr, etc).
-     */
-    public Stats getStatistics() {
-        clanStats.reloadStats(getMembersStats());
-        return clanStats;
     }
 
     /**
@@ -461,5 +428,38 @@ public class Clan {
             }
         }
         return allies;
+    }
+
+    /**
+     * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
+     *
+     * @return High Sky rate.
+     */
+    public double getHSRate() {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        double hsRate = 0.0;
+        for (String member : getMembers()) {
+            hsRate += clanManager.getPlayer(member, false).getHSRate();
+        }
+        hsRate *= getExpRate();
+        return hsRate;
+    }
+
+    /**
+     * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
+     *
+     * @param roundScale How many digits after comma should be in returned value.
+     * @return Rounded value of HSR. Rounding rule is set to maths (half up).
+     */
+    public double getHSRate(int roundScale) {
+        return new BigDecimal(getHSRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getExpRate() {
+        return getDaysSinceCreated() / 14d;
+    }
+
+    public Level getLevel() {
+        return Level.getLevelByRate(Level.LevelType.CLAN, getHSRate());
     }
 }

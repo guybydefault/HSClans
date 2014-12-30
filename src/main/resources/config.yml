@@ -17,14 +17,42 @@ power:
     loss-per-day: 5.0
     # Minimal value of power which can be set if player has been offline for a couple of days.
     loss-limit: 0.0
+player:
+  levels:
+    1:
+      name: '-'
+      rate: 0.0
+    2:
+      name: 'Боец'
+      rate: 0.05
+    3:
+      name: 'Бывалый'
+      rate: 0.1
+    4:
+      name: 'Элита'
+      rate: 0.5
+    5:
+      name: 'Герой'
+      rate: 1.0
+    6:
+      name: 'Легенда'
+      rate: 2.0
+    7:
+      name: 'Богоподобный'
+      rate: 2.0
 clan:
   home:
     respawn: true
   levels:
-    medium:
-      days: 1
-    high:
-      days: 2
+    1:
+      name: '-'
+      rate: 0.0
+    2:
+      name: 'Обыватель'
+      rate: 0.05
+    3:
+      name: 'Топ Клан'
+      rate: 1.0
 pvp:
   # These potions are treated as harmful. It means that they will be blocked when attacker damages allies/friends with these ones.
   bad-potions:

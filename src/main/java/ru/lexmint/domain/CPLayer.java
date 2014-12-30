@@ -2,7 +2,9 @@ package ru.lexmint.domain;
 
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
-import ru.lexmint.domain.stats.PlayerStats;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Class, describing a player who is or was in a clan.
@@ -24,11 +26,6 @@ public class CPLayer {
     private ClanRole clanRole;
 
     /**
-     * League of the player.
-     */
-    private ClanLeague clanLeague;
-
-    /**
      * Power of a player, has an influence on clan in which player is a member.
      */
     private double power;
@@ -44,11 +41,6 @@ public class CPLayer {
     private long lastPowerUpdateTime;
 
     /**
-     * Contains player kills, deaths and counts kdr.
-     */
-    private PlayerStats stats;
-
-    /**
      * Time when player joined the server first.
      */
     private final long firstPlayed;
@@ -56,7 +48,32 @@ public class CPLayer {
     /**
      * Hours of time while player has been playing on server.
      */
-    private double hoursPlayed;
+    private double hoursPlayedTotal;
+
+    /**
+     * Hours of time while player has been playing on server during this week.
+     */
+    private double hoursPlayedWeek;
+
+    /**
+     * Last time player's hoursPlayedWeek count was restarted. Used while checking hoursPlayedWeek for reset.
+     */
+    private long lastPlayedWeekUpdate;
+
+    /**
+     * Number of kills player has made.
+     */
+    private int kills;
+
+    /**
+     * Number of points player has gained from killing other players.
+     */
+    private int points;
+
+    /**
+     * Number of player's deaths.
+     */
+    private int deaths;
 
     /**
      * Constructor for player without clan.
@@ -67,12 +84,15 @@ public class CPLayer {
     CPLayer(String name, double power) {
         this.name = name;
         clanRole = ClanRole.OUTLAW;
-        clanLeague = ClanLeague.LOW;
         this.power = power;
         lastPowerUpdateTime = System.currentTimeMillis();
-        stats = new PlayerStats(0, 0);
         firstPlayed = System.currentTimeMillis();
-        hoursPlayed = 0;
+        lastPlayedWeekUpdate = System.currentTimeMillis();
+        hoursPlayedTotal = 0;
+        hoursPlayedWeek = 0;
+        kills = 0;
+        points = 0;
+        deaths = 0;
     }
 
     /**
@@ -81,24 +101,29 @@ public class CPLayer {
      * @param name                Name of the player.
      * @param clan                Player's clan.
      * @param clanRole            Player's role in the given clan.
-     * @param clanLeague          League of the player.
      * @param power               Power of the player.
      * @param powerBoost          Boost which is added to player's basic power.
      * @param lastPowerUpdateTime Last time when player's power was updated.
      * @param kills               Number of kills this player has made.
      * @param deaths              Number of player's deaths.
+     * @param points              Points player has gained from killing other players.
+     * @param hoursPlayedTotal    Hours of time while player has been playing on server.
+     * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, ClanLeague clanLeague, double power, double powerBoost, long lastPowerUpdateTime, int kills, int deaths, long firstPlayed, double hoursPlayed) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, double hoursPlayedTotal, double hoursPlayedWeek, long lastPlayedWeekUpdate) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
-        this.clanLeague = clanLeague;
         this.power = power;
         this.powerBoost = powerBoost;
         this.lastPowerUpdateTime = lastPowerUpdateTime;
-        this.stats = new PlayerStats(kills, deaths);
+        this.kills = kills;
+        this.points = points;
+        this.deaths = deaths;
         this.firstPlayed = firstPlayed;
-        this.hoursPlayed = hoursPlayed;
+        this.hoursPlayedTotal = hoursPlayedTotal;
+        this.hoursPlayedWeek = hoursPlayedWeek;
+        this.lastPlayedWeekUpdate = lastPlayedWeekUpdate;
     }
 
     /**
@@ -169,13 +194,6 @@ public class CPLayer {
      */
     public boolean hasClan() {
         return clan != null;
-    }
-
-    /**
-     * @return Clan league of this player.
-     */
-    public ClanLeague getClanLeague() {
-        return clanLeague;
     }
 
     /**
@@ -324,13 +342,6 @@ public class CPLayer {
     }
 
     /**
-     * @return Object which contains player kills, deaths, count KDR (KillDeath rate).
-     */
-    public PlayerStats getStats() {
-        return stats;
-    }
-
-    /**
      * @return Time when player joined server for the first time.
      */
     public long getFirstPlayed() {
@@ -350,20 +361,137 @@ public class CPLayer {
      * @param alter Hours which will be added to player's summary hours played.
      */
     public void alterHoursPlayed(double alter) {
-        hoursPlayed += alter;
+        hoursPlayedTotal += alter;
+        if ((System.currentTimeMillis() - lastPlayedWeekUpdate) / 1000 / 60 / 60 / 24 >= 7) {
+            hoursPlayedWeek = 0.0;
+            lastPlayedWeekUpdate = System.currentTimeMillis();
+        }
+        hoursPlayedWeek += alter;
     }
 
     /**
      * @return Hours of time while player has been playing on server.
      */
-    public double getHoursPlayed() {
-        return hoursPlayed;
+    public double getHoursPlayedTotal() {
+        return hoursPlayedTotal;
     }
 
     /**
-     *
      * @return Rounded time while player has been playing on server.
      */
-    public int getHoursPlayedRounded() {return (int) Math.round(hoursPlayed); }
+    public int getHoursPlayedTotalRounded() {
+        return (int) Math.round(getHoursPlayedTotal());
+    }
 
+    /**
+     * @return Hours of time while player has been playing on server during the week.
+     */
+    public double getHoursPlayedWeek() {
+        return hoursPlayedWeek;
+    }
+
+    /**
+     * @return Rounded time while player has been playing on server during the week.
+     */
+    public int getHoursPlayedWeekRounded() {
+        return (int) Math.round(getHoursPlayedWeek());
+    }
+
+    /**
+     * @return Number of kills player has made.
+     */
+    public int getKills() {
+        return kills;
+    }
+
+    /**
+     * Increments number of kills by 1.
+     */
+    public void incrementKills() {
+        kills++;
+    }
+
+    /**
+     * Increments number of deaths by 1.
+     */
+    public void incrementDeaths() {
+        deaths++;
+    }
+
+    /**
+     * @return Number of points player has gained from killing other players.
+     */
+    public int getPoints() {
+        return points;
+    }
+
+    /**
+     * @return Number of player's deaths.
+     */
+    public int getDeaths() {
+        return deaths;
+    }
+
+    /**
+     * @return Last time player's hoursPlayedWeek count was restarted. Used while checking hoursPlayedWeek for reset.
+     */
+    public long getLastPlayedWeekUpdate() {
+        return lastPlayedWeekUpdate;
+    }
+
+    /**
+     * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
+     *
+     * @return High Sky rate.
+     */
+    public double getHSRate() {
+        return getPvPRate() * getOnlineRate() + getExpRate();
+    }
+
+    /**
+     * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
+     *
+     * @param roundScale How many digits after comma should be in returned value.
+     * @return Rounded value of player's HSR. Rounding rule is set to maths (half up).
+     */
+    public double getHSRate(int roundScale) {
+        return new BigDecimal(getHSRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public Level getLevel() {
+        return Level.getLevelByRate(Level.LevelType.PLAYER, getHSRate());
+    }
+
+    public double getPvPRate() {
+        double ppk = 0;
+        /** Points per kill */
+        if (kills != 0) {
+            ppk = getPoints() / (double) getKills();
+        }
+        double pvpRate = ppk;
+        if (getDeaths() != 0) {
+            pvpRate /= getDeaths();
+        }
+        return pvpRate;
+    }
+
+    public double getPvPRate(int roundScale) {
+        return new BigDecimal(getPvPRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getOnlineRate() {
+        return getHoursPlayedWeek() / 14;
+    }
+
+    public double getOnlineRate(int roundScale) {
+        return new BigDecimal(getOnlineRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getExpRate() {
+        return (getHoursPlayedTotal() - getHoursPlayedWeek()) / 100d;
+    }
+
+    public double getExpRate(int roundScale) {
+        return new BigDecimal(getExpRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
 }

@@ -32,10 +32,11 @@ public class CommandManager implements CommandExecutor {
     DescriptionCommand description;
     HomeCommand home;
     SethomeCommand setHome;
-    ChatCommand chat;
+    ClanChatCommand clanChat;
     RegenCommand regen;
     ListCommand list;
     AllyCommand ally;
+    AllyChatCommand allyChat;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -46,7 +47,7 @@ public class CommandManager implements CommandExecutor {
         leave = new LeaveCommand(true, ClanRole.NEWBIE, "hsclans.command.leave", 0, "commands.leave.usage");
         uninvite = new UninviteCommand(true, ClanRole.MODERATOR, "hsclans.command.uninvite", 1, "commands.uninvite.usage");
         show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
-        player = new PlayerCommand(false, ClanRole.OUTLAW, "hsclans.command.player", 1, "commands.player.usage");
+        player = new PlayerCommand(false, ClanRole.OUTLAW, "hsclans.command.player", 0, "commands.player.usage");
         claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
         unclaim = new UnclaimCommand(true, ClanRole.MODERATOR, " hsclans.command.unclaim", 0, "commands.unclaim.usage");
         kick = new KickCommand(true, ClanRole.MODERATOR, "hsclans.command.kick", 1, "commands.kick.usage");
@@ -54,10 +55,11 @@ public class CommandManager implements CommandExecutor {
         demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.command.demote", 1, "commands.demote.usage");
         home = new HomeCommand(true, ClanRole.NEWBIE, "hsclans.command.home", 0, "commands.home.usage");
         setHome = new SethomeCommand(true, ClanRole.MODERATOR, "hsclans.command.sethome", 0, "commands.sethome.usage");
-        chat = new ChatCommand(true, ClanRole.NEWBIE, "hsclans.command.chat", 1, "commands.chat.usage");
+        clanChat = new ClanChatCommand(true, ClanRole.NEWBIE, "hsclans.command.clanchat", 1, "commands.clanchat.usage");
         regen = new RegenCommand(false, ClanRole.OUTLAW, "hsclans.command.regen", 1, "commands.regen.usage");
         list = new ListCommand(false, ClanRole.OUTLAW, "hsclans.command.list", 0, "commands.list.usage");
         ally = new AllyCommand(true, ClanRole.MODERATOR, "hsclans.command.ally", 1, "commands.ally.usage");
+        allyChat = new AllyChatCommand(true, ClanRole.NEWBIE, "hsclans.command.allychat", 1, "commands.allychat.usage");
 
         commandHashMap.put("create", create);
 
@@ -75,6 +77,7 @@ public class CommandManager implements CommandExecutor {
 
         commandHashMap.put("player", player);
         commandHashMap.put("p", player);
+        commandHashMap.put("power", player);
 
         commandHashMap.put("claim", claim);
 
@@ -86,12 +89,13 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("home", home);
         commandHashMap.put("sethome", setHome);
 
-        commandHashMap.put("chat", chat);
-        commandHashMap.put("c", chat);
+        commandHashMap.put("c", clanChat);
 
         commandHashMap.put("regen", regen);
         commandHashMap.put("list", list);
         commandHashMap.put("ally", ally);
+
+        commandHashMap.put("a", allyChat);
     }
 
     @Override

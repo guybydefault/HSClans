@@ -44,13 +44,13 @@ public class ListCommand extends BaseCommand {
 
         List<Clan> clanList = new ArrayList<>(HSClans.instance.getClanManager().getClans());
 
-        /** Sorting by KDR **/
+        /** Sorting by HSR **/
         Collections.sort(clanList, new Comparator<Clan>() {
             @Override
             public int compare(Clan o1, Clan o2) {
-                if (o1.getStatistics().getKDR() < o2.getStatistics().getKDR()) {
+                if (o1.getHSRate() < o2.getHSRate()) {
                     return 1;
-                } else if (o1.getStatistics().getKDR() > o2.getStatistics().getKDR()) {
+                } else if (o1.getHSRate() > o2.getHSRate()) {
                     return -1;
                 } else {
                     return 0;
@@ -85,7 +85,7 @@ public class ListCommand extends BaseCommand {
                     String.valueOf(clan.getClaimsNumber()),
                     String.valueOf(clan.getPowerRounded()),
                     String.valueOf(clan.getPowerMaxRounded()),
-                    String.valueOf(clan.getStatistics().getKDRRounded()));
+                    clan.getLevel().getName());
         }
     }
 }

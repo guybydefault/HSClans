@@ -79,6 +79,11 @@ public class HSClans extends JavaPlugin {
      */
     private EntityListener entityListener;
 
+    /**
+     * Integration with tag api (color names).
+     */
+    private TagListener tagListener;
+
     @Override
     public void onEnable() {
         getLogger().info("===== ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " =====");
@@ -120,12 +125,14 @@ public class HSClans extends JavaPlugin {
         playerListener = new PlayerListener();
         blockListener = new BlockListener();
         entityListener = new EntityListener();
+        tagListener = new TagListener();
         getServer().getPluginManager().registerEvents(monitorListener, this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(exploitListener, this);
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(entityListener, this);
+        getServer().getPluginManager().registerEvents(tagListener, this);
         /* Registering listeners */
 
         getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");

@@ -68,14 +68,16 @@ public class StorageManager {
                     "name VARCHAR(24) NOT NULL, " +
                     "clan VARCHAR(8)," +
                     "role VARCHAR(16)," +
-                    "league VARCHAR(16) NOT NULL, " +
                     "power DOUBLE NOT NULL, " +
                     "power_boost DOUBLE NOT NULL, " +
                     "last_power_update BIGINT(16) NOT NULL, " +
                     "kills SMALLINT NOT NULL," +
+                    "points MEDIUMINT NOT NULL," +
                     "deaths SMALLINT NOT NULL, " +
                     "first_played BIGINT(16) NOT NULL, " +
                     "hours_played DOUBLE NOT NULL, " +
+                    "hours_played_week DOUBLE NOT NULL, " +
+                    "last_played_week_update BIGINT(16) NOT NULL, " +
                     "PRIMARY KEY (Name)" +
                     ") CHARACTER SET utf8");
 
@@ -204,20 +206,22 @@ public class StorageManager {
                 String name = rs.getString("name");
                 String role = rs.getString("role");
                 String clanName = rs.getString("clan");
-                String clanLeague = rs.getString("league");
                 double power = rs.getDouble("power");
                 double powerBoost = rs.getDouble("power_boost");
                 long lastPowerUpdateTime = rs.getLong("last_power_update");
                 int kills = rs.getInt("kills");
+                int points = rs.getInt("points");
                 int deaths = rs.getInt("deaths");
                 long firstPlayed = rs.getLong("first_played");
                 double hoursPlayed = rs.getDouble("hours_played");
+                double hoursPlayedWeek = rs.getDouble("hours_played_week");
+                long lastPlayedWeekUpdate = rs.getLong("last_played_week_update");
 
                 Clan clan = null;
                 if (clanName != null) {
                     clan = HSClans.instance.getClanManager().getClan(clanName);
                 }
-                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), ClanLeague.valueOf(clanLeague), power, powerBoost, lastPowerUpdateTime, kills, deaths, firstPlayed, hoursPlayed);
+                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, hoursPlayed, hoursPlayedWeek, lastPlayedWeekUpdate);
                 return cpLayer;
             }
         } catch (SQLException e) {
@@ -240,9 +244,9 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "players " +
-                            "(name, role, clan, league, power, power_boost, last_power_update, kills, deaths, first_played, " +
-                            "hours_played) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "(name, role, clan, points, power, power_boost, last_power_update, kills, deaths, first_played, " +
+                            "hours_played, hours_played_week, last_played_week_update) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     ps.setString(1, cpLayer.getName());
                     ps.setString(2, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
@@ -250,14 +254,16 @@ public class StorageManager {
                     } else {
                         ps.setString(3, null);
                     }
-                    ps.setString(4, cpLayer.getClanLeague().toString());
+                    ps.setInt(4, cpLayer.getPoints());
                     ps.setDouble(5, cpLayer.getPower());
                     ps.setDouble(6, cpLayer.getPowerBoost());
                     ps.setLong(7, cpLayer.getLastPowerUpdateTime());
-                    ps.setInt(8, cpLayer.getStats().getKills());
-                    ps.setInt(9, cpLayer.getStats().getDeaths());
+                    ps.setInt(8, cpLayer.getKills());
+                    ps.setInt(9, cpLayer.getDeaths());
                     ps.setLong(10, cpLayer.getFirstPlayed());
-                    ps.setDouble(11, cpLayer.getHoursPlayed());
+                    ps.setDouble(11, cpLayer.getHoursPlayedTotal());
+                    ps.setDouble(12, cpLayer.getHoursPlayedWeek());
+                    ps.setLong(13, cpLayer.getLastPlayedWeekUpdate());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -281,23 +287,24 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "players SET " +
-                            "role=?, clan=?, league=?, power=?, power_boost=?, last_power_update=?, kills=?, deaths=?, " +
-                            "hours_played=? WHERE name=?");
+                            "role=?, clan=?, points=?, power=?, power_boost=?, last_power_update=?, kills=?, deaths=?, " +
+                            "hours_played=?, hours_played_week=?, last_played_week_update=? WHERE name=?");
                     ps.setString(1, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
                         ps.setString(2, cpLayer.getClan().getName());
                     } else {
                         ps.setString(2, null);
                     }
-                    ps.setString(3, cpLayer.getClanLeague().toString());
+                    ps.setInt(3, cpLayer.getPoints());
                     ps.setDouble(4, cpLayer.getPower());
                     ps.setDouble(5, cpLayer.getPowerBoost());
                     ps.setLong(6, cpLayer.getLastPowerUpdateTime());
-                    ps.setInt(7, cpLayer.getStats().getKills());
-                    ps.setInt(8, cpLayer.getStats().getDeaths());
-                    ps.setDouble(9, cpLayer.getHoursPlayed());
-
-                    ps.setString(10, cpLayer.getName());
+                    ps.setInt(7, cpLayer.getKills());
+                    ps.setInt(8, cpLayer.getDeaths());
+                    ps.setDouble(9, cpLayer.getHoursPlayedTotal());
+                    ps.setDouble(10, cpLayer.getHoursPlayedWeek());
+                    ps.setLong(11, cpLayer.getLastPlayedWeekUpdate());
+                    ps.setString(12, cpLayer.getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {

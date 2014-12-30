@@ -1,12 +1,80 @@
 name: HSClans
-version: 0.3
+version: 1.0
 main: ru.lexmint.HSClans
 authors: [Lexmint]
-# TODO Only for last loading to easily debug
-softdepent: [Vault, HSJail, NoCheatPlus]
+website: http://lexmint.ru/
+softdepend: [WorldGuard, WorldBorder, PermissionsEX]
 commands:
   factions:
     description: Базовая команда плагина.
     aliases: [f]
 permissions:
-#  hsclans.command.create:
+  hsclans.kit.player:
+    description: Все права для рядового игрока.
+    children:
+      hsclans.command.create: true
+      hsclans.command.description: true
+      hsclans.command.join: true
+      hsclans.command.invite: true
+      hsclans.command.help: true
+      hsclans.command.leave: true
+      hsclans.command.uninvite: true
+      hsclans.command.show: true
+      hsclans.command.player: true
+      hsclans.command.claim: true
+      hsclans.command.unclaim: true
+      hsclans.command.kick: true
+      hsclans.command.promote: true
+      hsclans.command.demote: true
+      hsclans.command.home: true
+      hsclans.command.sethome: true
+      hsclans.command.clanchat: true
+      hsclans.command.list: true
+      hsclans.command.ally: true
+      hsclans.command.allychat: true
+  hsclans.kit.admin:
+    description: Все права для Администратора.
+    children:
+      hsclans.command.regen: true
+  hsclans.command.create:
+    description:
+  hsclans.command.description:
+    description:
+  hsclans.command.join:
+    description:
+  hsclans.command.invite:
+    description:
+  hsclans.command.help:
+    description:
+  hsclans.command.leave:
+    description:
+  hsclans.command.uninvite:
+    description:
+  hsclans.command.show:
+    description:
+  hsclans.command.player:
+    description:
+  hsclans.command.claim:
+    description:
+  hsclans.command.unclaim:
+    description:
+  hsclans.command.kick:
+    description:
+  hsclans.command.promote:
+    description:
+  hsclans.command.demote:
+    description:
+  hsclans.command.home:
+    description:
+  hsclans.command.sethome:
+    description:
+  hsclans.command.clanchat:
+    description:
+  hsclans.command.regen:
+    description:
+  hsclans.command.list:
+    description:
+  hsclans.command.ally:
+    description:
+  hsclans.command.allychat:
+    description:

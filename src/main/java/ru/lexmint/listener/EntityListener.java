@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
@@ -145,8 +144,8 @@ public class EntityListener implements Listener {
             return;
         }
 
-        ProjectileSource thrower = event.getPotion().getShooter();
-        if (!(thrower instanceof Entity)) {
+        Entity thrower = event.getPotion().getShooter();
+        if (thrower == null) {
             return;
         }
 
