@@ -30,7 +30,7 @@ public class CreateCommand extends BaseCommand {
     public void perform(CommandSender sender, String[] subargs) {
         ClanManager clanManager = HSClans.instance.getClanManager();
         Pattern pattern = Pattern.compile("[A-Z][A-Za-z]+");
-        if (!pattern.matcher(subargs[1]).matches() && subargs[1].length() <= 8 && subargs[1].length() >= 2) {
+        if (!pattern.matcher(subargs[1]).matches() || subargs[1].length() > 8 || subargs[1].length() < 2) {
             HSClans.instance.getMessenger().message("commands.create.wrong-name", sender);
             return;
         }
