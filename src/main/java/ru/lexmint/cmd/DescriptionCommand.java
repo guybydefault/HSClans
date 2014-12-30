@@ -36,6 +36,9 @@ public class DescriptionCommand extends BaseCommand {
             Matcher matcher = pattern.matcher(subargs[i]);
             if (matcher.matches()) {
                 description.append(subargs[i]);
+                if (i < subargs.length - 1) {
+                    description.append(" ");
+                }
             } else {
                 HSClans.instance.getMessenger().message("commands.description.wrong-desc", sender);
                 return;
