@@ -86,7 +86,9 @@ public class MonitorListener implements Listener {
 
         clanManager.updatePlayer(cpLayer);
         // Remove player from cache to save space in memory.
-        clanManager.clearPlayerCache(player.getName());
+        if (HSClans.instance.getSettings().getBoolean("performance.cache-clear-on-leave")) {
+            clanManager.clearPlayerCache(player.getName());
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

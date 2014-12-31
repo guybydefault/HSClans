@@ -67,10 +67,15 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("desc", description);
 
         commandHashMap.put("join", join);
+
         commandHashMap.put("invite", invite);
+        commandHashMap.put("inv", invite);
+
         commandHashMap.put("help", help);
         commandHashMap.put("leave", leave);
+
         commandHashMap.put("uninvite", uninvite);
+        commandHashMap.put("uninv", uninvite);
 
         commandHashMap.put("show", show);
         commandHashMap.put("f", show);

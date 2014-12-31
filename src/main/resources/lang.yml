@@ -6,8 +6,10 @@ chat:
   clan-format: '&7[&aКлан&7] (&6%clan_role%&7) &r%name%&7 >> &r'
   # Format of ally chat
   ally-format: '&7[&5Альянс&7] (&6%clan_role%&7 из &6%clan_name%&r) %name%&7 >> &r'
-  # Format of public (standart) chat. Replace of tag {CLAN_INFO}
-  clan-info: '%clan_role_tag%%clan%&7[%player_level%&7]'
+  # Format of public (standart) chat. Replace of tag {CLAN_INFO}. Available tag: %player_level% %clan% %clan_role_tag%
+  clan-info:
+    no-clan: '%clan_role_tag% &7[&e%player_level%&7]&r'
+    clan: '&7[&e%player_level%&7]&r %clan_role_tag%%clan%&r'
 clan:
   description: '- не установлено -'
   roles:
@@ -71,9 +73,9 @@ commands:
       2: '&e/f show, f <Имя_Клана/Игрока>&6 - Информация о клане.'
       3: '&e/f create <Имя_Клана>&6 - Создать клан.'
       4: '&e/f join&6 <Имя_Клана> - Вступить в клан.'
-      5: '&e/f leave&6 - Покинуть клан.'
-      6: '&e/f invite <Ник_Игрока>&6 - Пригласить игрока в клан.'
-      7: '&e/f uninvite <Ник_Игрока>&6 - Отозвать приглашение у игрока.'
+      5: '&e/f leave&6 - Покинуть клан (или распустить, если Вы лидер).'
+      6: '&e/f invite, inv <Ник_Игрока>&6 - Пригласить игрока в клан.'
+      7: '&e/f uninvite, uninv <Ник_Игрока>&6 - Отозвать приглашение у игрока.'
       8: '&e/f kick <Ник_Игрока>&6 - Выгнать игрока из клана.'
       9: '&e/f promote <Ник_Игрока>&6 - Повысить игрока по статусу.'
       10: '&e/f demote <Ник_Игрока>&6 - Понизить игрока по статусу.'
@@ -88,7 +90,7 @@ commands:
       18: '&e/f sethome&6 - Установить локацию дома клана.'
       19: '&e/f list <Номер_Страницы>&6 - Список кланов сервера.'
       29: '&e/f regen <Имя_Мира>&6 - Секретная команда Админов.'
-      30: '&e/f ally <Имя_Клана>&6 - Заключить альянс с другим кланом.'
+      30: '&e/f ally <Имя_Клана>&6 - Заключить/разорвать альянс с другим кланом.'
   leave:
     usage: '&e/f leave&6 - Покинуть клан.'
     disband-broadcast: '&6Лидер &e%s%&6 покинул своих бойцов в клане &e&l%s%&r&6, распустив его.'

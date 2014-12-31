@@ -51,10 +51,18 @@ public class ClanManager {
         /**
          * Adds players online to player cache for performance needs.
          */
-        for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
-            CPLayer cpLayer = getPlayer(player.getName(), true);
-            if (cpLayer == null) {
-                createPlayer(player.getName());
+        if (HSClans.instance.getSettings().getBoolean("performance.cache-clan-players")) {
+            for (Clan clan : clansByName.values()) {
+                for (String clanMember : clan.getMembers()) {
+                    getPlayer(clanMember, true);
+                }
+            }
+        } else {
+            for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
+                CPLayer cpLayer = getPlayer(player.getName(), true);
+                if (cpLayer == null) {
+                    createPlayer(player.getName());
+                }
             }
         }
 
@@ -130,7 +138,7 @@ public class ClanManager {
         if (cpLayer == null) {
             HSClans.instance.getDebug().info("Importing player " + playerName);
             cpLayer = storageManager.importClanPlayer(playerName);
-            if ((HSClans.instance.getSettings().getBoolean("performance.cache-all") || cache) && cpLayer != null) {
+            if ((HSClans.instance.getSettings().getBoolean("performance.cache-on-request") || cache) && cpLayer != null) {
                 addCPlayerToCache(cpLayer);
             }
             HSClans.instance.getDebug().info("Imported player " + cpLayer);
