@@ -12,6 +12,7 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import ru.lexmint.HSClans;
+import ru.lexmint.cmd.BypassCommand;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
 import ru.lexmint.domain.ClanManager;
@@ -98,6 +99,10 @@ public class BlockListener implements Listener {
     }
 
     private boolean canChangeBlock(Player player, Location location) {
+        if (BypassCommand.isBypassing(player.getName())) {
+            return true;
+        }
+
         ClanManager clanManager = HSClans.instance.getClanManager();
         Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
         if (claim == null) {

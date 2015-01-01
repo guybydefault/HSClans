@@ -78,3 +78,7 @@ permissions:
     description:
   hsclans.command.allychat:
     description:
+  hsclans.command.disband:
+    description:
+  hsclans.command.bypass:
+    description:

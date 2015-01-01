@@ -32,7 +32,7 @@ public class JoinCommand extends BaseCommand {
         if (!cpLayer.hasClan()) {
             Clan clan = clanManager.getClan(subargs[1]);
             if (clan != null) {
-                if (clan.pullInvitation(sender.getName())) {
+                if (clan.pullInvitation(sender.getName()) || BypassCommand.isBypassing(sender.getName())) {
                     clanManager.addPlayerToClan(clan, cpLayer, ClanRole.NEWBIE);
                     HSClans.instance.getMessenger().broadcastToClan("commands.join.broadcast-to-clan", clan, sender.getName(), clan.getName());
                 } else {

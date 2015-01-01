@@ -37,6 +37,8 @@ public class CommandManager implements CommandExecutor {
     ListCommand list;
     AllyCommand ally;
     AllyChatCommand allyChat;
+    DisbandCommand disbandCommand;
+    BypassCommand bypassCommand;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -60,6 +62,8 @@ public class CommandManager implements CommandExecutor {
         list = new ListCommand(false, ClanRole.OUTLAW, "hsclans.command.list", 0, "commands.list.usage");
         ally = new AllyCommand(true, ClanRole.MODERATOR, "hsclans.command.ally", 1, "commands.ally.usage");
         allyChat = new AllyChatCommand(true, ClanRole.NEWBIE, "hsclans.command.allychat", 1, "commands.allychat.usage");
+        disbandCommand = new DisbandCommand(false, ClanRole.OUTLAW, "hsclans.command.disband", 1, "commands.disband.usage");
+        bypassCommand = new BypassCommand(true, ClanRole.OUTLAW, "hsclans.command.bypass", 0, "command.bypass.usage");
 
         commandHashMap.put("create", create);
 
@@ -101,6 +105,8 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("ally", ally);
 
         commandHashMap.put("a", allyChat);
+        commandHashMap.put("disband", disbandCommand);
+        commandHashMap.put("bypass", bypassCommand);
     }
 
     @Override

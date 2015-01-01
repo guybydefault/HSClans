@@ -34,7 +34,7 @@ public class DemoteCommand extends BaseCommand {
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.demote.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(demoter, player)) {
-            if (demoter.getClanRole().getLevel() > player.getClanRole().getLevel()) {
+            if (demoter.getClanRole().getLevel() > player.getClanRole().getLevel() || BypassCommand.isBypassing(sender.getName())) {
                 if (clanManager.demoteClanPlayer(player)) {
                     HSClans.instance.getMessenger().broadcastToClan("commands.demote.success", demoter.getClan(), demoter.getClanRole().getName(),
                             demoter.getName(), player.getName(), player.getClanRole().getName());

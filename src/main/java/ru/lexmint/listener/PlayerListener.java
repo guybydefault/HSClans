@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import ru.lexmint.HSClans;
+import ru.lexmint.cmd.BypassCommand;
 import ru.lexmint.domain.*;
 import ru.lexmint.utils.Utils;
 
@@ -153,6 +154,10 @@ public class PlayerListener implements Listener {
      * @return True if player has permission to interact with it there or false, otherwise.
      */
     private boolean canPlayerUseBlock(Player player, Location location, Material material) {
+        if (BypassCommand.isBypassing(player.getName())) {
+            return true;
+        }
+
         HSClans.instance.getDebug().info("Can " + player.getName() + " use block of type " + material + "?");
         ClanManager clanManager = HSClans.instance.getClanManager();
         Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
@@ -202,6 +207,10 @@ public class PlayerListener implements Listener {
      * @return True if player has permission to use it there or false, otherwise.
      */
     private boolean canPlayerUseItem(Player player, Location location, Material material) {
+        if (BypassCommand.isBypassing(player.getName())) {
+            return true;
+        }
+
         HSClans.instance.getDebug().info("Can " + player.getName() + " use item of type " + material + "?");
 
         ClanManager clanManager = HSClans.instance.getClanManager();

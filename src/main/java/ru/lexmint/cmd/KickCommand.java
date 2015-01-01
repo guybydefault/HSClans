@@ -35,7 +35,7 @@ public class KickCommand extends BaseCommand {
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.kick.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(player, kicker)) {
-            if (kicker.getClanRole().getLevel() > player.getClanRole().getLevel()) {
+            if (kicker.getClanRole().getLevel() > player.getClanRole().getLevel() || BypassCommand.isBypassing(sender.getName())) {
                 clanManager.removePlayerFromClan(player);
                 HSClans.instance.getMessenger().broadcastToClan("commands.kick.success", kicker.getClan(), kicker.getClanRole().getName(), kicker.getName(),
                         player.getClanRole().getName(), player.getName());

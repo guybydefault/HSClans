@@ -175,4 +175,17 @@ public class Messenger {
         return sb.toString();
     }
 
+    /**
+     * Formats message with given path doing replaces in it according to arguments.
+     * @param path Path of the message in language file.
+     * @param replaces things you want to replace in a message
+     * @return Formatted message.
+     */
+    public String format(String path, String... replaces) {
+        String msg = getMessage(path);
+        msg = replaceVariables(lang.getString(path), replaces);
+        msg = translateColorCodes(msg);
+        return msg;
+    }
+
 }
