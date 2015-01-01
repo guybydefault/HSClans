@@ -3,6 +3,8 @@ package ru.lexmint.domain;
 import ru.lexmint.HSClans;
 import ru.lexmint.utils.Config;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,24 +14,16 @@ import java.util.Set;
  * level type (clan/player) defined in arguments.
  */
 public class Level {
+    private static final Level[] PLAYER_LEVELS = loadLevels("player.levels");
+    private static final Level[] CLAN_LEVELS = loadLevels("clan.levels");
     private double hsRate;
     private String name;
+    private int level;
 
     private Level(double hsRate, String name) {
         this.hsRate = hsRate;
         this.name = name;
     }
-
-    public double getHsRate() {
-        return hsRate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    private static final Level[] PLAYER_LEVELS = loadLevels("player.levels");
-    private static final Level[] CLAN_LEVELS = loadLevels("clan.levels");
 
     public static Level getLevelByRate(LevelType levelType, double hsRate) {
         Level result = null;
@@ -57,7 +51,40 @@ public class Level {
             levels[i] = new Level(settings.getDouble(path + "." + level + ".rate"),
                     settings.getString(path + "." + level + ".name"));
         }
+
+        Arrays.sort(levels, new Comparator<Level>() {
+            @Override
+            public int compare(Level o1, Level o2) {
+                if (o1.getHsRate() > o2.getHsRate()) {
+                    return 1;
+                } else if (o1.getHsRate() < o2.getHsRate()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        for (int i = 0; i < levels.length; i++) {
+            levels[i].setLevel(i);
+        }
         return levels;
+    }
+
+    public double getHsRate() {
+        return hsRate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public enum LevelType {

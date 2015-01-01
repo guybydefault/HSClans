@@ -16,6 +16,11 @@ public class CPLayer {
     private final String name;
 
     /**
+     * Time when player joined the server first.
+     */
+    private final long firstPlayed;
+
+    /**
      * Clan of a player. May be null.
      */
     private Clan clan;
@@ -41,9 +46,9 @@ public class CPLayer {
     private long lastPowerUpdateTime;
 
     /**
-     * Time when player joined the server first.
+     * Time when player was seen on server for the last time.
      */
-    private final long firstPlayed;
+    private long lastPlayed;
 
     /**
      * Hours of time while player has been playing on server.
@@ -88,6 +93,7 @@ public class CPLayer {
         lastPowerUpdateTime = System.currentTimeMillis();
         firstPlayed = System.currentTimeMillis();
         lastPlayedWeekUpdate = System.currentTimeMillis();
+        lastPlayed = System.currentTimeMillis();
         hoursPlayedTotal = 0;
         hoursPlayedWeek = 0;
         kills = 0;
@@ -110,7 +116,7 @@ public class CPLayer {
      * @param hoursPlayedTotal    Hours of time while player has been playing on server.
      * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, double hoursPlayedTotal, double hoursPlayedWeek, long lastPlayedWeekUpdate) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, long lastPlayedWeekUpdate) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -124,6 +130,7 @@ public class CPLayer {
         this.hoursPlayedTotal = hoursPlayedTotal;
         this.hoursPlayedWeek = hoursPlayedWeek;
         this.lastPlayedWeekUpdate = lastPlayedWeekUpdate;
+        this.lastPlayed = lastPlayed;
     }
 
     /**
@@ -164,20 +171,20 @@ public class CPLayer {
     }
 
     /**
-     * Removes data of clan for this player.
-     */
-    public void removeFromClan() {
-        clanRole = ClanRole.OUTLAW;
-        clan = null;
-    }
-
-    /**
      * Sets player's role in clan.
      *
      * @param clanRole Player's role in the clan.
      */
     void setClanRole(ClanRole clanRole) {
         this.clanRole = clanRole;
+    }
+
+    /**
+     * Removes data of clan for this player.
+     */
+    public void removeFromClan() {
+        clanRole = ClanRole.OUTLAW;
+        clan = null;
     }
 
     /**
@@ -349,6 +356,20 @@ public class CPLayer {
     }
 
     /**
+     * @return Time when player was seen on server for the last time.
+     */
+    public long getLastPlayed() {
+        return lastPlayed;
+    }
+
+    /**
+     * @param lastPlayed Time when player was seen on server for the last time.
+     */
+    public void setLastPlayed(long lastPlayed) {
+        this.lastPlayed = lastPlayed;
+    }
+
+    /**
      * @return Days which have passed since this player joined server for the first time.
      */
     public int getDaysSinceFirstPlayed() {
@@ -410,6 +431,23 @@ public class CPLayer {
     public void incrementKills() {
         kills++;
     }
+
+    /**
+     * Alters points given to player when he kills another player. Feature is in number of these points.
+     * In case the player kills a player whose level is bigger than him, the player is given more points
+     * (difference between victim's level and the player's, killer's). In case the player kills a player
+     * with the same level of points - he is given just one point. In other cases - zero points.
+     *
+     * @param victim Player who was killed by this one.
+     */
+    public void alterPoints(CPLayer victim) {
+        if (victim.getLevel().getLevel() > getLevel().getLevel()) {
+            points += victim.getLevel().getLevel() - getLevel().getLevel();
+        } else if (victim.getLevel().getLevel() == getLevel().getLevel()) {
+            points++;
+        }
+    }
+
 
     /**
      * Increments number of deaths by 1.

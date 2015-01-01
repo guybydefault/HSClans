@@ -1,5 +1,6 @@
 package ru.lexmint;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.lexmint.cmd.CommandManager;
@@ -113,8 +114,9 @@ public class HSClans extends JavaPlugin {
 
 
         /* Registering command handling to CommandManager */
+        CommandManager commandManager = new CommandManager();
         for (String command : getDescription().getCommands().keySet()) {
-            getCommand(command).setExecutor(new CommandManager());
+            getCommand(command).setExecutor(commandManager);
         }
         /* Registering command handling to CommandManager */
 
@@ -126,6 +128,7 @@ public class HSClans extends JavaPlugin {
         blockListener = new BlockListener();
         entityListener = new EntityListener();
         tagListener = new TagListener();
+
         getServer().getPluginManager().registerEvents(monitorListener, this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(exploitListener, this);
@@ -134,6 +137,13 @@ public class HSClans extends JavaPlugin {
         getServer().getPluginManager().registerEvents(entityListener, this);
         getServer().getPluginManager().registerEvents(tagListener, this);
         /* Registering listeners */
+
+        /* We need to make sure that all online players are loaded to cache and the count down
+        of their play time on server (for statistics) has been started.
+         */
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            monitorListener.onPlayerJoin(player);
+        }
 
         getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }

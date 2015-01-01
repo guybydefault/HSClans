@@ -16,49 +16,41 @@ import java.util.Set;
  */
 public class Clan {
     /**
-     * Name of a clan, tag.
-     */
-    private String name;
-
-    /**
-     * Description of a clan.
-     */
-    private String description;
-
-    /**
      * Set of all clan's members.
      */
     private final Set<String> members = new HashSet<>();
-
     /**
      * Set of all players invited to the clan.
      */
     private final Set<String> invites = new HashSet<>();
-
     /**
      * Claims of a clan.
      */
     private final Set<Claim> claims = new HashSet<>();
-
     /**
      * Time when a clan was created.
      */
     private final long createdTime;
-
-    /**
-     * Power of a clan, has an influence on territory claim.
-     */
-    private double power;
-
-    /**
-     * Home location of a clan.
-     */
-    private Location home;
-
     /**
      * Set which contains clan allies (clans which are requested to be allies with this clan).
      */
     private final Set<Clan> alliances;
+    /**
+     * Name of a clan, tag.
+     */
+    private String name;
+    /**
+     * Description of a clan.
+     */
+    private String description;
+    /**
+     * Power of a clan, has an influence on territory claim.
+     */
+    private double power;
+    /**
+     * Home location of a clan.
+     */
+    private Location home;
 
     /**
      * Basic constructor for creating a clan.
@@ -110,6 +102,19 @@ public class Clan {
      * @return The set containing all names of the clan's members.
      */
     public Set<String> getMembers() {
+        return members;
+    }
+
+    /**
+     *
+     * @return Set of CPlayer object of all members of this clan.
+     */
+    public Set<CPLayer> getCMembers() {
+        Set<CPLayer> members = new HashSet<>();
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        for (String member : this.members) {
+            members.add(clanManager.getPlayer(member, false));
+        }
         return members;
     }
 
@@ -365,7 +370,7 @@ public class Clan {
     }
 
     /**
-     * @return Set of Players (clan membersr) who is offline now.
+     * @return Set of Players (clan members) who is offline now.
      */
     public Set<OfflinePlayer> getMembersOffline() {
         Set<OfflinePlayer> playerSet = new HashSet<>();

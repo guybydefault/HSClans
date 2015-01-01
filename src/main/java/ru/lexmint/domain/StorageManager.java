@@ -75,6 +75,7 @@ public class StorageManager {
                     "points MEDIUMINT NOT NULL," +
                     "deaths SMALLINT NOT NULL, " +
                     "first_played BIGINT(16) NOT NULL, " +
+                    "last_played BIGINT(16) NOT NULL, " +
                     "hours_played DOUBLE NOT NULL, " +
                     "hours_played_week DOUBLE NOT NULL, " +
                     "last_played_week_update BIGINT(16) NOT NULL, " +
@@ -216,12 +217,13 @@ public class StorageManager {
                 double hoursPlayed = rs.getDouble("hours_played");
                 double hoursPlayedWeek = rs.getDouble("hours_played_week");
                 long lastPlayedWeekUpdate = rs.getLong("last_played_week_update");
+                long lastPlayed = rs.getLong("last_played");
 
                 Clan clan = null;
                 if (clanName != null) {
                     clan = HSClans.instance.getClanManager().getClan(clanName);
                 }
-                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, hoursPlayed, hoursPlayedWeek, lastPlayedWeekUpdate);
+                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, lastPlayedWeekUpdate);
                 return cpLayer;
             }
         } catch (SQLException e) {
@@ -245,8 +247,8 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "players " +
                             "(name, role, clan, points, power, power_boost, last_power_update, kills, deaths, first_played, " +
-                            "hours_played, hours_played_week, last_played_week_update) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "hours_played, hours_played_week, last_played_week_update, last_played) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     ps.setString(1, cpLayer.getName());
                     ps.setString(2, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
@@ -264,6 +266,7 @@ public class StorageManager {
                     ps.setDouble(11, cpLayer.getHoursPlayedTotal());
                     ps.setDouble(12, cpLayer.getHoursPlayedWeek());
                     ps.setLong(13, cpLayer.getLastPlayedWeekUpdate());
+                    ps.setLong(14, cpLayer.getLastPlayed());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -288,7 +291,8 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "players SET " +
                             "role=?, clan=?, points=?, power=?, power_boost=?, last_power_update=?, kills=?, deaths=?, " +
-                            "hours_played=?, hours_played_week=?, last_played_week_update=? WHERE name=?");
+                            "hours_played=?, hours_played_week=?, last_played_week_update=?, " +
+                            "last_played=? WHERE name=?");
                     ps.setString(1, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
                         ps.setString(2, cpLayer.getClan().getName());
@@ -304,7 +308,8 @@ public class StorageManager {
                     ps.setDouble(9, cpLayer.getHoursPlayedTotal());
                     ps.setDouble(10, cpLayer.getHoursPlayedWeek());
                     ps.setLong(11, cpLayer.getLastPlayedWeekUpdate());
-                    ps.setString(12, cpLayer.getName());
+                    ps.setLong(12, cpLayer.getLastPlayed());
+                    ps.setString(13, cpLayer.getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {

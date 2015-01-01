@@ -16,6 +16,7 @@
     <orderEntry type="library" name="worldedit-5.6" level="project" />
     <orderEntry type="library" name="bukkit-1.6.4-R2.0" level="project" />
     <orderEntry type="library" name="TagAPI" level="project" />
+    <orderEntry type="library" name="EssentialsSpawn" level="project" />
   </component>
 </module>
 

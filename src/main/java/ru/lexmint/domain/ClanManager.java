@@ -1,6 +1,5 @@
 package ru.lexmint.domain;
 
-import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 
 import java.util.Collection;
@@ -49,19 +48,12 @@ public class ClanManager {
         }
 
         /**
-         * Adds players online to player cache for performance needs.
+         * Adds players in clans to player cache for performance needs if it's configured in config.
          */
         if (HSClans.instance.getSettings().getBoolean("performance.cache-clan-players")) {
             for (Clan clan : clansByName.values()) {
                 for (String clanMember : clan.getMembers()) {
                     getPlayer(clanMember, true);
-                }
-            }
-        } else {
-            for (Player player : HSClans.instance.getServer().getOnlinePlayers()) {
-                CPLayer cpLayer = getPlayer(player.getName(), true);
-                if (cpLayer == null) {
-                    createPlayer(player.getName());
                 }
             }
         }

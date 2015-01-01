@@ -59,12 +59,7 @@ public class MonitorListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        ClanManager clanManager = HSClans.instance.getClanManager();
-        if (clanManager.getPlayer(player.getName(), true) == null) {
-            clanManager.createPlayer(player.getName());
-        }
-        playTimes.put(event.getPlayer().getName(), System.currentTimeMillis());
+        onPlayerJoin(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -84,11 +79,21 @@ public class MonitorListener implements Listener {
             cpLayer.alterHoursPlayed(hoursPlayed);
         }
 
+        cpLayer.setLastPlayed(System.currentTimeMillis());
+
         clanManager.updatePlayer(cpLayer);
         // Remove player from cache to save space in memory.
         if (HSClans.instance.getSettings().getBoolean("performance.cache-clear-on-leave")) {
             clanManager.clearPlayerCache(player.getName());
         }
+    }
+
+    public void onPlayerJoin(Player player) {
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        if (clanManager.getPlayer(player.getName(), true) == null) {
+            clanManager.createPlayer(player.getName());
+        }
+        playTimes.put(player.getName(), System.currentTimeMillis());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -98,13 +103,14 @@ public class MonitorListener implements Listener {
         // Updating power.
         cpLayer.onDeath();
         // Incrementing deaths
-        cpLayer.incrementDeaths(); // TODO Points
+        cpLayer.incrementDeaths();
         clanManager.updatePlayer(cpLayer);
 
         Player killer = event.getEntity().getKiller();
         if (killer != null) {
             CPLayer kPlayer = clanManager.getPlayer(killer.getName(), false);
             kPlayer.incrementKills();
+            kPlayer.alterPoints(cpLayer);
             clanManager.updatePlayer(kPlayer);
         }
     }

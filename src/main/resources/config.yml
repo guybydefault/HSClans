@@ -20,26 +20,35 @@ power:
 player:
   levels:
     1:
-      name: '-'
+      name: '&7-'
       rate: 0.0
     2:
-      name: 'Боец'
+      name: 'Рекрут'
       rate: 0.05
     3:
-      name: 'Бывалый'
+      name: 'Боец'
       rate: 0.1
     4:
-      name: 'Элита'
-      rate: 0.5
+      name: 'Бывалый'
+      rate: 0.2
     5:
-      name: 'Герой'
-      rate: 1.0
+      name: 'Гладиатор'
+      rate: 0.5
     6:
-      name: 'Легенда'
-      rate: 2.0
+      name: 'Чемпион'
+      rate: 0.9
     7:
+      name: 'Герой'
+      rate: 1.2
+    8:
+      name: 'Легенда'
+      rate: 1.5
+    9:
+      name: 'Повелитель'
+      rate: 1.8
+    10:
       name: 'Богоподобный'
-      rate: 2.0
+      rate: 2.1
 clan:
   home:
     respawn: true
