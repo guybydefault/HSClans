@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
+import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
 
@@ -42,15 +43,23 @@ public class PlayerCommand extends BaseCommand {
         }
 
         if (cpLayer != null) {
-            HSClans.instance.getMessenger().message("commands.player.header", sender, cpLayer.getName());
-            HSClans.instance.getMessenger().message("commands.player.power", sender, String.valueOf(cpLayer.getPowerRounded()), String.valueOf(cpLayer.getPowerMaxRounded()));
-            HSClans.instance.getMessenger().message("commands.player.first-played", sender, String.valueOf(cpLayer.getDaysSinceFirstPlayed()));
-            HSClans.instance.getMessenger().message("commands.player.time-played", sender, String.valueOf(cpLayer.getHoursPlayedTotalRounded()));
-            HSClans.instance.getMessenger().message("commands.player.level", sender, cpLayer.getLevel().getName(), String.valueOf(cpLayer.getHSRate(3)));
-            if (!cpLayer.hasClan()) {
-                HSClans.instance.getMessenger().message("commands.player.no-clan", sender, cpLayer.getClanRole().getName());
+            String name;
+            if (cpLayer.isOnline()) {
+                name = HSClans.instance.getMessenger().format("commands.player.status.online", cpLayer.getName());
             } else {
-                HSClans.instance.getMessenger().message("commands.player.clan", sender, cpLayer.getClan().getName(), cpLayer.getClan().getLevel().getName(), cpLayer.getClanRole().getName());
+                name = HSClans.instance.getMessenger().format("commands.player.status.offline", cpLayer.getName());
+            }
+            HSClans.instance.getMessenger().message("commands.player.header", sender, name);
+            HSClans.instance.getMessenger().message("commands.player.first-played", sender, String.valueOf(cpLayer.getDaysSinceFirstPlayed()));
+            HSClans.instance.getMessenger().message("commands.player.time-played", sender, String.valueOf(cpLayer.getHoursPlayedTotalRounded()), String.valueOf(cpLayer.getHoursPlayedWeekRounded()));
+            HSClans.instance.getMessenger().message("commands.player.power", sender, String.valueOf(cpLayer.getPowerRounded()), String.valueOf(cpLayer.getPowerMaxRounded()));
+            HSClans.instance.getMessenger().message("commands.player.level", sender, cpLayer.getLevel().getName(), String.valueOf(cpLayer.getHSRate(3)));
+            if (cpLayer.hasClan()) {
+                Clan clan = cpLayer.getClan();
+                HSClans.instance.getMessenger().message("commands.player.clan", sender, cpLayer.getClanRole().getName(), clan.getLevel().getName(), clan.getName(),
+                        String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
+            } else {
+                HSClans.instance.getMessenger().message("commands.player.no-clan", sender, cpLayer.getClanRole().getName());
             }
         } else {
             HSClans.instance.getMessenger().message("commands.player.not-found", sender);
