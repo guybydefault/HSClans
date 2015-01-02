@@ -32,9 +32,9 @@ public class SethomeCommand extends BaseCommand {
 
         ClanManager clanManager = HSClans.instance.getClanManager();
         Chunk playerChunk = player.getLocation().getChunk();
-        Claim currentClaim = clanManager.getClaim(playerChunk.getX(), playerChunk.getZ());
+        Claim currentClaim = clanManager.getClaim(playerChunk.getX(), playerChunk.getZ(), location.getWorld());
 
-        if(currentClaim == null) {
+        if (currentClaim == null) {
             HSClans.instance.getMessenger().message("commands.sethome.wilderness", player);
             return;
         }

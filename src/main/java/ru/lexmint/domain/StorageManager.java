@@ -85,6 +85,7 @@ public class StorageManager {
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "claims (" +
                     "x SMALLINT NOT NULL, " +
                     "z SMALLINT NOT NULL, " +
+                    "world VARCHAR(32) NOT NULL, " +
                     "clan VARCHAR(8) NOT NULL" +
                     ") CHARACTER SET utf8");
         } catch (SQLException e) {
@@ -107,7 +108,7 @@ public class StorageManager {
             ps = connection.prepareStatement
                     ("SELECT * FROM " + tablePrefix + "clans");
             ResultSet rs = ps.executeQuery();
-            Map<String, Clan> clansByName = new HashMap();
+            Map<String, Clan> clansByName = new HashMap<>();
             Map<Clan, String[]> alliesMap = new HashMap<>();
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -174,12 +175,13 @@ public class StorageManager {
                 int x = rs.getInt("x");
                 int z = rs.getInt("z");
                 String clanName = rs.getString("clan");
+                String world = rs.getString("world");
                 Clan clan = HSClans.instance.getClanManager().getClan(clanName);
                 if (clan == null) {
                     HSClans.instance.getDebug().error("Clan in method importClaims() (StorageManager) is null!");
                     continue;
                 }
-                Claim claim = new Claim(x, z, clan);
+                Claim claim = new Claim(x, z, Bukkit.getWorld(world), clan);
                 claimSet.add(claim);
             }
             return claimSet;
@@ -433,11 +435,12 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "claims " +
-                            "(x, z, clan) " +
-                            "VALUES (?, ?, ?)");
+                            "(x, z, world, clan) " +
+                            "VALUES (?, ?, ?, ?)");
                     ps.setInt(1, claim.getClaimLocation().getX());
                     ps.setInt(2, claim.getClaimLocation().getZ());
-                    ps.setString(3, claim.getClan().getName());
+                    ps.setString(3, claim.getClaimLocation().getWorld().getName());
+                    ps.setString(4, claim.getClan().getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -454,9 +457,10 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("DELETE FROM " + tablePrefix + "claims " +
-                            "WHERE x=? AND z=?");
+                            "WHERE x=? AND z=? AND world=?");
                     ps.setInt(1, claim.getClaimLocation().getX());
                     ps.setInt(2, claim.getClaimLocation().getZ());
+                    ps.setString(3, claim.getClaimLocation().getWorld().getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -476,10 +480,11 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "claims " +
                             "SET clan=? " +
-                            "WHERE x=? AND z=?");
+                            "WHERE x=? AND z=? AND world=?");
                     ps.setString(1, claim.getClan().getName());
                     ps.setInt(2, claim.getClaimLocation().getX());
                     ps.setInt(3, claim.getClaimLocation().getZ());
+                    ps.setString(4, claim.getClaimLocation().getWorld().getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {

@@ -2,6 +2,7 @@ package ru.lexmint;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
@@ -158,6 +159,7 @@ public class HSClans extends JavaPlugin {
         for (Player player : getServer().getOnlinePlayers()) {
             monitorListener.onPlayerLeave(player);
         }
+        HandlerList.unregisterAll(this);
         MySQL.instance.disconnect();
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been disabled!");
     }

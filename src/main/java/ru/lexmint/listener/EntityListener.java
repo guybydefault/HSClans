@@ -49,7 +49,7 @@ public class EntityListener implements Listener {
         Entity exploder = event.getEntity();
 
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
         /** Wilderness. **/
         if (claim == null) {
             return;
@@ -202,7 +202,7 @@ public class EntityListener implements Listener {
 
         Location loc = event.getBlock().getLocation();
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(loc.getChunk().getX(), loc.getChunk().getZ());
+        Claim claim = clanManager.getClaim(loc.getChunk().getX(), loc.getChunk().getZ(), loc.getWorld());
 
         /** Wilderness. */
         if (claim == null) {

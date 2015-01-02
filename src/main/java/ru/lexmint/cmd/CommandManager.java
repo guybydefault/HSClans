@@ -53,7 +53,7 @@ public class CommandManager implements CommandExecutor {
         show = new ShowCommand(false, ClanRole.OUTLAW, "hsclans.command.show", 0, "commands.show.usage");
         player = new PlayerCommand(false, ClanRole.OUTLAW, "hsclans.command.player", 0, "commands.player.usage");
         claim = new ClaimCommand(true, ClanRole.MODERATOR, "hsclans.command.claim", 0, "commands.claim.usage");
-        unclaim = new UnclaimCommand(true, ClanRole.MODERATOR, " hsclans.command.unclaim", 0, "commands.unclaim.usage");
+        unclaim = new UnclaimCommand(true, ClanRole.MODERATOR, "hsclans.command.unclaim", 0, "commands.unclaim.usage");
         kick = new KickCommand(true, ClanRole.MODERATOR, "hsclans.command.kick", 1, "commands.kick.usage");
         promote = new PromoteCommand(true, ClanRole.MODERATOR, "hsclans.command.promote", 1, "commands.promote.usage");
         demote = new DemoteCommand(true, ClanRole.MODERATOR, "hsclans.command.demote", 1, "commands.demote.usage");
@@ -93,7 +93,6 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("power", player);
 
         commandHashMap.put("claim", claim);
-
         commandHashMap.put("unclaim", unclaim);
 
         commandHashMap.put("kick", kick);
@@ -150,6 +149,7 @@ public class CommandManager implements CommandExecutor {
 
     /**
      * Performs claim command upon this sender.
+     *
      * @param sender Sender of the command.
      */
     public void performClaimCommand(CommandSender sender) {

@@ -33,7 +33,7 @@ public class HomeCommand extends BaseCommand {
         if (clan.hasHome()) {
             Player player = (Player) sender;
             Location homeLocation = clan.getHome();
-            Claim claimTo = clanManager.getClaim(homeLocation.getChunk().getX(), homeLocation.getChunk().getZ());
+            Claim claimTo = clanManager.getClaim(homeLocation.getChunk().getX(), homeLocation.getChunk().getZ(), homeLocation.getWorld());
             if (claimTo == null || !claimTo.canTeleportTo(cpLayer)) {
                 HSClans.instance.getMessenger().message("commands.home.not-owned", player);
                 return;

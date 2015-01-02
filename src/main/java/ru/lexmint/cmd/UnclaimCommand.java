@@ -45,14 +45,14 @@ public class UnclaimCommand extends BaseCommand {
             int chunkX = player.getLocation().getChunk().getX();
             int chunkZ = player.getLocation().getChunk().getZ();
 
-            Claim claim = clanManager.getClaim(chunkX, chunkZ);
+            Claim claim = clanManager.getClaim(chunkX, chunkZ, player.getLocation().getWorld());
 
             if (claim == null) {
                 HSClans.instance.getMessenger().message("commands.unclaim.wilderness", sender);
             } else if (claim.getClan() != cpLayer.getClan()) {
                 HSClans.instance.getMessenger().message("commands.unclaim.not-owned", sender, claim.getClan().getName());
             } else {
-                clanManager.removeClaim(chunkX, chunkZ);
+                clanManager.removeClaim(claim);
                 HSClans.instance.getMessenger().broadcastToClan("commands.unclaim.success", cpLayer.getClan(),
                         cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
             }

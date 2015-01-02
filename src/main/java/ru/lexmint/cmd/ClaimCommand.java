@@ -1,5 +1,6 @@
 package ru.lexmint.cmd;
 
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
@@ -26,12 +27,13 @@ public class ClaimCommand extends BaseCommand {
         Player player = (Player) sender;
         int chunkZ = player.getLocation().getChunk().getZ();
         int chunkX = player.getLocation().getChunk().getX();
+        World world = player.getLocation().getWorld();
 
         ClanManager clanManager = HSClans.instance.getClanManager();
 
         CPLayer cPlayer = clanManager.getPlayer(sender.getName(), true);
         Clan clan = cPlayer.getClan();
-        Claim claim = clanManager.getClaim(chunkX, chunkZ);
+        Claim claim = clanManager.getClaim(chunkX, chunkZ, world);
 
         if (claim != null) {
             Clan owner = claim.getClan();
@@ -41,22 +43,20 @@ public class ClaimCommand extends BaseCommand {
                 HSClans.instance.getMessenger().message("commands.claim.ally", sender, owner.getName());
             } else if (owner.canHoldClaim()) {
                 HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
+            } else if (clan.canClaim(1)) {
+                clanManager.changeClaimClan(claim, clan);
+                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
+                        clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
+                HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
+                        cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
             } else {
-                if (clan.canClaim(1)) {
-                    clanManager.changeClaimClan(claim, clan);
-                    HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
-                            clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
-                    HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
-                            cPlayer.getName(), owner.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
-                } else {
-                    HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()));
-                }
+                HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()));
             }
         } else {
             if (Integration.checkForRegionsInChunk(player.getLocation().getChunk())) {
                 HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
             } else if (clan.canClaim(1)) {
-                clanManager.addClaim(chunkX, chunkZ, clan);
+                clanManager.addClaim(chunkX, chunkZ, world, clan);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
                         String.valueOf(chunkZ));
             } else {

@@ -87,3 +87,5 @@ permissions:
     description:
   hsclans.command.autoclaim:
     description:
+  hsclans.command.reload:
+    description:

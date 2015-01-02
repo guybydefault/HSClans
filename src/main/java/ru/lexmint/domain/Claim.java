@@ -1,5 +1,8 @@
 package ru.lexmint.domain;
 
+import org.bukkit.World;
+import ru.lexmint.cmd.BypassCommand;
+
 /**
  * Class which describes claimed location of a clan (chunk).
  */
@@ -29,10 +32,11 @@ public class Claim {
      *
      * @param x    X coordinate
      * @param z    Z coordinate
+     * @param world World where this claim is
      * @param clan Clan which this claim is belonged to
      */
-    Claim(int x, int z, Clan clan) {
-        claimLocation = new ClaimLocation(x, z);
+    Claim(int x, int z, World world, Clan clan) {
+        claimLocation = new ClaimLocation(x, z, world);
         this.clan = clan;
     }
 
@@ -64,8 +68,8 @@ public class Claim {
      * this land or is in alliance with owner). Otherwise, false.
      */
     public boolean canTeleportTo(CPLayer cpLayer) {
-        return cpLayer.getClan() == getClan()
-                || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()));
+        return (cpLayer.getClan() == getClan()
+                || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) || BypassCommand.isBypassing(cpLayer.getName());
     }
 
     /**
@@ -74,16 +78,18 @@ public class Claim {
      * land or is in alliance with owner). Otherwise, false.
      */
     public boolean canTeleportFrom(CPLayer cpLayer) {
-        return cpLayer.getClan() == getClan() || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()));
+        return (cpLayer.getClan() == getClan() || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) || BypassCommand.isBypassing(cpLayer.getName());
     }
 
     class ClaimLocation {
         private int x;
         private int z;
+        private World world;
 
-        public ClaimLocation(int x, int z) {
+        public ClaimLocation(int x, int z, World world) {
             this.x = x;
             this.z = z;
+            this.world = world;
         }
 
         public int getX() {
@@ -92,6 +98,10 @@ public class Claim {
 
         public int getZ() {
             return z;
+        }
+
+        public World getWorld() {
+            return world;
         }
     }
 }

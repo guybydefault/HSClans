@@ -125,7 +125,7 @@ public class RegenCommand extends BaseCommand {
             while (currentChunkX <= chunkEndX) {
                 while (currentChunkZ <= chunkEndZ) {
                     chunks++;
-                    if (clanManager.getClaim(currentChunkX, currentChunkZ) == null
+                    if (clanManager.getClaim(currentChunkX, currentChunkZ, world) == null
                             && !Integration.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
                         if (world.regenerateChunk(currentChunkX, currentChunkZ)) {
                             chunksGen++;

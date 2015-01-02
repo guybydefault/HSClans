@@ -45,8 +45,8 @@ public class MonitorListener implements Listener {
 
         ClanManager clanManager = HSClans.instance.getClanManager();
 
-        Claim from = clanManager.getClaim(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ());
-        Claim to = clanManager.getClaim(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ());
+        Claim from = clanManager.getClaim(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld());
+        Claim to = clanManager.getClaim(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
 
         /**
          * Checks if owner of the land is the same or not. If the same - returns.

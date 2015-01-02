@@ -121,7 +121,7 @@ public class ShowCommand extends BaseCommand {
             messenger.message("commands.show.no-allies", sender);
         }
         messenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate(2)));
-        messenger.message("commands.show.size", sender, String.valueOf(clan.getMembersSize()), String.valueOf(clan.getMembersOnline().size()));
+        messenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
         messenger.message("commands.show.members", sender, members.toString());
     }
 }

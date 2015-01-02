@@ -93,8 +93,8 @@ public class BlockListener implements Listener {
 
     private boolean canPistonMoveBlock(Location from, Location to) {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claimFrom = clanManager.getClaim(from.getChunk().getX(), from.getChunk().getZ());
-        Claim claimTo = clanManager.getClaim(to.getChunk().getX(), to.getChunk().getZ());
+        Claim claimFrom = clanManager.getClaim(from.getChunk().getX(), from.getChunk().getZ(), from.getWorld());
+        Claim claimTo = clanManager.getClaim(to.getChunk().getX(), to.getChunk().getZ(), to.getWorld());
         return claimTo == null || claimFrom.getClan() == claimTo.getClan();
     }
 
@@ -104,7 +104,7 @@ public class BlockListener implements Listener {
         }
 
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
         if (claim == null) {
             return true;
         } else {

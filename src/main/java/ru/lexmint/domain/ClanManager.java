@@ -1,5 +1,6 @@
 package ru.lexmint.domain;
 
+import org.bukkit.World;
 import ru.lexmint.HSClans;
 
 import java.util.Collection;
@@ -257,12 +258,13 @@ public class ClanManager {
     /**
      * Adds claim to storage and cache.
      *
-     * @param x X coordinate
-     * @param z Z coordinate
+     * @param x     X coordinate
+     * @param z     Z coordinate
+     * @param world World where this claim is
      * @return Claim which has been created and storaged
      */
-    public Claim addClaim(int x, int z, Clan clan) {
-        Claim claim = new Claim(x, z, clan);
+    public Claim addClaim(int x, int z, World world, Clan clan) {
+        Claim claim = new Claim(x, z, world, clan);
 
         claims.add(claim);
         clan.addClaim(claim);
@@ -297,14 +299,15 @@ public class ClanManager {
     }
 
     /**
-     * @param x X coordinate
-     * @param z Z coordinate
+     * @param x     X coordinate
+     * @param z     Z coordinate
+     * @param world World where this claim is
      * @return Claim object. Returns null if it has not been found (means that nobody has claimed this land).
      */
     // TODO Rewrite using hashCode, equals
-    public Claim getClaim(int x, int z) {
+    public Claim getClaim(int x, int z, World world) {
         for (Claim claim : claims) {
-            if (claim.getClaimLocation().getX() == x && claim.getClaimLocation().getZ() == z) {
+            if (claim.getClaimLocation().getX() == x && claim.getClaimLocation().getZ() == z && claim.getClaimLocation().getWorld() == world) {
                 return claim;
             }
         }
@@ -314,11 +317,21 @@ public class ClanManager {
     /**
      * Removes claim from cache and storage.
      *
-     * @param x X coordinate
-     * @param z Z coordinate
+     * @param x     X coordinate
+     * @param z     Z coordinate
+     * @param world World where this claim is
      */
-    public void removeClaim(int x, int z) {
-        Claim claim = getClaim(x, z);
+    public void removeClaim(int x, int z, World world) {
+        Claim claim = getClaim(x, z, world);
+        removeClaim(claim);
+    }
+
+    /**
+     * Removes claim from cache and storage.
+     *
+     * @param claim Claim which needs to be removed.
+     */
+    public void removeClaim(Claim claim) {
         claim.getClan().removeClaim(claim);
         updateClan(claim.getClan());
         claims.remove(claim);

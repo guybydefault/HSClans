@@ -90,10 +90,10 @@ claims:
     usage:
       # Usage of these items will be blocked whenever clan is offline or online.
       always:
-      - BUCKET
       - LAVA_BUCKET
     # Usage of these items will be blocked when clan is offline.
       offline:
+      - BUCKET
       - FIREBALL
       - WATER_BUCKET
       - FLINT_AND_STEEL
@@ -104,6 +104,7 @@ claims:
       allie:
       - LAVA_BUCKET
       - WATER_BUCKET
+      - BUCKET
       - FIREBALL
     interact:
       # Interaction with these items will be blocked whenever clan is offline or online.

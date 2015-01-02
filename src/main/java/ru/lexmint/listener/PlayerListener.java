@@ -59,8 +59,15 @@ public class PlayerListener implements Listener {
             if (cpLayer.hasClan()) {
                 Clan clan = cpLayer.getClan();
                 if (clan.hasHome()) {
-                    HSClans.instance.getDebug().info("Respawn location for player " + event.getPlayer().getName() + " changed to clan's home");
-                    event.setRespawnLocation(clan.getHome());
+                    Location homeLoc = clan.getHome();
+                    Claim claim = clanManager.getClaim(homeLoc.getChunk().getX(), homeLoc.getChunk().getZ(), homeLoc.getWorld());
+                    if (claim != null && claim.canTeleportTo(cpLayer)) {
+                        HSClans.instance.getDebug().info("Respawn location for player " + event.getPlayer().getName() + " changed to clan's home");
+                        event.setRespawnLocation(clan.getHome());
+                    } else {
+                        HSClans.instance.getMessenger().message("messages.respawn.cancel", event.getPlayer());
+                    }
+
                 }
             }
         }
@@ -160,7 +167,7 @@ public class PlayerListener implements Listener {
 
         HSClans.instance.getDebug().info("Can " + player.getName() + " use block of type " + material + "?");
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
 
         /** Wilderness **/
         if (claim == null) {
@@ -214,7 +221,7 @@ public class PlayerListener implements Listener {
         HSClans.instance.getDebug().info("Can " + player.getName() + " use item of type " + material + "?");
 
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ());
+        Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
 
         /** Wilderness **/
         if (claim == null) {
