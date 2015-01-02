@@ -9,7 +9,7 @@ power:
   # Power regeneration per minute.
   per-minute: 0.2
   # Value of power which is set to player when he joins a server for the first time.
-  start-value: 0.0
+  start-value: 10.0
   max-value: 10.0
   min-value: -10.0
   loss-per-death: 5.0

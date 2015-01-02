@@ -16,6 +16,7 @@ import java.util.Set;
 public class Level {
     private static final Level[] PLAYER_LEVELS = loadLevels("player.levels");
     private static final Level[] CLAN_LEVELS = loadLevels("clan.levels");
+
     private double hsRate;
     private String name;
     private int level;
@@ -79,12 +80,12 @@ public class Level {
         return name;
     }
 
-    private void setLevel(int level) {
-        this.level = level;
-    }
-
     public int getLevel() {
         return level;
+    }
+
+    private void setLevel(int level) {
+        this.level = level;
     }
 
     public enum LevelType {

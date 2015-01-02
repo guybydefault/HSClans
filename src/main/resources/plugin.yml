@@ -32,10 +32,13 @@ permissions:
       hsclans.command.list: true
       hsclans.command.ally: true
       hsclans.command.allychat: true
+      hsclans.command.autoclaim: true
   hsclans.kit.admin:
     description: Все права для Администратора.
     children:
       hsclans.command.regen: true
+      hsclans.command.bypass: true
+      hsclans.command.disband: true
   hsclans.command.create:
     description:
   hsclans.command.description:
@@ -81,4 +84,6 @@ permissions:
   hsclans.command.disband:
     description:
   hsclans.command.bypass:
+    description:
+  hsclans.command.autoclaim:
     description:

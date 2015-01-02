@@ -42,7 +42,7 @@ public class BypassCommand extends BaseCommand {
 
     @Override
     public void perform(CommandSender sender, String[] subargs) {
-        if (bypassPlayers.contains(sender.getName())) {
+        if (isBypassing(sender.getName())) {
             bypassPlayers.remove(sender.getName());
             HSClans.instance.getMessenger().message("commands.bypass.disabled", sender);
         } else {

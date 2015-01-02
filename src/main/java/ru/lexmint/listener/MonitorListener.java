@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import ru.lexmint.HSClans;
+import ru.lexmint.cmd.AutoclaimCommand;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
 import ru.lexmint.domain.ClanManager;
@@ -22,6 +23,11 @@ import java.util.HashMap;
  */
 public class MonitorListener implements Listener {
 
+    /**
+     * Stores players' join times. It is used to count their play time when they leave from server.
+     */
+    private final HashMap<String, Long> playTimes = new HashMap<>();
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
         /**
@@ -31,7 +37,12 @@ public class MonitorListener implements Listener {
             return;
         }
 
+        /** Autoclaim mode **/
         Player player = event.getPlayer();
+        if (AutoclaimCommand.isAutoclaiming(player.getName())) {
+            HSClans.instance.getCommandManager().performClaimCommand(player);
+        }
+
         ClanManager clanManager = HSClans.instance.getClanManager();
 
         Claim from = clanManager.getClaim(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ());
@@ -51,11 +62,6 @@ public class MonitorListener implements Listener {
 
         }
     }
-
-    /**
-     * Stores players' join times. It is used to count their play time when they leave from server.
-     */
-    private final HashMap<String, Long> playTimes = new HashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {

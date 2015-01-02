@@ -16,29 +16,31 @@ public class CommandManager implements CommandExecutor {
 
     HashMap<String, BaseCommand> commandHashMap = new HashMap<>();
 
-    CreateCommand create;
-    HelpCommand help;
-    JoinCommand join;
-    InviteCommand invite;
-    LeaveCommand leave;
-    UninviteCommand uninvite;
-    ShowCommand show;
-    PlayerCommand player;
-    ClaimCommand claim;
-    UnclaimCommand unclaim;
-    KickCommand kick;
-    PromoteCommand promote;
-    DemoteCommand demote;
-    DescriptionCommand description;
-    HomeCommand home;
-    SethomeCommand setHome;
-    ClanChatCommand clanChat;
-    RegenCommand regen;
-    ListCommand list;
-    AllyCommand ally;
-    AllyChatCommand allyChat;
-    DisbandCommand disbandCommand;
-    BypassCommand bypassCommand;
+    private CreateCommand create;
+    private HelpCommand help;
+    private JoinCommand join;
+    private InviteCommand invite;
+    private LeaveCommand leave;
+    private UninviteCommand uninvite;
+    private ShowCommand show;
+    private PlayerCommand player;
+    private ClaimCommand claim;
+    private UnclaimCommand unclaim;
+    private KickCommand kick;
+    private PromoteCommand promote;
+    private DemoteCommand demote;
+    private DescriptionCommand description;
+    private HomeCommand home;
+    private SethomeCommand setHome;
+    private ClanChatCommand clanChat;
+    private RegenCommand regen;
+    private ListCommand list;
+    private AllyCommand ally;
+    private AllyChatCommand allyChat;
+    private DisbandCommand disband;
+    private BypassCommand bypass;
+    private AutoclaimCommand autoclaim;
+    private ReloadCommand reload;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -62,8 +64,10 @@ public class CommandManager implements CommandExecutor {
         list = new ListCommand(false, ClanRole.OUTLAW, "hsclans.command.list", 0, "commands.list.usage");
         ally = new AllyCommand(true, ClanRole.MODERATOR, "hsclans.command.ally", 1, "commands.ally.usage");
         allyChat = new AllyChatCommand(true, ClanRole.NEWBIE, "hsclans.command.allychat", 1, "commands.allychat.usage");
-        disbandCommand = new DisbandCommand(false, ClanRole.OUTLAW, "hsclans.command.disband", 1, "commands.disband.usage");
-        bypassCommand = new BypassCommand(true, ClanRole.OUTLAW, "hsclans.command.bypass", 0, "command.bypass.usage");
+        disband = new DisbandCommand(false, ClanRole.OUTLAW, "hsclans.command.disband", 1, "commands.disband.usage");
+        bypass = new BypassCommand(true, ClanRole.OUTLAW, "hsclans.command.bypass", 0, "commands.bypass.usage");
+        autoclaim = new AutoclaimCommand(true, ClanRole.OUTLAW, "hsclans.command.autoclaim", 0, "commands.autoclaim.usage");
+        reload = new ReloadCommand(false, ClanRole.OUTLAW, "hsclans.command.reload", 0, "commands.reload.usage");
 
         commandHashMap.put("create", create);
 
@@ -105,33 +109,50 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("ally", ally);
 
         commandHashMap.put("a", allyChat);
-        commandHashMap.put("disband", disbandCommand);
-        commandHashMap.put("bypass", bypassCommand);
+        commandHashMap.put("disband", disband);
+        commandHashMap.put("bypass", bypass);
+        commandHashMap.put("autoclaim", autoclaim);
+        commandHashMap.put("reload", reload);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length >= 1) {
             BaseCommand executor = commandHashMap.get(args[0].toLowerCase());
-            if (executor != null) {
-                if (executor.getSenderIsPlayer() && !(sender instanceof Player)) {
-                    HSClans.instance.getMessenger().message("messages.errors.only-player-command", sender);
-                } else if (!sender.hasPermission(executor.getPermission())) {
-                    HSClans.instance.getMessenger().message("messages.errors.no-permission", sender);
-                } else if (args.length - 1 < executor.getArguments()) {
-                    HSClans.instance.getMessenger().message(executor.getUsage(), sender);
-                } else if (executor.senderIsPlayer && HSClans.instance.getClanManager().getPlayer(sender.getName(), true).getClanRole().getLevel()
-                        < executor.getRequiredClanRole().getLevel()) {
-                    HSClans.instance.getMessenger().message("messages.errors.low-clan-role", sender, executor.getRequiredClanRole().getName());
-                } else {
-                    executor.perform(sender, args);
-                }
-            } else {
-                HSClans.instance.getMessenger().message("messages.errors.command-not-found", sender);
-            }
+            performCommand(sender, executor, false, args);
         } else {
             HSClans.instance.getMessenger().message("messages.errors.no-command", sender);
         }
         return true;
+    }
+
+    private void performCommand(CommandSender sender, BaseCommand executor, boolean ignoreArgs, String... args) {
+        if (executor != null) {
+            if (executor.getSenderIsPlayer() && !(sender instanceof Player)) {
+                HSClans.instance.getMessenger().message("messages.errors.only-player-command", sender);
+            } else if (!sender.hasPermission(executor.getPermission())) {
+                HSClans.instance.getMessenger().message("messages.errors.no-permission", sender);
+            } else if (!ignoreArgs && args.length - 1 < executor.getArguments()) {
+                HSClans.instance.getMessenger().message(executor.getUsage(), sender);
+            } else if (executor.senderIsPlayer && HSClans.instance.getClanManager().getPlayer(sender.getName(), true).getClanRole().getLevel()
+                    < executor.getRequiredClanRole().getLevel()
+                    /** Player in bypass mode should be able to promote/demote/kick anyone even if he is at low clan role */
+                    && !((executor instanceof PromoteCommand || executor instanceof DemoteCommand || executor instanceof KickCommand)
+                    && BypassCommand.isBypassing(sender.getName()))) {
+                HSClans.instance.getMessenger().message("messages.errors.low-clan-role", sender, executor.getRequiredClanRole().getName());
+            } else {
+                executor.perform(sender, args);
+            }
+        } else {
+            HSClans.instance.getMessenger().message("messages.errors.command-not-found", sender);
+        }
+    }
+
+    /**
+     * Performs claim command upon this sender.
+     * @param sender Sender of the command.
+     */
+    public void performClaimCommand(CommandSender sender) {
+        performCommand(sender, claim, true);
     }
 }

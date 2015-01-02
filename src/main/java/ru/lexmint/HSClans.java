@@ -53,6 +53,11 @@ public class HSClans extends JavaPlugin {
     private ClanManager clanManager;
 
     /**
+     * Class which manages with commands.
+     */
+    private CommandManager commandManager;
+
+    /**
      * Listener which logs info, updates player's power and something important stats.
      */
     private MonitorListener monitorListener;
@@ -114,7 +119,7 @@ public class HSClans extends JavaPlugin {
 
 
         /* Registering command handling to CommandManager */
-        CommandManager commandManager = new CommandManager();
+        commandManager = new CommandManager();
         for (String command : getDescription().getCommands().keySet()) {
             getCommand(command).setExecutor(commandManager);
         }
@@ -210,5 +215,11 @@ public class HSClans extends JavaPlugin {
     public Messenger getMessenger() {
         return messenger;
     }
+
+    /**
+     *
+     * @return Object which manages with commands.
+     */
+    public CommandManager getCommandManager() {return commandManager;}
 
 }
