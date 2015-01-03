@@ -51,6 +51,8 @@ player:
       rate: 2.1
 clan:
   home:
+    # Minimal height where player can set his home. He will be unable to set it lower than this.
+    min-height: 50.0
     respawn: true
   levels:
     1:

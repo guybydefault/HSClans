@@ -46,6 +46,11 @@ public class SethomeCommand extends BaseCommand {
             return;
         }
 
+        if (location.getY() < HSClans.instance.getSettings().getDouble("clan.home.min-height")) {
+            HSClans.instance.getMessenger().message("commands.sethome.low-height", sender);
+            return;
+        }
+
         Clan clan = cpLayer.getClan();
         clan.setHome(location);
         clanManager.updateClan(clan);
