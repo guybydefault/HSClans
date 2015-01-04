@@ -36,9 +36,7 @@ public class LeaveCommand extends BaseCommand {
             HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());
             HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
         } else {
-            clanManager.removeClan(clan);
             HSClans.instance.getMessenger().broadcastToAll("commands.leave.disband-broadcast", cpLayer.getName(), clan.getName());
-
         }
 
 

@@ -9,6 +9,7 @@ import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
 import ru.lexmint.listener.*;
+import ru.lexmint.utils.AutoLeaveTask;
 import ru.lexmint.utils.Config;
 import ru.lexmint.utils.Debug;
 import ru.lexmint.utils.Messenger;
@@ -151,6 +152,12 @@ public class HSClans extends JavaPlugin {
             monitorListener.onPlayerJoin(player);
         }
 
+        /* Auto-Leave from clan task for inactive players */
+        if (getSettings().getBoolean("player.auto-leave.enabled")) {
+            int autoLeavePeriod = (int) (getSettings().getDouble("player.auto-leave.period") * 60 * 60 * 20);
+            getServer().getScheduler().scheduleSyncRepeatingTask(this, new AutoLeaveTask(), 0, autoLeavePeriod);
+        }
+
         getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }
 
@@ -159,6 +166,7 @@ public class HSClans extends JavaPlugin {
         for (Player player : getServer().getOnlinePlayers()) {
             monitorListener.onPlayerLeave(player);
         }
+        getServer().getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);
         MySQL.instance.disconnect();
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been disabled!");
@@ -219,9 +227,10 @@ public class HSClans extends JavaPlugin {
     }
 
     /**
-     *
      * @return Object which manages with commands.
      */
-    public CommandManager getCommandManager() {return commandManager;}
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
 
 }

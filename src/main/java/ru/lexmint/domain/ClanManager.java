@@ -3,10 +3,7 @@ package ru.lexmint.domain;
 import org.bukkit.World;
 import ru.lexmint.HSClans;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class which controls all clans of the server, loads them, etc.
@@ -152,7 +149,8 @@ public class ClanManager {
     }
 
     /**
-     * Removes a player from clan if he is a clan member.
+     * Removes a player from clan if he is a clan member. If clan has no more leaders after
+     * player leave - it will be disbanded automatically.
      * <p/>
      *
      * @param cpLayer CPLayer object describing this player.
@@ -162,10 +160,13 @@ public class ClanManager {
 
         clan.removePlayer(cpLayer.getName());
         cpLayer.removeFromClan();
-        updateClan(clan);
-
         updatePlayer(cpLayer);
 
+        if (!clan.hasLeader()) {
+            removeClan(clan);
+        } else {
+            updateClan(clan);
+        }
     }
 
     /**
@@ -397,5 +398,17 @@ public class ClanManager {
      */
     public Collection<Clan> getClans() {
         return clansByName.values();
+    }
+
+    /**
+     * @return Players who belong to some clan.
+     */
+    public List<CPLayer> getClanPlayers() {
+        Collection<Clan> clans = getClans();
+        List<CPLayer> clanPlayers = new LinkedList<>();
+        for (Clan clan : clans) {
+            clanPlayers.addAll(clan.getCMembers());
+        }
+        return clanPlayers;
     }
 }

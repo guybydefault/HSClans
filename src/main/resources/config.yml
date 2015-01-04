@@ -18,6 +18,12 @@ power:
     # Minimal value of power which can be set if player has been offline for a couple of days.
     loss-limit: 0.0
 player:
+  auto-leave:
+    # This feature kick player from clan if he has been inactive for more than <hours_inactive>.
+    enabled: true
+    hours-inactive: 48.0
+    # Period between task is executed (in hours).
+    period: 12.0
   levels:
     1:
       name: '&7-'

@@ -14,9 +14,9 @@
     <orderEntry type="library" name="WorldBorder" level="project" />
     <orderEntry type="library" name="worldguard-5.9" level="project" />
     <orderEntry type="library" name="worldedit-5.6" level="project" />
-    <orderEntry type="library" name="bukkit-1.6.4-R2.0" level="project" />
     <orderEntry type="library" name="TagAPI" level="project" />
     <orderEntry type="library" name="EssentialsSpawn" level="project" />
+    <orderEntry type="library" name="spigot-api-1.6.4-R2.1-20131127.110235-3" level="project" />
   </component>
 </module>
 

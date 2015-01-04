@@ -356,17 +356,26 @@ public class CPLayer {
     }
 
     /**
-     * @return Time when player was seen on server for the last time.
+     * @return Amount of ime when player was seen on server for the last time
+     * (if he's online - returns time of his last quit from server).
      */
     public long getLastPlayed() {
         return lastPlayed;
     }
 
     /**
-     * @param lastPlayed Time when player was seen on server for the last time.
+     * @param lastPlayed Time when player was seen on server for the last time
      */
     public void setLastPlayed(long lastPlayed) {
         this.lastPlayed = lastPlayed;
+    }
+
+    /**
+     * @return Amount of time (in hours) when player was saw on server for the last time
+     * (if he's online - returns time of his last quit from server).
+     */
+    public double getHoursSinceLastPlayed() {
+        return (System.currentTimeMillis() - getLastPlayed()) / 1000d / 60 / 60;
     }
 
     /**

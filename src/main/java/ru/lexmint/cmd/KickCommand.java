@@ -31,7 +31,6 @@ public class KickCommand extends BaseCommand {
 
         CPLayer player = clanManager.getPlayer(playerName, false);
         CPLayer kicker = clanManager.getPlayer(sender.getName(), true);
-
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.kick.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(player, kicker)) {
