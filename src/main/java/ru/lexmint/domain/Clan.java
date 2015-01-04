@@ -194,6 +194,7 @@ public class Clan {
     public double getPowerMax() {
         ClanManager clanManager = HSClans.instance.getClanManager();
         double maxPower = 0;
+
         for (String memberName : members) {
             CPLayer member = clanManager.getPlayer(memberName, false);
             maxPower += member.getPowerMax();
