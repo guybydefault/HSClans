@@ -41,6 +41,7 @@ public class CommandManager implements CommandExecutor {
     private BypassCommand bypass;
     private AutoclaimCommand autoclaim;
     private ReloadCommand reload;
+    private MapCommand map;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -68,6 +69,7 @@ public class CommandManager implements CommandExecutor {
         bypass = new BypassCommand(true, ClanRole.OUTLAW, "hsclans.command.bypass", 0, "commands.bypass.usage");
         autoclaim = new AutoclaimCommand(true, ClanRole.OUTLAW, "hsclans.command.autoclaim", 0, "commands.autoclaim.usage");
         reload = new ReloadCommand(false, ClanRole.OUTLAW, "hsclans.command.reload", 0, "commands.reload.usage");
+        map = new MapCommand(true, ClanRole.OUTLAW, "hsclans.command.map", 0, "commands.map.usage");
 
         commandHashMap.put("create", create);
 
@@ -91,6 +93,7 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("player", player);
         commandHashMap.put("p", player);
         commandHashMap.put("power", player);
+        commandHashMap.put("who", player);
 
         commandHashMap.put("claim", claim);
         commandHashMap.put("unclaim", unclaim);
@@ -112,6 +115,7 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("bypass", bypass);
         commandHashMap.put("autoclaim", autoclaim);
         commandHashMap.put("reload", reload);
+        commandHashMap.put("map", map);
     }
 
     @Override

@@ -33,6 +33,7 @@ permissions:
       hsclans.command.ally: true
       hsclans.command.allychat: true
       hsclans.command.autoclaim: true
+      hsclans.command.map: true
   hsclans.kit.admin:
     description: Все права для Администратора.
     children:
@@ -88,4 +89,6 @@ permissions:
   hsclans.command.autoclaim:
     description:
   hsclans.command.reload:
+    description:
+  hsclans.command.map:
     description:
