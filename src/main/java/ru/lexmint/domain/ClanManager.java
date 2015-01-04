@@ -175,7 +175,10 @@ public class ClanManager {
      * @param clan Clan which will be removed.
      */
     public void removeClan(Clan clan) {
-        for (String member : clan.getMembers()) {
+        Iterator<String> it = clan.getMembers().iterator();
+        while (it.hasNext()) {
+            String member = it.next();
+            it.remove();
             CPLayer cpLayer = getPlayer(member, false);
             cpLayer.removeFromClan();
             updatePlayer(cpLayer);
@@ -198,12 +201,15 @@ public class ClanManager {
      */
     public int removeAllClaims(Clan clan) {
         int disclaims = 0;
-        for (Claim claim : clan.getClaims()) {
+        Iterator<Claim> it = clan.getClaims().iterator();
+        while (it.hasNext()) {
+            Claim claim = it.next();
+            /* Remove claim from clan */
+            it.remove();
             claims.remove(claim);
             storageManager.removeClaim(claim);
             disclaims++;
         }
-        clan.removeAllClaims();
         updateClan(clan);
         return disclaims;
     }

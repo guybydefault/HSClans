@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="spigot-api-1.6.4-R2.1-20131104.232453-1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Dropbox/Java Projects/Libraries/spigot-api-1.6.4-R2.1-20131104.232453-1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Dropbox/Java Projects/Libraries/spigot-api-1.6.4-R2.1-20131104.232453-1.jar!/" />
+      <root url="jar://$USER_HOME$/Dropbox/Java Projects/Libraries/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548.zip!/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548/src/main/java" />
+      <root url="jar://$USER_HOME$/Dropbox/Java Projects/Libraries/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548.zip!/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548/src/main/javadoc" />
+      <root url="jar://$USER_HOME$/Dropbox/Java Projects/Libraries/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548.zip!/Spigot-API-b9846e5de470c50930477f2f51c07592e1fb7548/src/test/java" />
+    </SOURCES>
+  </library>
+</component>
