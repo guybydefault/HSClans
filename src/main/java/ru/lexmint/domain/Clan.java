@@ -282,6 +282,13 @@ public class Clan {
     }
 
     /**
+     * Removes all claims of the clan.
+     */
+    void removeAllClaims() {
+        claims.clear();
+    }
+
+    /**
      * @return Set of clan's claims.
      */
     public Set<Claim> getClaims() {
