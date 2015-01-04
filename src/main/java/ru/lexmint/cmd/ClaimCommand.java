@@ -7,7 +7,14 @@ import ru.lexmint.HSClans;
 import ru.lexmint.domain.*;
 import ru.lexmint.utils.Integration;
 
+import java.util.List;
+
 public class ClaimCommand extends BaseCommand {
+    /*
+     * List of worlds where claiming is denied.
+     */
+    private final List<String> deniedWorlds = HSClans.instance.getSettings().getStringList("claims.denied-worlds");
+
     /**
      * Main constructor for creating a command.
      *
@@ -55,6 +62,8 @@ public class ClaimCommand extends BaseCommand {
         } else {
             if (Integration.checkForRegionsInChunk(player.getLocation().getChunk())) {
                 HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
+            } else if (deniedWorlds.contains(world.getName())) {
+                HSClans.instance.getMessenger().message("commands.claim.denied-world", sender);
             } else if (clan.canClaim(1)) {
                 clanManager.addClaim(chunkX, chunkZ, world, clan);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),

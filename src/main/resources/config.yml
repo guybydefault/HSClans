@@ -83,6 +83,8 @@ pvp:
   - WEAKNESS
   - WITHER
 claims:
+  denied-worlds:
+  - 'world_nether'
   deny:
     enderman-grief: true
     wither-grief: true
