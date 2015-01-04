@@ -62,7 +62,6 @@ public class PlayerListener implements Listener {
                     Location homeLoc = clan.getHome();
                     Claim claim = clanManager.getClaim(homeLoc.getChunk().getX(), homeLoc.getChunk().getZ(), homeLoc.getWorld());
                     if (claim != null && claim.canTeleportTo(cpLayer)) {
-                        HSClans.instance.getDebug().info("Respawn location for player " + event.getPlayer().getName() + " changed to clan's home");
                         event.setRespawnLocation(clan.getHome());
                     } else {
                         HSClans.instance.getMessenger().message("messages.respawn.cancel", event.getPlayer());
@@ -165,7 +164,6 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        HSClans.instance.getDebug().info("Can " + player.getName() + " use block of type " + material + "?");
         ClanManager clanManager = HSClans.instance.getClanManager();
         Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());
 
@@ -218,7 +216,6 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        HSClans.instance.getDebug().info("Can " + player.getName() + " use item of type " + material + "?");
 
         ClanManager clanManager = HSClans.instance.getClanManager();
         Claim claim = clanManager.getClaim(location.getChunk().getX(), location.getChunk().getZ(), location.getWorld());

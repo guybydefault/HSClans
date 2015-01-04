@@ -480,6 +480,15 @@ public class CPLayer {
     }
 
     /**
+     *
+     * @param cPlayer Player for which we need to check relation ship.
+     * @return True if cpLayer is enemy. Otherwise (if alliance or same clan) false.
+     */
+    public boolean isEnemy(CPLayer cPlayer) {
+        return !cPlayer.hasClan() || (cPlayer.getClan() != getClan() && !cPlayer.getClan().isAlliedWith(getClan()));
+    }
+
+    /**
      * @return Last time player's hoursPlayedWeek count was restarted. Used while checking hoursPlayedWeek for reset.
      */
     public long getLastPlayedWeekUpdate() {

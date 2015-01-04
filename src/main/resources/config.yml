@@ -83,6 +83,15 @@ pvp:
   - WEAKNESS
   - WITHER
 claims:
+  teleport-from:
+    # If true - player will be able to teleport from enemy claims when owners are offline.
+    offline: true
+    # If true - player will be able to teleport from enemy claims when owner are online.
+    online: false
+    # If there are enemies within this distance (value) (inclusive) teleport will be denied.
+    distance:
+      enabled: true
+      value: 32.0
   denied-worlds:
   - 'world_nether'
   deny:

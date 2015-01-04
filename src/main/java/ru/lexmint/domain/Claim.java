@@ -1,6 +1,7 @@
 package ru.lexmint.domain;
 
 import org.bukkit.World;
+import ru.lexmint.HSClans;
 import ru.lexmint.cmd.BypassCommand;
 
 /**
@@ -30,10 +31,10 @@ public class Claim {
     /**
      * Main constructor for creating a clam object.
      *
-     * @param x    X coordinate
-     * @param z    Z coordinate
+     * @param x     X coordinate
+     * @param z     Z coordinate
      * @param world World where this claim is
-     * @param clan Clan which this claim is belonged to
+     * @param clan  Clan which this claim is belonged to
      */
     Claim(int x, int z, World world, Clan clan) {
         claimLocation = new ClaimLocation(x, z, world);
@@ -78,7 +79,26 @@ public class Claim {
      * land or is in alliance with owner). Otherwise, false.
      */
     public boolean canTeleportFrom(CPLayer cpLayer) {
-        return (cpLayer.getClan() == getClan() || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) || BypassCommand.isBypassing(cpLayer.getName());
+        if (getClan().hasPlayersOnline()) {
+            if (HSClans.instance.getSettings().getBoolean("claims.teleport-from.online")) {
+                return true;
+            }
+        } else {
+            if (HSClans.instance.getSettings().getBoolean("claims.teleport-from.offline")) {
+                return true;
+            }
+        }
+
+        if (cpLayer.getClan() == getClan() || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) {
+            return true;
+        }
+
+        if (BypassCommand.isBypassing(cpLayer.getName())) {
+            return true;
+        }
+
+        return false;
+
     }
 
     class ClaimLocation {

@@ -26,14 +26,16 @@ public class AutoLeaveTask extends BukkitRunnable {
             }
             if (cpLayer.getHoursSinceLastPlayed() > hoursInactive) {
                 kickFromClan(clanManager, cpLayer);
+                HSClans.instance.getDebug().info("Player " + cpLayer.getName() + " kicked from clan " + cpLayer.getClan().getName() + " for inactivity (" + hoursInactive + "h)");
             }
         }
     }
 
     /**
      * Kicks player from clan for inactivity.
+     *
      * @param clanManager Clan manager
-     * @param cpLayer CPlayer which will be removed from clan.
+     * @param cpLayer     CPlayer which will be removed from clan.
      */
     private void kickFromClan(ClanManager clanManager, CPLayer cpLayer) {
         Clan clan = cpLayer.getClan();

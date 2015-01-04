@@ -81,6 +81,7 @@ public class ClanManager {
         storageManager.addClan(clan);
 
         addPlayerToClan(clan, leader, ClanRole.LEADER);
+        HSClans.instance.getDebug().info(leaderName + " has created new clan " + clanName);
     }
 
     /**
@@ -106,7 +107,6 @@ public class ClanManager {
      * @return Created CPlayer object.
      */
     public CPLayer createPlayer(String playerName) {
-        HSClans.instance.getDebug().info("Creating player " + playerName);
         CPLayer cpLayer = new CPLayer(playerName, HSClans.instance.getSettings().getDouble("power.start-value"));
         addCPlayerToCache(cpLayer);
         storageManager.addClanPlayer(cpLayer);
@@ -126,12 +126,10 @@ public class ClanManager {
     public CPLayer getPlayer(String playerName, boolean cache) {
         CPLayer cpLayer = clanPlayersByName.get(playerName.toLowerCase());
         if (cpLayer == null) {
-            HSClans.instance.getDebug().info("Importing player " + playerName);
             cpLayer = storageManager.importClanPlayer(playerName);
             if ((HSClans.instance.getSettings().getBoolean("performance.cache-on-request") || cache) && cpLayer != null) {
                 addCPlayerToCache(cpLayer);
             }
-            HSClans.instance.getDebug().info("Imported player " + cpLayer);
         }
         return cpLayer;
     }
@@ -164,6 +162,7 @@ public class ClanManager {
 
         if (!clan.hasLeader()) {
             removeClan(clan);
+            HSClans.instance.getDebug().info("Clan " + clan.getName() + " has been disbanded by leader " + cpLayer.getName());
         } else {
             updateClan(clan);
         }

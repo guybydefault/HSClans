@@ -32,7 +32,6 @@ public class EntityListener implements Listener {
     public EntityListener() {
         badPotionEffects = Utils.getPotionsSet("pvp.bad-potions");
         deniedExplosions = Utils.getExplosionsSet("claims.deny.explosion.always");
-        HSClans.instance.getDebug().info("Plugin loaded. DeniedExplosions: " + deniedExplosions.toString());
         deniedExplosionsOffline = Utils.getExplosionsSet("claims.deny.explosion.offline");
     }
 
@@ -57,7 +56,6 @@ public class EntityListener implements Listener {
 
         boolean clanOnline = claim.getClan().hasPlayersOnline();
         // TODO: instanceof => entity.getType
-        HSClans.instance.getDebug().info("EntityExplodeEvent. Exploder: " + exploder.getType() + " Clan is online: " + clanOnline);
         if (exploder instanceof Creeper && !canExplode(ExplosionType.CREEPER, clanOnline)) {
             event.setCancelled(true);
         } else if (exploder instanceof Fireball && !canExplode(ExplosionType.FIREBALL, clanOnline)) {
@@ -112,7 +110,6 @@ public class EntityListener implements Listener {
      */
     private boolean canExplode(ExplosionType explosionType, boolean clanOnline) {
         if (deniedExplosions.contains(explosionType)) {
-            HSClans.instance.getDebug().info("Can not explode! " + explosionType);
             return false;
         } else if (!clanOnline && deniedExplosionsOffline.contains(explosionType)) {
             return false;
