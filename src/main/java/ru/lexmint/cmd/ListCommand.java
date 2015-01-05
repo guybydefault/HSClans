@@ -82,10 +82,10 @@ public class ListCommand extends BaseCommand {
                     clan.getName(),
                     String.valueOf(clan.getMembersOnline().size()),
                     String.valueOf(clan.getMembersSize()),
-                    clan.getLevel().getName(),
                     String.valueOf(clan.getClaimsNumber()),
                     String.valueOf(clan.getPowerRounded()),
-                    String.valueOf(clan.getPowerMaxRounded()));
+                    String.valueOf(clan.getPowerMaxRounded()),
+                    clan.getLevel().getName());
 
         }
     }

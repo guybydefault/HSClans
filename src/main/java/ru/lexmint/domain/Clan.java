@@ -106,7 +106,6 @@ public class Clan {
     }
 
     /**
-     *
      * @return Set of CPlayer object of all members of this clan.
      */
     public Set<CPLayer> getCMembers() {
@@ -469,7 +468,7 @@ public class Clan {
     }
 
     public double getExpRate() {
-        return getDaysSinceCreated() / 14d;
+        return getDaysSinceCreated() / 7d;
     }
 
     public Level getLevel() {

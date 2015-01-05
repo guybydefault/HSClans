@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.*;
+import ru.lexmint.integration.Essentials;
 
 /**
  * Teleport to clan's home location.
@@ -38,6 +39,11 @@ public class HomeCommand extends BaseCommand {
                 HSClans.instance.getMessenger().message("commands.home.not-owned", player);
                 return;
             }
+            // TODO subargs[0] home! just home
+            if (Essentials.handleTeleport(subargs[0], (Player) sender, homeLocation)) {
+                return;
+            }
+
             if (player.teleport(homeLocation)) {
                 HSClans.instance.getMessenger().message("commands.home.success", sender);
             }

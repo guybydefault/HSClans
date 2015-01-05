@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
-import ru.lexmint.utils.Integration;
+import ru.lexmint.integration.WorldProtection;
 
 /**
  * Created by lexmint on 22.12.14.
@@ -33,7 +33,7 @@ public class RegenCommand extends BaseCommand {
 
     @Override
     public void perform(CommandSender sender, String[] subargs) {
-        WorldBorder worldBorder = Integration.getWorldBorder();
+        WorldBorder worldBorder = WorldProtection.getWorldBorder();
         if (worldBorder == null) {
             HSClans.instance.getMessenger().message("commands.regen.plugin-not-found", sender);
             return;
@@ -126,7 +126,7 @@ public class RegenCommand extends BaseCommand {
                 while (currentChunkZ <= chunkEndZ) {
                     chunks++;
                     if (clanManager.getClaim(currentChunkX, currentChunkZ, world) == null
-                            && !Integration.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
+                            && !WorldProtection.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
                         if (world.regenerateChunk(currentChunkX, currentChunkZ)) {
                             chunksGen++;
                         }

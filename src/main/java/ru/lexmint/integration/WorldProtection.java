@@ -1,4 +1,4 @@
-package ru.lexmint.utils;
+package ru.lexmint.integration;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -20,13 +20,13 @@ import java.util.Map;
 /**
  * Contains requests to API of other plugin (WorldBorder, WorldGuard).
  */
-public class Integration {
+public class WorldProtection {
     /**
      * @return WorldBorder plugin instance. May return null if plugin has not been loaded.
      */
     public static WorldBorder getWorldBorder() {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldBorder");
-        if (plugin == null || !(plugin instanceof WorldBorder)) {
+        if (plugin == null) {
             return null;
         }
         return (WorldBorder) plugin;
@@ -37,7 +37,7 @@ public class Integration {
      */
     public static WorldGuardPlugin getWorldGuard() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+        if (plugin == null) {
             return null;
         }
         return (WorldGuardPlugin) plugin;

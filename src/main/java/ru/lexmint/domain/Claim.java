@@ -2,7 +2,6 @@ package ru.lexmint.domain;
 
 import org.bukkit.World;
 import ru.lexmint.HSClans;
-import ru.lexmint.cmd.BypassCommand;
 
 /**
  * Class which describes claimed location of a clan (chunk).
@@ -69,8 +68,8 @@ public class Claim {
      * this land or is in alliance with owner). Otherwise, false.
      */
     public boolean canTeleportTo(CPLayer cpLayer) {
-        return (cpLayer.getClan() == getClan()
-                || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) || BypassCommand.isBypassing(cpLayer.getName());
+        return cpLayer.getClan() == getClan()
+                || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()));
     }
 
     /**
@@ -90,10 +89,6 @@ public class Claim {
         }
 
         if (cpLayer.getClan() == getClan() || (cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan()))) {
-            return true;
-        }
-
-        if (BypassCommand.isBypassing(cpLayer.getName())) {
             return true;
         }
 

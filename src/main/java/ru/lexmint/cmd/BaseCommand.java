@@ -88,6 +88,7 @@ public abstract class BaseCommand {
 
     /**
      * Returns minimal required clan role for executing this command by a player.
+     *
      * @return Minimal required ClanRole.
      */
     public final ClanRole getRequiredClanRole() {
@@ -96,6 +97,7 @@ public abstract class BaseCommand {
 
     /**
      * Returns minimal required number of arguments for executing this command.
+     *
      * @return Minimal required number of arguments.
      */
     public final int getArguments() {

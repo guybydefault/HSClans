@@ -145,6 +145,7 @@ claims:
       - BEACON
       - ANVIL
       - TRAPPED_CHEST
+      - LOCKED_CHEST
       - DROPPER
       - HOPPER
       # Interaction with these items will be blocked when clan is online.
@@ -161,6 +162,7 @@ claims:
       - SOIL
       - BEACON
       - TRAPPED_CHEST
+      - LOCKED_CHEST
       - DROPPER
       - HOPPER
       allie:
@@ -186,3 +188,6 @@ performance:
   cache-clan-players: true
   # Should player's cache be cleared when he leaves a server or not.
   cache-clear-on-leave: false
+integration:
+  # Integration with essentials homes (cooldown, delay, etc).
+  essentials: true

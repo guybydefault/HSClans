@@ -8,6 +8,7 @@ import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanRole;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -41,7 +42,11 @@ public class AllyChatCommand extends BaseCommand {
         for (Clan ally : clan.getAlliances()) {
             recipients.addAll(ally.getMembersOnline());
         }
-        AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, (Player) sender, msg, recipients);
+        /*
+        Copy of recipients Set is used in creation of new AsyncPlayerChatEvent because some chat plugins like Essentials, which
+        support local chat, modify Collection of the recipients so other players (out of the distance) can not receive clan/ally chat messages.
+         */
+        AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, (Player) sender, msg, new HashSet<>(recipients));
         HSClans.instance.getServer().getPluginManager().callEvent(playerChatEvent);
         if (!playerChatEvent.isCancelled()) {
             HSClans.instance.getMessenger().chatToAlly(msg, cpLayer, recipients);

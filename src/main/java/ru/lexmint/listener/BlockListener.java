@@ -95,7 +95,7 @@ public class BlockListener implements Listener {
         ClanManager clanManager = HSClans.instance.getClanManager();
         Claim claimFrom = clanManager.getClaim(from.getChunk().getX(), from.getChunk().getZ(), from.getWorld());
         Claim claimTo = clanManager.getClaim(to.getChunk().getX(), to.getChunk().getZ(), to.getWorld());
-        return claimTo == null || claimFrom.getClan() == claimTo.getClan();
+        return claimTo == null || (claimFrom != null && claimFrom.getClan() == claimTo.getClan());
     }
 
     private boolean canChangeBlock(Player player, Location location) {

@@ -8,6 +8,7 @@ import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
+import ru.lexmint.integration.Essentials;
 import ru.lexmint.listener.*;
 import ru.lexmint.utils.AutoLeaveTask;
 import ru.lexmint.utils.Config;
@@ -157,6 +158,9 @@ public class HSClans extends JavaPlugin {
             int autoLeavePeriod = (int) (getSettings().getDouble("player.auto-leave.period") * 60 * 60 * 20);
             getServer().getScheduler().scheduleSyncRepeatingTask(this, new AutoLeaveTask(), 0, autoLeavePeriod);
         }
+
+        /* Essentials integration */
+        Essentials.setup();
 
         getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }
