@@ -3,6 +3,7 @@ package ru.lexmint.cmd;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.*;
 import ru.lexmint.integration.Essentials;
@@ -44,7 +45,7 @@ public class HomeCommand extends BaseCommand {
                 return;
             }
 
-            if (player.teleport(homeLocation)) {
+            if (player.teleport(homeLocation, PlayerTeleportEvent.TeleportCause.COMMAND)) {
                 HSClans.instance.getMessenger().message("commands.home.success", sender);
             }
         } else {
