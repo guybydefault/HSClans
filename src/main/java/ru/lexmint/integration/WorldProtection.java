@@ -2,20 +2,15 @@ package ru.lexmint.integration;
 
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.wimbli.WorldBorder.WorldBorder;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Contains requests to API of other plugin (WorldBorder, WorldGuard).
@@ -76,6 +71,7 @@ public class WorldProtection {
             return false;
         }
 
+
         World world = chunk.getWorld();
         int minChunkX = chunk.getX() << 4;
         int minChunkZ = chunk.getZ() << 4;
@@ -87,20 +83,11 @@ public class WorldProtection {
         BlockVector minChunk = new BlockVector(minChunkX, 0, minChunkZ);
         BlockVector maxChunk = new BlockVector(maxChunkX, worldHeight, maxChunkZ);
         ProtectedCuboidRegion region = new ProtectedCuboidRegion("wgoverlapcheckhsc", minChunk, maxChunk);
-        Map<String, ProtectedRegion> allRegions = regionManager.getRegions();
-        List<ProtectedRegion> allRegionsList = new ArrayList<ProtectedRegion>(allRegions.values());
-        List<ProtectedRegion> overlaps;
-
-        boolean overlapping = false;
-        try {
-            overlaps = region.getIntersectingRegions(allRegionsList);
-            if (overlaps != null && !overlaps.isEmpty()) {
-                overlapping = true;
-            }
-        } catch (UnsupportedIntersectionException e) {
-            e.printStackTrace();
+        ApplicableRegionSet set = regionManager.getApplicableRegions(region);
+        if (set.size() >= 1) {
+            return true;
+        } else {
+            return false;
         }
-
-        return overlapping;
     }
 }
