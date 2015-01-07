@@ -53,6 +53,11 @@ public class Clan {
     private Location home;
 
     /**
+     * Boost which is added to clan's power (may be fine to clan when player with negative power leaves it).
+     */
+    private double powerBoost;
+
+    /**
      * Basic constructor for creating a clan.
      *
      * @param name Name of a clan.
@@ -172,7 +177,24 @@ public class Clan {
      */
     public double getPower() {
         updatePower();
-        return power;
+        return power + powerBoost;
+    }
+
+    /**
+     *
+     * @return Boost which is added to clan's power (may be even fine when player with negative power leaves clan).
+     */
+    public double getPowerBoost() {
+        return powerBoost;
+    }
+
+    /**
+     * Increases/decreases clan's power by given value.
+     *
+     * @param powerBoost Power which will be added to clan's power boost.
+     */
+    public void alterPowerBoost(double powerBoost) {
+        this.powerBoost -= powerBoost;
     }
 
     /**
@@ -474,4 +496,5 @@ public class Clan {
     public Level getLevel() {
         return Level.getLevelByRate(Level.LevelType.CLAN, getHSRate());
     }
+
 }

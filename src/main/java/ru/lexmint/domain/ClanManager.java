@@ -146,6 +146,7 @@ public class ClanManager {
         removePlayerFromClan(cpLayer);
     }
 
+
     /**
      * Removes a player from clan if he is a clan member. If clan has no more leaders after
      * player leave - it will be disbanded automatically.

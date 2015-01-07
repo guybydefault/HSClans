@@ -48,7 +48,6 @@ public class PlayerListener implements Listener {
         deniedInteractOffline = Utils.getMaterialsSet("claims.deny.interact.offline");
         deniedInteractNewbie = Utils.getMaterialsSet("claims.deny.interact.newbie");
         deniedInteractAllie = Utils.getMaterialsSet("claims.deny.interact.allie");
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

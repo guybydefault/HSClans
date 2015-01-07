@@ -1,5 +1,6 @@
 package ru.lexmint.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
@@ -28,17 +29,28 @@ public class LeaveCommand extends BaseCommand {
     @Override
     public void perform(CommandSender sender, String[] subargs) {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
-        Clan clan = cpLayer.getClan();
-        clanManager.removePlayerFromClan(cpLayer.getName());
+        final CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
+        final Clan clan = cpLayer.getClan();
+        clanManager.removePlayerFromClan(cpLayer);
 
         if (clan.hasLeader()) {
             HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());
             HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
+            /* Fine to clan's power */
+            if (cpLayer.getPower() < 0) {
+                double minutes = -cpLayer.getPower() / HSClans.instance.getSettings().getDouble("power.per-minute");
+                clan.alterPowerBoost(cpLayer.getPower());
+                Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
+                    @Override
+                    public void run() {
+                        clan.alterPowerBoost(-cpLayer.getPower());
+                    }
+                }, (int) (20 * 60 * minutes));
+                HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-fine", clan, String.valueOf((int) cpLayer.getPower()), String.valueOf(Math.round(minutes)), cpLayer.getName());
+            }
+
         } else {
             HSClans.instance.getMessenger().broadcastToAll("commands.leave.disband-broadcast", cpLayer.getName(), clan.getName());
         }
-
-
     }
 }

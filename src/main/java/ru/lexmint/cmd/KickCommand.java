@@ -1,5 +1,6 @@
 package ru.lexmint.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
@@ -30,7 +31,7 @@ public class KickCommand extends BaseCommand {
         ClanManager clanManager = HSClans.instance.getClanManager();
 
         CPLayer player = clanManager.getPlayer(playerName, false);
-        CPLayer kicker = clanManager.getPlayer(sender.getName(), true);
+        final CPLayer kicker = clanManager.getPlayer(sender.getName(), true);
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.kick.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(player, kicker)) {
@@ -38,6 +39,17 @@ public class KickCommand extends BaseCommand {
                 clanManager.removePlayerFromClan(player);
                 HSClans.instance.getMessenger().broadcastToClan("commands.kick.success", kicker.getClan(), kicker.getClanRole().getName(), kicker.getName(),
                         player.getClanRole().getName(), player.getName());
+                if (kicker.getPower() < 0) {
+                    double minutes = -kicker.getPower() / HSClans.instance.getSettings().getDouble("power.per-minute");
+                    kicker.getClan().alterPowerBoost(kicker.getPower());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
+                        @Override
+                        public void run() {
+                            kicker.getClan().alterPowerBoost(-kicker.getPower());
+                        }
+                    }, (int) (20 * 60 * minutes));
+                    HSClans.instance.getMessenger().broadcastToClan("commands.kick.clan-fine", kicker.getClan(), String.valueOf((int) kicker.getPower()), String.valueOf(Math.round(minutes)), kicker.getName());
+                }
             } else {
                 HSClans.instance.getMessenger().message("commands.kick.low-rank", sender, player.getName(), player.getClanRole().getName(),
                         kicker.getClanRole().getName());
