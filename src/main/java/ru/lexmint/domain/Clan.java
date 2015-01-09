@@ -194,7 +194,7 @@ public class Clan {
      * @param powerBoost Power which will be added to clan's power boost.
      */
     public void alterPowerBoost(double powerBoost) {
-        this.powerBoost -= powerBoost;
+        this.powerBoost += powerBoost;
     }
 
     /**
