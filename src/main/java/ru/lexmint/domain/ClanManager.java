@@ -158,6 +158,7 @@ public class ClanManager {
         Clan clan = cpLayer.getClan();
 
         clan.removePlayer(cpLayer.getName());
+
         cpLayer.removeFromClan();
         updatePlayer(cpLayer);
 

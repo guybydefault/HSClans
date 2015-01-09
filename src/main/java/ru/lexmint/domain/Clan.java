@@ -240,21 +240,21 @@ public class Clan {
      * @return Rounded to int value of clan's power.
      */
     public int getPowerRounded() {
-        return (int) Math.round(getPower());
+        return (int) getPower();
     }
 
     /**
      * @return Rounded to int maximal value of clan's power.
      */
     public int getPowerMaxRounded() {
-        return (int) Math.round(getPowerMax());
+        return (int) getPowerMax();
     }
 
     /**
      * @return Rounded to int minimal value of clan's power.
      */
     public int getPowerMinRounded() {
-        return (int) Math.round(getPowerMin());
+        return (int) getPowerMin();
     }
 
     /**

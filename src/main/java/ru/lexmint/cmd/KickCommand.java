@@ -1,11 +1,12 @@
 package ru.lexmint.cmd;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
+import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
+import ru.lexmint.listener.ExploitListener;
 
 /**
  * Command which is used for kicking players out of a clan by moderator or leader.
@@ -32,24 +33,19 @@ public class KickCommand extends BaseCommand {
 
         final CPLayer player = clanManager.getPlayer(playerName, false);
         final CPLayer kicker = clanManager.getPlayer(sender.getName(), true);
+        Clan clan = kicker.getClan();
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.kick.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(player, kicker)) {
             if (kicker.getClanRole().getLevel() > player.getClanRole().getLevel() || BypassCommand.isBypassing(sender.getName())) {
                 clanManager.removePlayerFromClan(player);
-                HSClans.instance.getMessenger().broadcastToClan("commands.kick.success", kicker.getClan(), kicker.getClanRole().getName(), kicker.getName(),
-                        player.getClanRole().getName(), player.getName());
-                final double power = player.getPower();
-                if (power < 0) {
-                    double minutes = -power / HSClans.instance.getSettings().getDouble("power.per-minute");
-                    kicker.getClan().alterPowerBoost(power);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
-                        @Override
-                        public void run() {
-                            kicker.getClan().alterPowerBoost(-power);
-                        }
-                    }, (int) (20 * 60 * minutes));
-                    HSClans.instance.getMessenger().broadcastToClan("commands.kick.clan-fine", kicker.getClan(), String.valueOf((int) power), String.valueOf(Math.round(minutes)), kicker.getName());
+                if (clan.hasLeader()) {
+                    HSClans.instance.getMessenger().broadcastToClan("commands.kick.success", clan, kicker.getClanRole().getName(), kicker.getName(),
+                            player.getClanRole().getName(), player.getName());
+                    /* Fine to clan's power if cPlayer has negative power. */
+                    ExploitListener.handlePowerLeaveExploit(clan, player);
+                } else {
+                    HSClans.instance.getMessenger().broadcastToAll("commands.kick.disband-broadcast", kicker.getName(), clan.getName());
                 }
             } else {
                 HSClans.instance.getMessenger().message("commands.kick.low-rank", sender, player.getName(), player.getClanRole().getName(),

@@ -3,10 +3,12 @@ package ru.lexmint.utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -62,6 +64,15 @@ public class Messenger {
      */
     public void chatToClan(String msg, CPLayer cpLayer, Set<Player> recipients) {
         msg = appendPrefix(msg, lang.getString("chat.clan-format").replaceFirst("%clan_role%", cpLayer.getClanRole().getName()).replaceFirst("%name%", cpLayer.getName()));
+        /*
+        Copy of recipients Set is used in creation of new AsyncPlayerChatEvent because some chat plugins like Essentials, which
+        support local chat, modify Collection of the recipients so other players (out of the distance) can not receive clan/ally chat messages.
+        */
+        AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, cpLayer.getPlayer(), msg, new HashSet<>(recipients));
+        HSClans.instance.getServer().getPluginManager().callEvent(playerChatEvent);
+        if (playerChatEvent.isCancelled()) {
+            return;
+        }
         msg = translateColorCodes(msg);
         sendToPlayers(msg, recipients);
     }
@@ -74,6 +85,15 @@ public class Messenger {
      */
     public void chatToAlly(String msg, CPLayer cpLayer, Set<Player> recipients) {
         msg = appendPrefix(msg, lang.getString("chat.ally-format").replaceFirst("%clan_role%", cpLayer.getClanRole().getName()).replaceFirst("%name%", cpLayer.getName()).replaceFirst("%clan_name%", cpLayer.getClan().getName()));
+         /*
+        Copy of recipients Set is used in creation of new AsyncPlayerChatEvent because some chat plugins like Essentials, which
+        support local chat, modify Collection of the recipients so other players (out of the distance) can not receive clan/ally chat messages.
+         */
+        AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, cpLayer.getPlayer(), msg, new HashSet<>(recipients));
+        HSClans.instance.getServer().getPluginManager().callEvent(playerChatEvent);
+        if (playerChatEvent.isCancelled()) {
+            return;
+        }
         msg = translateColorCodes(msg);
         sendToPlayers(msg, recipients);
     }
@@ -177,7 +197,8 @@ public class Messenger {
 
     /**
      * Formats message with given path doing replaces in it according to arguments.
-     * @param path Path of the message in language file.
+     *
+     * @param path     Path of the message in language file.
      * @param replaces things you want to replace in a message
      * @return Formatted message.
      */

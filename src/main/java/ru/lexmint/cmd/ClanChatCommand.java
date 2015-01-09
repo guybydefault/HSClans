@@ -2,13 +2,11 @@ package ru.lexmint.cmd;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanRole;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -39,14 +37,6 @@ public class ClanChatCommand extends BaseCommand {
         CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(sender.getName(), true);
         Clan clan = cpLayer.getClan();
         Set<Player> recipients = clan.getMembersOnline();
-        /*
-        Copy of recipients Set is used in creation of new AsyncPlayerChatEvent because some chat plugins like Essentials, which
-        support local chat, modify Collection of the recipients so other players (out of the distance) can not receive clan/ally chat messages.
-         */
-        AsyncPlayerChatEvent playerChatEvent = new AsyncPlayerChatEvent(false, (Player) sender, msg, new HashSet<>(recipients));
-        HSClans.instance.getServer().getPluginManager().callEvent(playerChatEvent);
-        if (!playerChatEvent.isCancelled()) {
-            HSClans.instance.getMessenger().chatToClan(msg, cpLayer, recipients);
-        }
+        HSClans.instance.getMessenger().chatToClan(msg, cpLayer, recipients);
     }
 }

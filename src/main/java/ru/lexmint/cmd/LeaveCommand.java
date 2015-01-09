@@ -1,12 +1,12 @@
 package ru.lexmint.cmd;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
+import ru.lexmint.listener.ExploitListener;
 
 /**
  * Leave a clan.
@@ -36,20 +36,8 @@ public class LeaveCommand extends BaseCommand {
         if (clan.hasLeader()) {
             HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());
             HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
-            /* Fine to clan's power */
-            final double power = cpLayer.getPower();
-            if (power < 0) {
-                double minutes = -power / HSClans.instance.getSettings().getDouble("power.per-minute");
-                clan.alterPowerBoost(power);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
-                    @Override
-                    public void run() {
-                        clan.alterPowerBoost(-power);
-                    }
-                }, (int) (20 * 60 * minutes));
-                HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-fine", clan, String.valueOf((int) cpLayer.getPower()), String.valueOf(Math.round(minutes)), cpLayer.getName());
-            }
-
+            /* Fine to clan's power if cPlayer has negative power. */
+            ExploitListener.handlePowerLeaveExploit(clan, cpLayer);
         } else {
             HSClans.instance.getMessenger().broadcastToAll("commands.leave.disband-broadcast", cpLayer.getName(), clan.getName());
         }
