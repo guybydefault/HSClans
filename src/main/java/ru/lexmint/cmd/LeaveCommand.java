@@ -37,13 +37,14 @@ public class LeaveCommand extends BaseCommand {
             HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());
             HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-broadcast", clan, cpLayer.getName(), clan.getName());
             /* Fine to clan's power */
-            if (cpLayer.getPower() < 0) {
-                double minutes = -cpLayer.getPower() / HSClans.instance.getSettings().getDouble("power.per-minute");
-                clan.alterPowerBoost(cpLayer.getPower());
+            final double power = cpLayer.getPower();
+            if (power < 0) {
+                double minutes = -power / HSClans.instance.getSettings().getDouble("power.per-minute");
+                clan.alterPowerBoost(power);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
                     @Override
                     public void run() {
-                        clan.alterPowerBoost(-cpLayer.getPower());
+                        clan.alterPowerBoost(-power);
                     }
                 }, (int) (20 * 60 * minutes));
                 HSClans.instance.getMessenger().broadcastToClan("commands.leave.clan-fine", clan, String.valueOf((int) cpLayer.getPower()), String.valueOf(Math.round(minutes)), cpLayer.getName());

@@ -30,7 +30,7 @@ public class KickCommand extends BaseCommand {
         String playerName = subargs[1];
         ClanManager clanManager = HSClans.instance.getClanManager();
 
-        CPLayer player = clanManager.getPlayer(playerName, false);
+        final CPLayer player = clanManager.getPlayer(playerName, false);
         final CPLayer kicker = clanManager.getPlayer(sender.getName(), true);
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.kick.player-not-found", sender, subargs[1]);
@@ -39,16 +39,17 @@ public class KickCommand extends BaseCommand {
                 clanManager.removePlayerFromClan(player);
                 HSClans.instance.getMessenger().broadcastToClan("commands.kick.success", kicker.getClan(), kicker.getClanRole().getName(), kicker.getName(),
                         player.getClanRole().getName(), player.getName());
-                if (kicker.getPower() < 0) {
-                    double minutes = -kicker.getPower() / HSClans.instance.getSettings().getDouble("power.per-minute");
-                    kicker.getClan().alterPowerBoost(kicker.getPower());
+                final double power = player.getPower();
+                if (power < 0) {
+                    double minutes = -power / HSClans.instance.getSettings().getDouble("power.per-minute");
+                    kicker.getClan().alterPowerBoost(power);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(HSClans.instance, new Runnable() {
                         @Override
                         public void run() {
-                            kicker.getClan().alterPowerBoost(-kicker.getPower());
+                            kicker.getClan().alterPowerBoost(-power);
                         }
                     }, (int) (20 * 60 * minutes));
-                    HSClans.instance.getMessenger().broadcastToClan("commands.kick.clan-fine", kicker.getClan(), String.valueOf((int) kicker.getPower()), String.valueOf(Math.round(minutes)), kicker.getName());
+                    HSClans.instance.getMessenger().broadcastToClan("commands.kick.clan-fine", kicker.getClan(), String.valueOf((int) power), String.valueOf(Math.round(minutes)), kicker.getName());
                 }
             } else {
                 HSClans.instance.getMessenger().message("commands.kick.low-rank", sender, player.getName(), player.getClanRole().getName(),
