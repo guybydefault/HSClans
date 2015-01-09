@@ -8,7 +8,9 @@ import ru.lexmint.cmd.CommandManager;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.StorageManager;
 import ru.lexmint.domain.io.MySQL;
+import ru.lexmint.integration.Border;
 import ru.lexmint.integration.Essentials;
+import ru.lexmint.integration.WorldGuard;
 import ru.lexmint.listener.*;
 import ru.lexmint.utils.AutoLeaveTask;
 import ru.lexmint.utils.Config;
@@ -161,6 +163,8 @@ public class HSClans extends JavaPlugin {
 
         /* Essentials integration */
         Essentials.setup();
+        WorldGuard.setup();
+        Border.setup();
 
         getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }

@@ -1,5 +1,6 @@
 package ru.lexmint.listener;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,11 +15,14 @@ import ru.lexmint.domain.ClanManager;
 public class ChatListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        String format = event.getFormat();
-        ClanManager clanManager = HSClans.instance.getClanManager();
-        CPLayer cpLayer = clanManager.getPlayer(event.getPlayer().getName(), true);
+        event.setFormat(event.getFormat().replace("[CLAN_INFO]", getClanInfo(event.getPlayer())));
+    }
 
+    public static String getClanInfo(Player player) {
         String clanInfo;
+        ClanManager clanManager = HSClans.instance.getClanManager();
+        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+
         if (cpLayer.hasClan()) {
             clanInfo = HSClans.instance.getLangConfig().getString("chat.clan-info.clan");
             clanInfo = clanInfo.replaceFirst("%clan%", cpLayer.getClan().getName());
@@ -29,8 +33,8 @@ public class ChatListener implements Listener {
         clanInfo = clanInfo.replaceFirst("%player_level%", cpLayer.getLevel().getName());
 
         clanInfo = HSClans.instance.getMessenger().translateColorCodes(clanInfo);
-
-        format = format.replace("{CLAN_INFO}", clanInfo);
-        event.setFormat(format);
+        return clanInfo;
     }
+
+
 }

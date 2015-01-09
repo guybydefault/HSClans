@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.*;
-import ru.lexmint.integration.WorldProtection;
+import ru.lexmint.integration.WorldGuard;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public class ClaimCommand extends BaseCommand {
                 HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()));
             }
         } else {
-            if (WorldProtection.checkForRegionsInChunk(player.getLocation().getChunk())) {
+            if (WorldGuard.checkForRegionsInChunk(player.getLocation().getChunk())) {
                 HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
             } else if (deniedWorlds.contains(world.getName())) {
                 HSClans.instance.getMessenger().message("commands.claim.denied-world", sender);
