@@ -8,8 +8,9 @@ power:
   regen-offline: false
   # Power regeneration per minute.
   per-minute: 0.2
-  # Value of power which is set to player when he joins a server for the first time.
-  start-value: 10.0
+  # Value of power which is set to player when he joins a server for the first time. It is better that it is zero because
+  # some clans can use multi-accounts to regenerate power in/after the battles.
+  start-value: 0.0
   max-value: 10.0
   min-value: -10.0
   loss-per-death: 5.0
@@ -65,11 +66,14 @@ clan:
       name: '-'
       rate: 0.0
     2:
-      name: 'Обыватель'
-      rate: 0.05
+      name: 'Опытные'
+      rate: 0.2
     3:
-      name: 'Топ Клан'
-      rate: 1.0
+      name: 'Ветераны'
+      rate: 0.5
+    3:
+      name: 'Топ клан'
+      rate: 0.8
 pvp:
   # These potions are treated as harmful. It means that they will be blocked when attacker damages allies/friends with these ones.
   bad-potions:
