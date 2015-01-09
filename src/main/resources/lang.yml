@@ -8,7 +8,7 @@ chat:
   ally-format: '&7[&5Альянс&7] (&2%clan_role%&7 из &2%clan_name%&r) %name%&7 >> &r'
   # Format of public (standart) chat. Replace of tag {CLAN_INFO}. Available tag: %player_level% %clan% %clan_role_tag%
   clan-info:
-    no-clan: '%clan_role_tag% &7[&e%player_level%&7]&r'
+    no-clan: '&7[&e%player_level%&7]&r'
     clan: '&7[&e%player_level%&7]&r %clan_role_tag%%clan%&r'
 clan:
   description: '&7описание не установлено'
@@ -30,8 +30,8 @@ clan:
       name: 'Лидер'
       tag: '***'
 land:
-  wilderness: '&2~ &2Свободные земли'
-  clan: '&2~ &7[%s%&7]&r %s% - %s%'
+  wilderness: '&e~ &2Свободные земли'
+  clan: '&e~ &7[%s%&7]&r %s% - %s%'
 commands:
   create:
     usage: '&e/f create <Название_Клана>&2 - Создать клан.'
