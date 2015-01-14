@@ -96,8 +96,11 @@ public class MonitorListener implements Listener {
 
     public void onPlayerJoin(Player player) {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        if (clanManager.getPlayer(player.getName(), true) == null) {
+        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+        if (cpLayer == null) {
             clanManager.createPlayer(player.getName());
+        } else {
+            cpLayer.losePowerFromBeingOffline();
         }
         playTimes.put(player.getName(), System.currentTimeMillis());
     }
