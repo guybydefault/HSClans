@@ -97,7 +97,7 @@ public class HSClans extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("===== ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + " =====");
+        getLogger().info("ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + "!");
         long startingTime = System.currentTimeMillis();
 
         instance = this;
@@ -166,7 +166,7 @@ public class HSClans extends JavaPlugin {
         WorldGuard.setup();
         Border.setup();
 
-        getLogger().info("+++++ " + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
+        getLogger().info("" + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }
 
     @Override
