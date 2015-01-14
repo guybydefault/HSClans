@@ -31,7 +31,7 @@ public class Chat {
 
             @Override
             public String modifyMessage(AsyncPlayerChatEvent asyncPlayerChatEvent, Player player, String msg) {
-                return msg.replace("[CLAN_INFO]", ChatListener.getClanInfo(player));
+                return msg.replace("[CLAN_INFO]", ChatListener.getClanInfo(asyncPlayerChatEvent.getPlayer()));
             }
         });
     }
