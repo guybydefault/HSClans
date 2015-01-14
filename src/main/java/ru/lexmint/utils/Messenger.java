@@ -74,6 +74,7 @@ public class Messenger {
             return;
         }
         msg = translateColorCodes(msg);
+        HSClans.instance.getDebug().info("[" + cpLayer.getClan().getName() + "]: " + msg);
         sendToPlayers(msg, recipients);
     }
 
@@ -95,6 +96,7 @@ public class Messenger {
             return;
         }
         msg = translateColorCodes(msg);
+        HSClans.instance.getDebug().info(msg);
         sendToPlayers(msg, recipients);
     }
 
