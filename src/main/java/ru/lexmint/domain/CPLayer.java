@@ -265,12 +265,17 @@ public class CPLayer {
      * Manages power loosing from being offline. Each day of player's offline may cost him power to decrease. Power loss per day
      * and power loss limit are configured in config.
      */
-    private void losePowerFromBeingOffline() {
+    public void losePowerFromBeingOffline() {
         double powerOfflineLossPerDay = HSClans.instance.getSettings().getDouble("power.offline.loss-per-day");
         double powerOfflineLossLimit = HSClans.instance.getSettings().getDouble("power.offline.loss-limit");
         if (powerOfflineLossPerDay > 0.0 && power > powerOfflineLossLimit) {
             long now = System.currentTimeMillis();
             long millisPassed = now - lastPowerUpdateTime;
+
+            if (millisPassed / 1000 / 60 / 60 < 24) {
+                return;
+            }
+
             lastPowerUpdateTime = now;
 
             double loss = millisPassed * powerOfflineLossPerDay / (24 * 60 * 60 * 1000);
@@ -280,7 +285,6 @@ public class CPLayer {
             } else {
                 alterPower(-loss);
             }
-
         }
     }
 
