@@ -34,7 +34,8 @@ public class PromoteCommand extends BaseCommand {
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.promote.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(promoter, player)) {
-            if (promoter.getClanRole().getLevel() > player.getClanRole().getLevel() || BypassCommand.isBypassing(sender.getName())) {
+            if (promoter.getClanRole() == ClanRole.LEADER || promoter.getClanRole().getLevel() > player.getClanRole().getLevel() + 1
+                    || BypassCommand.isBypassing(sender.getName())) {
                 if (clanManager.promoteClanPlayer(player)) {
                     HSClans.instance.getMessenger().broadcastToClan("commands.promote.success", promoter.getClan(), promoter.getClanRole().getName(),
                             promoter.getName(), player.getName(), player.getClanRole().getName());
