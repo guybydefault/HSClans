@@ -3,9 +3,9 @@ chat:
   message-prefix: ''
   clan-broadcast: '&7[&eКлан&7] '
   # Format of clan chat
-  clan-format: '&a&lⒸ&r &7(&2%clan_role%&7) &r%name%&7 >> &r'
+  clan-format: '&aⒸ&r &7(&2%clan_role%&7) &r%name%&7 >> &r'
   # Format of ally chat
-  ally-format: '&5&lⒶ&r &7(&2%clan_role%&7 из &2%clan_name%&r) %name%&7 >> &r'
+  ally-format: '&5Ⓐ&r &7(&2%clan_role%&7 из &2%clan_name%&r) %name%&7 >> &r'
   # Format of public (standart) chat. Replace of tag {CLAN_INFO}. Available tag: %player_level% %clan% %clan_role_tag%
   clan-info:
     no-clan: '&7[&e%player_level%&7]&r'
