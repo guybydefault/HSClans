@@ -34,6 +34,7 @@ permissions:
       hsclans.command.allychat: true
       hsclans.command.autoclaim: true
       hsclans.command.map: true
+      hsclans.command.playerlist: true
   hsclans.kit.admin:
     description: Все права для Администратора (кроме регена).
     children:
@@ -90,4 +91,6 @@ permissions:
   hsclans.command.reload:
     description:
   hsclans.command.map:
+    description:
+  hsclans.command.playerlist:
     description:
