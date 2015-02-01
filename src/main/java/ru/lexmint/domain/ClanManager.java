@@ -190,6 +190,11 @@ public class ClanManager {
             storageManager.removeClaim(claim);
         }
 
+        for (Clan ally : clan.getAlliances()) {
+            ally.removeAlliance(clan);
+            updateClan(ally);
+        }
+
         clansByName.remove(clan.getName().toLowerCase());
         storageManager.removeClan(clan);
     }
