@@ -259,7 +259,7 @@ commands:
     usage: '&e/f plist <Номер_Страницы>&6 - Список игроков в кланах.'
     wrong-page-number: '&4Имя страницы должно быть числом! &c/f plist <Номер_Страницы>&4.'
     header: '&6***** &eHSClans&6 - Список игроков (Страница &e%s%&6/&e%s%&6) *****'
-    player: '&e%s%&6 Онлайн: &a%s%&6ч/&e%s%&6ч Клан: &e%s%&6 в &7[&e%s%&7]&6 LVL: &e%s%&6 (HSR: &e%s%&6)'
+    player: '&7%s%&6 &e%s%&6 (&a%s%&6/&e%s%&6ч) LVL: &e%s%&6 (HSR: &e%s%&6)'
     status:
       online: '&a%s%'
       offline: '&4%s%'

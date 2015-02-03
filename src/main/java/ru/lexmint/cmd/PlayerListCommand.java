@@ -71,13 +71,12 @@ public class PlayerListCommand extends BaseCommand {
                 name = HSClans.instance.getMessenger().format("commands.player-list.status.offline", cpLayer.getName());
             }
             HSClans.instance.getMessenger().message("commands.player-list.player", sender,
+                    String.valueOf(i + 1),
                     name,
                     String.valueOf(cpLayer.getHoursPlayedWeekRounded()),
                     String.valueOf(cpLayer.getHoursPlayedTotalRounded()),
-                    cpLayer.getClanRole().getName(),
-                    cpLayer.getClan().getName(),
                     cpLayer.getLevel().getName(),
-                    String.valueOf(cpLayer.getHSRate(3)));
+                    String.valueOf(cpLayer.getHSRate(2)));
         }
     }
 }
