@@ -523,9 +523,12 @@ public class CPLayer {
     }
 
     public double getPvPRate() {
+        if (getKills() < 10) {
+            return 0;
+        }
         double ppk = 0;
         /** Points per kill */
-        if (kills != 0) {
+        if (getKills() != 0) {
             ppk = getPoints() / (double) getKills();
         }
         double pvpRate = ppk;
