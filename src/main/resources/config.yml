@@ -26,36 +26,36 @@ player:
     # Period between task is executed (in hours).
     period: 12.0
   levels:
-    1:
+    '1':
       name: '&7-'
       rate: 0.0
-    2:
-      name: 'Рекрут'
+    '2':
+      name: Рекрут
+      rate: 0.01
+    '3':
+      name: Боец
       rate: 0.05
-    3:
-      name: 'Боец'
+    '4':
+      name: Бывалый
+      rate: 0.08
+    '5':
+      name: Гладиатор
       rate: 0.1
-    4:
-      name: 'Бывалый'
+    '6':
+      name: Чемпион
       rate: 0.2
-    5:
-      name: 'Гладиатор'
+    '7':
+      name: Герой
+      rate: 0.3
+    '8':
+      name: Легенда
       rate: 0.5
-    6:
-      name: 'Чемпион'
-      rate: 0.9
-    7:
-      name: 'Герой'
-      rate: 1.2
-    8:
-      name: 'Легенда'
-      rate: 1.5
-    9:
-      name: 'Повелитель'
-      rate: 1.8
-    10:
-      name: 'Богоподобный'
-      rate: 2.1
+    '9':
+      name: Повелитель
+      rate: 0.7
+    '10':
+      name: Богоподобный
+      rate: 1.0
 clan:
   home:
     # Minimal height where player can set his home. He will be unable to set it lower than this.
@@ -66,20 +66,23 @@ clan:
       name: '-'
       rate: 0.0
     '2':
-      name: Начинающие
-      rate: 0.05
+      name: Новички
+      rate: 0.15
     '3':
-      name: Опытные
-      rate: 0.2
+      name: Ученики
+      rate: 0.3
     '4':
-      name: Ветераны
-      rate: 0.5
+      name: Знатоки
+      rate: 0.6
     '5':
-      name: Мастера
-      rate: 1.5
+      name: Профи
+      rate: 1.2
     '6':
-      name: Топ клан
+      name: Мастера
       rate: 2.4
+    '7':
+      name: Топ клан
+      rate: 4.8
 pvp:
   # These potions are treated as harmful. It means that they will be blocked when attacker damages allies/friends with these ones.
   bad-potions:
