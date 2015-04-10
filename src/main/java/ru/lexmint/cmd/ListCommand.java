@@ -58,20 +58,6 @@ public class ListCommand extends BaseCommand {
             }
         });
 
-        /** Sorting by number of members online **/
-        Collections.sort(clanList, new Comparator<Clan>() {
-            @Override
-            public int compare(Clan o1, Clan o2) {
-                if (o1.getMembersOnline().size() < o2.getMembersOnline().size()) {
-                    return 1;
-                } else if (o1.getMembersOnline().size() > o2.getMembersOnline().size()) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
         HSClans.instance.getMessenger().message("commands.list.header", sender, String.valueOf(pageNumber),
                 ((clanList.size() % clansPerPage) > 0)
                         ? String.valueOf(clanList.size() / clansPerPage + 1)
