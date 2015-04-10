@@ -28,7 +28,7 @@ public class WorldGuard {
         }
     }
 
-    public static WorldGuardPlugin getWorldBorder() {
+    public static WorldGuardPlugin getWorldGuard() {
         return worldGuard;
     }
 
