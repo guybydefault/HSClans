@@ -114,7 +114,11 @@ public class ShowCommand extends BaseCommand {
         messenger.message("commands.show.header", sender, clan.getName());
         messenger.message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
         messenger.message("commands.show.description", sender, description);
-        messenger.message("commands.show.power-and-land", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getMembersSize()));
+        if (clan.getPowerBoost() < 0) {
+            messenger.message("commands.show.power.fine", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getPowerBoostRounded()));
+        } else {
+            messenger.message("commands.show.power.normal", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
+        }
         if (!allies.toString().isEmpty()) {
             messenger.message("commands.show.alliances", sender, allies.toString());
         } else {
