@@ -5,6 +5,7 @@ import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
+import ru.lexmint.domain.ClanRole;
 
 import java.util.List;
 
@@ -39,11 +40,24 @@ public class AutoLeaveTask extends BukkitRunnable {
      */
     private void kickFromClan(ClanManager clanManager, CPLayer cpLayer) {
         Clan clan = cpLayer.getClan();
-        clanManager.removePlayerFromClan(cpLayer);
-        if (clan.hasLeader()) {
-            HSClans.instance.getMessenger().broadcastToClan("messages.auto-leave.clan-broadcast", clan, cpLayer.getName());
+        if (cpLayer.getClanRole() == ClanRole.LEADER) {
+            if (clan.getMembersSize() >= 2) {
+                CPLayer newLeader = null;
+                for (CPLayer member : clan.getCMembers()) {
+                    if (newLeader == null
+                            || (member.getClanRole() == ClanRole.MODERATOR && newLeader.getClanRole() != ClanRole.MODERATOR)
+                            || member.getHSRate() > newLeader.getHSRate()) {
+                        newLeader = member;
+                    }
+                }
+                clanManager.setCPlayerRole(newLeader, ClanRole.LEADER);
+                HSClans.instance.getMessenger().broadcastToClan("messages.auto-leave.clan-new-leader", clan, cpLayer.getName(), newLeader.getName());
+            } else {
+                HSClans.instance.getMessenger().broadcastToAll("messages.auto-leave.disband-broadcast", clan.getName(), cpLayer.getName());
+            }
         } else {
-            HSClans.instance.getMessenger().broadcastToAll("messages.auto-leave.disband-broadcast", clan.getName(), cpLayer.getName());
+            HSClans.instance.getMessenger().broadcastToClan("messages.auto-leave.clan-broadcast", clan, cpLayer.getName());
         }
+        clanManager.removePlayerFromClan(cpLayer);
     }
 }
