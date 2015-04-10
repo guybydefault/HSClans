@@ -37,8 +37,17 @@ public class StorageManager {
             connection = MySQL.instance.getConnection();
             prepareDB();
         } catch (SQLException e) {
+            HSClans.instance.getServer().shutdown();
             HSClans.instance.getDebug().error("SQL Error while initialization of ClanSQLManager. " + e);
         }
+    }
+
+    /**
+     * When server runs into an exception while reading/writing information to SQL Database, it shutdowns to
+     * prevent data loosing and problems.
+     */
+    private void onSQLException() {
+        HSClans.instance.getServer().shutdown();
     }
 
     /**
@@ -90,6 +99,7 @@ public class StorageManager {
                     ") CHARACTER SET utf8");
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while preparing MySQL DB. " + e);
+            onSQLException();
         }
 
     }
@@ -154,6 +164,7 @@ public class StorageManager {
             return clansByName;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while importing CLANS in ClanSQLManager. " + e);
+            onSQLException();
         } finally {
             closeStatement(ps);
         }
@@ -187,6 +198,7 @@ public class StorageManager {
             return claimSet;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while importing CLAIMS in ClanSQLManager. " + e);
+            onSQLException();
         } finally {
             closeStatement(ps);
         }
@@ -230,6 +242,7 @@ public class StorageManager {
             }
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while getting CLAN PLAYER in ClanSQLManager. " + e);
+            onSQLException();
         } finally {
             closeStatement(ps);
         }
@@ -273,6 +286,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAN PLAYER in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -316,6 +330,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while updating CLAN PLAYER in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -368,6 +383,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while updating CLAN in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -401,6 +417,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAN in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -421,6 +438,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -445,6 +463,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAIM in ClanSQLManager. " + e);
+                    onSQLException();
                 }
             }
         });
@@ -465,6 +484,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -489,6 +509,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -509,6 +530,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN PLAYER in ClanSQLManager. " + e);
+                    onSQLException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -529,6 +551,7 @@ public class StorageManager {
                 statement.close();
             } catch (SQLException e) {
                 HSClans.instance.getDebug().error("SQL Error. Statement can't be closed. " + e);
+                onSQLException();
             }
         }
     }
