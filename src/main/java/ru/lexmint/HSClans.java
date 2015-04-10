@@ -171,9 +171,13 @@ public class HSClans extends JavaPlugin {
 
     @Override
     public void onDisable() {
+         /* We need to make sure that all online players are unloaded from cache and the count down
+        of their play time on server (for statistics) has been finished.
+         */
         for (Player player : getServer().getOnlinePlayers()) {
             monitorListener.onPlayerLeave(player);
         }
+
         getServer().getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);
         MySQL.instance.disconnect();
