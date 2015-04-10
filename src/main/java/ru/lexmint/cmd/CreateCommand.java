@@ -6,6 +6,8 @@ import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 /**
@@ -37,10 +39,17 @@ public class CreateCommand extends BaseCommand {
         CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
         if (cpLayer.getClanRole() == ClanRole.OUTLAW) {
             if (!clanManager.containsClan(subargs[1])) {
-                clanManager.createClan(subargs[1], sender.getName());
-                HSClans.instance.getMessenger().broadcastToAll("commands.create.success", sender.getName(), subargs[1]);
+                if (cpLayer.getHoursPlayedTotal() >= HSClans.instance.getConfig().getDouble("player.create-hours")
+                        || BypassCommand.isBypassing(cpLayer.getName())) {
+                    clanManager.createClan(subargs[1], sender.getName());
+                    HSClans.instance.getMessenger().broadcastToAll("commands.create.success", sender.getName(), subargs[1]);
+                } else {
+                    double hoursRequired = new BigDecimal(HSClans.instance.getConfig().getDouble("player.create-hours") - cpLayer.getHoursPlayedTotal())
+                            .setScale(1, RoundingMode.HALF_UP).doubleValue();
+                    HSClans.instance.getMessenger().message("commands.create.not-enough-hours", sender, String.valueOf(hoursRequired));
+                }
             } else {
-               HSClans.instance.getMessenger().message("commands.create.clan-exists", sender);
+                HSClans.instance.getMessenger().message("commands.create.clan-exists", sender);
             }
         } else {
             HSClans.instance.getMessenger().message("commands.create.wrong-role", sender);
