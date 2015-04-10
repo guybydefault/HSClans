@@ -19,6 +19,8 @@ power:
     # Minimal value of power which can be set if player has been offline for a couple of days.
     loss-limit: 0.0
 player:
+  # Number of hours (play time) required to create a clan. Set to 0 if you want to allow creating of clan to anyone.
+  create-hours: 4.0
   auto-leave:
     # This feature kick player from clan if he has been inactive for more than <hours_inactive>.
     enabled: true
