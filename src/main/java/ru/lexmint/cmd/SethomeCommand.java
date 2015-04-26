@@ -10,7 +10,7 @@ import ru.lexmint.domain.*;
 /**
  * Sets home for the clan (teleport position).
  */
-public class SethomeCommand extends BaseCommand {
+public class SethomeCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

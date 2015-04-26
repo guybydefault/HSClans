@@ -11,7 +11,7 @@ import ru.lexmint.listener.ExploitListener;
 /**
  * Leave a clan.
  */
-public class LeaveCommand extends BaseCommand {
+public class LeaveCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

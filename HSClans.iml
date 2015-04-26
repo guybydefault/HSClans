@@ -20,6 +20,7 @@
     <orderEntry type="library" name="Essentials" level="project" />
     <orderEntry type="library" name="java" level="project" />
     <orderEntry type="library" name="spigot-api-1.5.2-R1.1-20130701.230657-38" level="project" />
+    <orderEntry type="library" name="HSCore" level="project" />
   </component>
 </module>
 

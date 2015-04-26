@@ -11,7 +11,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Deinvite player from clan.
  */
-public class UninviteCommand extends BaseCommand {
+public class UninviteCommand extends HSCCommand {
 
     /**
      * Main constructor for creating a command.

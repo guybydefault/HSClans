@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Shows list of clan players by rating.
  */
-public class PlayerListCommand extends BaseCommand {
+public class PlayerListCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

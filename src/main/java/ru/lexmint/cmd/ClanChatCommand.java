@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Send a message to clan's chat.
  */
-public class ClanChatCommand extends BaseCommand {
+public class ClanChatCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

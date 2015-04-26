@@ -32,33 +32,35 @@ player:
       name: '&7-'
       rate: 0.0
     '2':
-      name: Рекрут
+      name: '&7Рекрут'
       rate: 0.01
     '3':
-      name: Боец
+      name: '&7Боец'
       rate: 0.05
     '4':
-      name: Бывалый
+      name: '&2Бывалый'
       rate: 0.08
     '5':
-      name: Гладиатор
+      name: '&2Гладиатор'
       rate: 0.1
     '6':
-      name: Чемпион
+      name: '&aЧемпион'
       rate: 0.2
     '7':
-      name: Герой
+      name: '&aГерой'
       rate: 0.3
     '8':
-      name: Легенда
+      name: '&dЛегенда'
       rate: 0.5
     '9':
-      name: Повелитель
+      name: '&dПовелитель'
       rate: 0.7
     '10':
-      name: Богоподобный
+      name: '&eБогоподобный'
       rate: 1.0
 clan:
+  # Maximum number of clan allies.
+  max-allies: 3
   home:
     # Minimal height where player can set his home. He will be unable to set it lower than this.
     min-height: 50.0

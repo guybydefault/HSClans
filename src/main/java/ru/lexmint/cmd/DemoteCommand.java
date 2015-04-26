@@ -9,7 +9,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Command which deals with player demotion in a clan.
  */
-public class DemoteCommand extends BaseCommand {
+public class DemoteCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

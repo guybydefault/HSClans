@@ -4,6 +4,7 @@ main: ru.lexmint.HSClans
 authors: [Lexmint]
 website: http://lexmint.ru/
 softdepend: [WorldGuard, WorldBorder, Essentials, EssentialsChat]
+depend: [HSCore]
 commands:
   factions:
     description: Базовая команда плагина.

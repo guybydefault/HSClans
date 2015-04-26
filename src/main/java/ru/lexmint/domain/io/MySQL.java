@@ -82,6 +82,7 @@ public class MySQL {
                 try {
                     connection.close();
                 } catch (SQLException e) {
+
                     HSClans.instance.getDebug().error("Error while disconnecting from MySQL. " + e);
                 }
             }

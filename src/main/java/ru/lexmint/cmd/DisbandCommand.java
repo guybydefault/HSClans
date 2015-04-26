@@ -9,7 +9,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Command which is used by admins to disband clans.
  */
-public class DisbandCommand extends BaseCommand {
+public class DisbandCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

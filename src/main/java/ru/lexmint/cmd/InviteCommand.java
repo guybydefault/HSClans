@@ -11,7 +11,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * InviteCommand used for inviting players to the faction.
  */
-public class InviteCommand extends BaseCommand {
+public class InviteCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

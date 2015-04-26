@@ -15,7 +15,7 @@ import ru.lexmint.integration.WorldGuard;
 /**
  * Regenerates world except those chunks where are some clan claims or WorldGuard claims.
  */
-public class RegenCommand extends BaseCommand {
+public class RegenCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

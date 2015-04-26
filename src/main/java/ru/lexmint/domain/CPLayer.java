@@ -216,26 +216,29 @@ public class CPLayer {
     /**
      * Manages power updating depending on config values and behavior described in config.
      */
-    void updatePower() {
+    private void updatePower() {
         if (!isOnline()) {
-            losePowerFromBeingOffline();
             if (!HSClans.instance.getSettings().getBoolean("power.regen-offline")) {
+                losePowerFromBeingOffline();
                 return;
             }
         }
+
         long now = System.currentTimeMillis();
         long millisPassed = now - lastPowerUpdateTime;
         lastPowerUpdateTime = now;
 
         Player player = getPlayer();
         if (player != null && player.isDead()) {
-            // Dead players can't regen their power!
+            /* Dead players can't regen their power! */
+            HSClans.instance.getClanManager().updatePlayer(this);
             return;
         }
 
         int millisPerMinute = 60 * 1000;
         alterPower(millisPassed * HSClans.instance.getSettings().getDouble("power.per-minute") / millisPerMinute);
 
+        HSClans.instance.getClanManager().updatePlayer(this);
     }
 
     /**
@@ -268,23 +271,26 @@ public class CPLayer {
     public void losePowerFromBeingOffline() {
         double powerOfflineLossPerDay = HSClans.instance.getSettings().getDouble("power.offline.loss-per-day");
         double powerOfflineLossLimit = HSClans.instance.getSettings().getDouble("power.offline.loss-limit");
-        if (powerOfflineLossPerDay > 0.0 && power > powerOfflineLossLimit) {
+        if (powerOfflineLossPerDay > 0.0) {
             long now = System.currentTimeMillis();
             long millisPassed = now - lastPowerUpdateTime;
+            double hoursPassed = millisPassed / 1000d / 60 / 60;
 
-            if (millisPassed / 1000 / 60 / 60 < 24) {
+            if (hoursPassed < 24) {
                 return;
             }
 
             lastPowerUpdateTime = now;
 
-            double loss = millisPassed * powerOfflineLossPerDay / (24 * 60 * 60 * 1000);
+            double loss = (hoursPassed / 24) * powerOfflineLossPerDay;
 
             if (power - loss < powerOfflineLossLimit) {
                 power = powerOfflineLossLimit;
             } else {
                 alterPower(-loss);
             }
+
+            HSClans.instance.getClanManager().updatePlayer(this);
         }
     }
 
@@ -335,7 +341,7 @@ public class CPLayer {
      * @return Player object of a player. May be null if he is offline.
      */
     public Player getPlayer() {
-        return HSClans.instance.getServer().getPlayer(getName());
+        return HSClans.instance.getServer().getPlayerExact(getName());
     }
 
     /**
@@ -386,7 +392,7 @@ public class CPLayer {
      * @return Days which have passed since this player joined server for the first time.
      */
     public int getDaysSinceFirstPlayed() {
-        return (int) (System.currentTimeMillis() - firstPlayed) / 1000 / 60 / 60 / 24;
+        return (int) ((System.currentTimeMillis() - firstPlayed) / 1000 / 60 / 60 / 24);
     }
 
     /**
@@ -484,7 +490,6 @@ public class CPLayer {
     }
 
     /**
-     *
      * @param cPlayer Player for which we need to check relation ship.
      * @return True if cpLayer is enemy. Otherwise (if alliance or same clan) false.
      */
@@ -523,17 +528,13 @@ public class CPLayer {
     }
 
     public double getPvPRate() {
-        if (getKills() < 10) {
-            return 0;
-        }
-        double ppk = 0;
-        /** Points per kill */
-        if (getKills() != 0) {
-            ppk = getPoints() / (double) getKills();
-        }
-        double pvpRate = ppk;
-        if (getDeaths() != 0) {
-            pvpRate /= getDeaths();
+        double pvpRate = 0;
+        if (getKills() > 10) {
+            /** Points per kill. */
+            pvpRate = getPoints() / getKills();
+            if (getDeaths() != 0) {
+                pvpRate /= getDeaths();
+            }
         }
         return pvpRate;
     }
@@ -543,7 +544,7 @@ public class CPLayer {
     }
 
     public double getOnlineRate() {
-        return getHoursPlayedWeek() / 14;
+        return getHoursPlayedWeek() / 14d;
     }
 
     public double getOnlineRate(int roundScale) {
@@ -553,6 +554,7 @@ public class CPLayer {
     public double getExpRate() {
         return (getHoursPlayedTotal() - getHoursPlayedWeek()) / 100d;
     }
+
 
     public double getExpRate(int roundScale) {
         return new BigDecimal(getExpRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();

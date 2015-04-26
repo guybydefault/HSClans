@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Command for creating clan.
  */
-public class CreateCommand extends BaseCommand {
+public class CreateCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

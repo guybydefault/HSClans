@@ -10,7 +10,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Join the clan.
  */
-public class JoinCommand extends BaseCommand {
+public class JoinCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

@@ -11,7 +11,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Command which shows player information about other player.
  */
-public class PlayerCommand extends BaseCommand {
+public class PlayerCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

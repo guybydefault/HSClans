@@ -11,7 +11,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Command which unclaims chunk or many chunks of the clan.
  */
-public class UnclaimCommand extends BaseCommand {
+public class UnclaimCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

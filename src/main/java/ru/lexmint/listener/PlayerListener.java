@@ -34,16 +34,12 @@ public class PlayerListener implements Listener {
     private final Set<Material> deniedInteractNewbie;
     private final Set<Material> deniedInteractAllie;
 
-    // TODO: Interaction spam
-    // for handling people who repeatedly spam attempts to open a door (or similar) in another faction's territory
-//    private Map<String, InteractAttemptSpam> interactSpammers = new HashMap<String, InteractAttemptSpam>();
-
-
     public PlayerListener() {
         deniedUsage = Utils.getMaterialsSet("claims.deny.usage.always");
         deniedUsageOffline = Utils.getMaterialsSet("claims.deny.usage.offline");
         deniedUsageNewbie = Utils.getMaterialsSet("claims.deny.usage.newbie");
         deniedUsageAllie = Utils.getMaterialsSet("claims.deny.usage.allie");
+
         deniedInteract = Utils.getMaterialsSet("claims.deny.interact.always");
         deniedInteractOffline = Utils.getMaterialsSet("claims.deny.interact.offline");
         deniedInteractNewbie = Utils.getMaterialsSet("claims.deny.interact.newbie");
@@ -84,21 +80,6 @@ public class PlayerListener implements Listener {
 
         if (!canPlayerUseBlock(player, block.getLocation(), block.getType())) {
             event.setCancelled(true);
-            // TODO: Interaction spam
-//            if (Conf.handleExploitInteractionSpam) {
-//                String name = player.getName();
-//                InteractAttemptSpam attempt = interactSpammers.get(name);
-//                if (attempt == null) {
-//                    attempt = new InteractAttemptSpam();
-//                    interactSpammers.put(name, attempt);
-//                }
-//                int count = attempt.increment();
-//                if (count >= 10) {
-//                    FPlayer me = FPlayers.i.get(name);
-//                    me.msg("<b>Ouch, that is starting to hurt. You should give it a rest.");
-//                    player.damage(NumberConversions.floor((double) count / 10));
-//                }
-//            }
             return;
         }
 
@@ -131,24 +112,6 @@ public class PlayerListener implements Listener {
             return;
         }
     }
-
-    // TODO: Interaction spam
-//    private static class InteractAttemptSpam {
-//        private int attempts = 0;
-//        private long lastAttempt = System.currentTimeMillis();
-//
-//        // returns the current attempt count
-//        public int increment() {
-//            long Now = System.currentTimeMillis();
-//            if (Now > lastAttempt + 2000) {
-//                attempts = 1;
-//            } else {
-//                attempts++;
-//            }
-//            lastAttempt = Now;
-//            return attempts;
-//        }
-//    }
 
     /**
      * Checks whether player can interact with item of given material at given location.

@@ -11,7 +11,7 @@ import ru.lexmint.listener.ExploitListener;
 /**
  * Command which is used for kicking players out of a clan by moderator or leader.
  */
-public class KickCommand extends BaseCommand {
+public class KickCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

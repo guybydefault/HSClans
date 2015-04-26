@@ -7,7 +7,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Reloads plugin.
  */
-public class ReloadCommand extends BaseCommand {
+public class ReloadCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

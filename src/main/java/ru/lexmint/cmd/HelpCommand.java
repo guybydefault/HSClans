@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Shows help of the plugin.
  */
-public class HelpCommand extends BaseCommand {
+public class HelpCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

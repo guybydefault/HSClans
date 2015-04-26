@@ -9,7 +9,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Commands which deals with player promotion in a clan.
  */
-public class PromoteCommand extends BaseCommand {
+public class PromoteCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

@@ -181,7 +181,6 @@ public class Clan {
     }
 
     /**
-     *
      * @return Boost which is added to clan's power (may be even fine when player with negative power leaves clan).
      */
     public double getPowerBoost() {
@@ -241,6 +240,13 @@ public class Clan {
      */
     public int getPowerRounded() {
         return (int) getPower();
+    }
+
+    /**
+     * @return Rounded to int value of clan's power boost.
+     */
+    public int getPowerBoostRounded() {
+        return (int) getPowerBoost();
     }
 
     /**
@@ -348,20 +354,28 @@ public class Clan {
      * @return Number of days passed since a clan was created.
      */
     public int getDaysSinceCreated() {
-        return (int) (System.currentTimeMillis() - createdTime) / 1000 / 60 / 60 / 24;
+        return (int) ((System.currentTimeMillis() - getCreatedTime()) / 1000 / 60 / 60 / 24);
     }
 
     /**
      * @return True if a clan has a leader, otherwise false.
      */
     public boolean hasLeader() {
+        return getLeadersNumber() >= 1;
+    }
+
+    /**
+     * @return Number of leaders in clan.
+     */
+    public int getLeadersNumber() {
         ClanManager clanManager = HSClans.instance.getClanManager();
+        int leaders = 0;
         for (String member : members) {
             if (clanManager.getPlayer(member, false).getClanRole() == ClanRole.LEADER) {
-                return true;
+                leaders++;
             }
         }
-        return false;
+        return leaders;
     }
 
     /**
@@ -414,13 +428,12 @@ public class Clan {
 
     /**
      * @param clan Clan which will be allied with this.
-     * @return True if clan has been added to alliances. False, if clan has more than 3 or 3 allies already or
+     * @return True if clan has been added to alliances. False, if clan has more than allies limit already or
      * if set of this clan's alliances has already
      * contained given clan.
      */
     public boolean addAlliance(Clan clan) {
-        // TODO: Alliances size. I must think about it!
-        if (alliances.size() >= 3) {
+        if (alliances.size() >= HSClans.instance.getSettings().getInt("clan.max-allies")) {
             return false;
         }
         return alliances.add(clan);
@@ -490,7 +503,12 @@ public class Clan {
     }
 
     public double getExpRate() {
-        return getDaysSinceCreated() / 7d;
+        double expRate = getDaysSinceCreated() / 14d;
+        if (expRate > 1.0) {
+            return 1.0;
+        } else {
+            return expRate;
+        }
     }
 
     public Level getLevel() {

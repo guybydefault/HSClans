@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Command which is used by admins to bypass clans' claims.
  */
-public class BypassCommand extends BaseCommand {
+public class BypassCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *
@@ -33,6 +33,7 @@ public class BypassCommand extends BaseCommand {
     /**
      * Checks if player is in admin (bypass) mode and can bypass claim protection, promote/demote players
      * in clans anyway, etc.
+     *
      * @param playerName name of the player who will be checked
      * @return True if player is in bypass mode. Otherwise, false.
      */

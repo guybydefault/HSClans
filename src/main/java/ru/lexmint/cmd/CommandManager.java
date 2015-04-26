@@ -14,35 +14,35 @@ import java.util.HashMap;
  */
 public class CommandManager implements CommandExecutor {
 
-    HashMap<String, BaseCommand> commandHashMap = new HashMap<>();
+    HashMap<String, HSCCommand> commandHashMap = new HashMap<>();
 
-    private CreateCommand create;
-    private HelpCommand help;
-    private JoinCommand join;
-    private InviteCommand invite;
-    private LeaveCommand leave;
-    private UninviteCommand uninvite;
-    private ShowCommand show;
-    private PlayerCommand player;
-    private ClaimCommand claim;
-    private UnclaimCommand unclaim;
-    private KickCommand kick;
-    private PromoteCommand promote;
-    private DemoteCommand demote;
-    private DescriptionCommand description;
-    private HomeCommand home;
-    private SethomeCommand setHome;
-    private ClanChatCommand clanChat;
-    private RegenCommand regen;
-    private ListCommand list;
-    private AllyCommand ally;
-    private AllyChatCommand allyChat;
-    private DisbandCommand disband;
-    private BypassCommand bypass;
-    private AutoclaimCommand autoclaim;
-    private ReloadCommand reload;
-    private MapCommand map;
-    private PlayerListCommand playerList;
+    private HSCCommand create;
+    private HSCCommand help;
+    private HSCCommand join;
+    private HSCCommand invite;
+    private HSCCommand leave;
+    private HSCCommand uninvite;
+    private HSCCommand show;
+    private HSCCommand player;
+    private HSCCommand claim;
+    private HSCCommand unclaim;
+    private HSCCommand kick;
+    private HSCCommand promote;
+    private HSCCommand demote;
+    private HSCCommand description;
+    private HSCCommand home;
+    private HSCCommand setHome;
+    private HSCCommand clanChat;
+    private HSCCommand regen;
+    private HSCCommand list;
+    private HSCCommand ally;
+    private HSCCommand allyChat;
+    private HSCCommand disband;
+    private HSCCommand bypass;
+    private HSCCommand autoclaim;
+    private HSCCommand reload;
+    private HSCCommand map;
+    private HSCCommand playerList;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -124,7 +124,7 @@ public class CommandManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length >= 1) {
-            BaseCommand executor = commandHashMap.get(args[0].toLowerCase());
+            HSCCommand executor = commandHashMap.get(args[0].toLowerCase());
             performCommand(sender, executor, false, args);
         } else {
             HSClans.instance.getMessenger().message("messages.errors.no-command", sender);
@@ -132,7 +132,7 @@ public class CommandManager implements CommandExecutor {
         return true;
     }
 
-    private void performCommand(CommandSender sender, BaseCommand executor, boolean ignoreArgs, String... args) {
+    private void performCommand(CommandSender sender, HSCCommand executor, boolean ignoreArgs, String... args) {
         if (executor != null) {
             if (executor.getSenderIsPlayer() && !(sender instanceof Player)) {
                 HSClans.instance.getMessenger().message("messages.errors.only-player-command", sender);
@@ -140,7 +140,7 @@ public class CommandManager implements CommandExecutor {
                 HSClans.instance.getMessenger().message("messages.errors.no-permission", sender);
             } else if (!ignoreArgs && args.length - 1 < executor.getArguments()) {
                 HSClans.instance.getMessenger().message(executor.getUsage(), sender);
-            } else if (executor.senderIsPlayer && HSClans.instance.getClanManager().getPlayer(sender.getName(), true).getClanRole().getLevel()
+            } else if (executor.getSenderIsPlayer() && HSClans.instance.getClanManager().getPlayer(sender.getName(), true).getClanRole().getLevel()
                     < executor.getRequiredClanRole().getLevel()
                     /** Player in bypass mode should be able to promote/demote/kick anyone even if he is at low clan role */
                     && !((executor instanceof PromoteCommand || executor instanceof DemoteCommand || executor instanceof KickCommand)

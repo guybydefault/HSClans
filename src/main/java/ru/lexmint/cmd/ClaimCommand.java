@@ -9,7 +9,7 @@ import ru.lexmint.integration.WorldGuard;
 
 import java.util.List;
 
-public class ClaimCommand extends BaseCommand {
+public class ClaimCommand extends HSCCommand {
     /*
      * List of worlds where claiming is denied.
      */

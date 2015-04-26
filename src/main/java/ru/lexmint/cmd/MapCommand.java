@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Shows map with faction claims on it.
  */
-public class MapCommand extends BaseCommand {
+public class MapCommand extends HSCCommand {
     /**
      * Characters which are used as symbols of the map's legend.
      */
@@ -68,7 +68,7 @@ public class MapCommand extends BaseCommand {
 
         /* Size */
         int height = HSClans.instance.getSettings().getInt("map.height");
-        int width =  HSClans.instance.getSettings().getInt("map.width");
+        int width = HSClans.instance.getSettings().getInt("map.width");
         int halfHeight = height / 2;
         int halfWidth = width / 2;
 

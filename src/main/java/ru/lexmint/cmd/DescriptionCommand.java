@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Command which sets description to clan.
  */
-public class DescriptionCommand extends BaseCommand {
+public class DescriptionCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

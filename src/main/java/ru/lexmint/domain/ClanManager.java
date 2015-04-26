@@ -383,12 +383,20 @@ public class ClanManager {
     public boolean promoteClanPlayer(CPLayer cpLayer) {
         ClanRole newClanRole = ClanRole.getClanRoleByLevel(cpLayer.getClanRole().getLevel() + 1);
         if (newClanRole != null) {
-            cpLayer.setClanRole(newClanRole);
-            updatePlayer(cpLayer);
+            setCPlayerRole(cpLayer, newClanRole);
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * @param cPlayer  CPlayer object of player.
+     * @param clanRole New clan role of a player.
+     */
+    public void setCPlayerRole(CPLayer cPlayer, ClanRole clanRole) {
+        cPlayer.setClanRole(clanRole);
+        updatePlayer(cPlayer);
     }
 
     /**

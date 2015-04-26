@@ -7,14 +7,14 @@ import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.domain.ClanRole;
-import ru.lexmint.utils.Messenger;
+import ru.lexmint.utils.ClanMessenger;
 
 import java.util.*;
 
 /**
  * Command which delivers information about the clan/player to the sender.
  */
-public class ShowCommand extends BaseCommand {
+public class ShowCommand extends HSCCommand {
 
     /**
      * Main constructor for creating a command.
@@ -33,7 +33,7 @@ public class ShowCommand extends BaseCommand {
     @Override
     public void perform(CommandSender sender, String[] subargs) {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        Messenger messenger = HSClans.instance.getMessenger();
+        ClanMessenger clanMessenger = HSClans.instance.getMessenger();
 
         Clan clan;
         if (subargs.length >= 2) {
@@ -48,13 +48,13 @@ public class ShowCommand extends BaseCommand {
             if (sender instanceof Player) {
                 clan = clanManager.getPlayer(sender.getName(), true).getClan();
             } else {
-                messenger.message("commands.show.console-without-arg", sender);
+                clanMessenger.message("commands.show.console-without-arg", sender);
                 return;
             }
         }
 
         if (clan == null) {
-            messenger.message("commands.show.not-found", sender);
+            clanMessenger.message("commands.show.not-found", sender);
             return;
         }
 
@@ -67,7 +67,7 @@ public class ShowCommand extends BaseCommand {
         Iterator<Clan> allyIt = clan.getAlliances().iterator();
         while (allyIt.hasNext()) {
             Clan ally = allyIt.next();
-            allies.append(messenger.format("commands.show.allie", ally.getName()));
+            allies.append(clanMessenger.format("commands.show.allie", ally.getName()));
             if (allyIt.hasNext()) {
                 allies.append(", ");
             }
@@ -102,30 +102,30 @@ public class ShowCommand extends BaseCommand {
         while (memberIt.hasNext()) {
             CPLayer member = memberIt.next();
             if (member.isOnline()) {
-                members.append(messenger.format("commands.show.member.online", member.getClanRole().getName(), member.getName()));
+                members.append(clanMessenger.format("commands.show.member.online", member.getClanRole().getName(), member.getName()));
             } else {
-                members.append(messenger.format("commands.show.member.offline", member.getClanRole().getName(), member.getName()));
+                members.append(clanMessenger.format("commands.show.member.offline", member.getClanRole().getName(), member.getName()));
             }
             if (memberIt.hasNext()) {
                 members.append(", ");
             }
         }
 
-        messenger.message("commands.show.header", sender, clan.getName());
-        messenger.message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
-        messenger.message("commands.show.description", sender, description);
+        clanMessenger.message("commands.show.header", sender, clan.getName());
+        clanMessenger.message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
+        clanMessenger.message("commands.show.description", sender, description);
         if (clan.getPowerBoost() < 0) {
-            messenger.message("commands.show.power.fine", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getPowerBoostRounded()));
+            clanMessenger.message("commands.show.power.fine", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getPowerBoostRounded()));
         } else {
-            messenger.message("commands.show.power.normal", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
+            clanMessenger.message("commands.show.power.normal", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
         }
         if (!allies.toString().isEmpty()) {
-            messenger.message("commands.show.alliances", sender, allies.toString());
+            clanMessenger.message("commands.show.alliances", sender, allies.toString());
         } else {
-            messenger.message("commands.show.no-allies", sender);
+            clanMessenger.message("commands.show.no-allies", sender);
         }
-        messenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate(2)));
-        messenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
-        messenger.message("commands.show.members", sender, members.toString());
+        clanMessenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate(2)));
+        clanMessenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
+        clanMessenger.message("commands.show.members", sender, members.toString());
     }
 }

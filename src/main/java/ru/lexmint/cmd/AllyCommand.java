@@ -10,7 +10,7 @@ import ru.lexmint.domain.ClanRole;
 /**
  * Creates an alliance with
  */
-public class AllyCommand extends BaseCommand {
+public class AllyCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

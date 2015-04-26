@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Send a message to ally's chat.
  */
-public class AllyChatCommand extends BaseCommand {
+public class AllyChatCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *

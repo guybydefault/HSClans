@@ -129,6 +129,5 @@ public class MonitorListener implements Listener {
         CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(event.getPlayer().getName(), true);
         // Make sure player has not got any power while he was dead.
         cpLayer.getPower();
-        HSClans.instance.getClanManager().updatePlayer(cpLayer);
     }
 }

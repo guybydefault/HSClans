@@ -12,7 +12,7 @@ import java.util.Set;
  * try to claim the land which he stands on or moves to as he was constantly entering claim
  * command.
  */
-public class AutoclaimCommand extends BaseCommand {
+public class AutoclaimCommand extends HSCCommand {
     /**
      * Set which stores names of players who have enabled autoclaim mode.
      */

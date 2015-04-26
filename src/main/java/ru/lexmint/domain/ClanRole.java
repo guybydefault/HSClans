@@ -6,7 +6,6 @@ import ru.lexmint.HSClans;
  * Class describing role of a player in clan.
  */
 public enum ClanRole {
-
     /**
      * Outlaw - player without a clan
      */

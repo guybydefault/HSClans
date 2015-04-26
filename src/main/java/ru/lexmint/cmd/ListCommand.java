@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Shows list of all clans on server by their power, rating, etc.
  */
-public class ListCommand extends BaseCommand {
+public class ListCommand extends HSCCommand {
 
     /**
      * Main constructor for creating a command.

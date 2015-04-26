@@ -11,7 +11,7 @@ import ru.lexmint.integration.Essentials;
 /**
  * Teleport to clan's home location.
  */
-public class HomeCommand extends BaseCommand {
+public class HomeCommand extends HSCCommand {
     /**
      * Main constructor for creating a command.
      *
