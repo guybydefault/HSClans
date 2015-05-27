@@ -23,6 +23,10 @@ import java.util.HashMap;
  */
 public class MonitorListener implements Listener {
 
+    public HashMap<String, Long> getPlayTimes() {
+        return playTimes;
+    }
+
     /**
      * Stores players' join times. It is used to count their play time when they leave from server.
      */
@@ -75,15 +79,18 @@ public class MonitorListener implements Listener {
 
     public void onPlayerLeave(Player player) {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+        final CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         // Make sure player has actual value of his power before logout (update power), save it.
         cpLayer.getPower();
 
-        // Deals with player's play time on server.
-        if (playTimes.containsKey(player.getName())) {
-            double hoursPlayed = (System.currentTimeMillis() - playTimes.remove(player.getName())) / 1000d / 60 / 60;
-            cpLayer.alterHoursPlayed(hoursPlayed);
+        /** Last player in clan leaves the server. */
+        if (cpLayer.hasClan()) {
+            if (cpLayer.getClan().getMembersOnline().size() == 1) {
+                cpLayer.getClan().setLastPlayed(System.currentTimeMillis());
+            }
         }
+
+        updateHoursPlayed(cpLayer);
 
         cpLayer.setLastPlayed(System.currentTimeMillis());
 
@@ -94,6 +101,19 @@ public class MonitorListener implements Listener {
         }
     }
 
+    /**
+     * This method does not save new player's data to database! Make an update to storage by hand.
+     *
+     * @param cpLayer CPlayer object.
+     */
+    public void updateHoursPlayed(CPLayer cpLayer) {
+        // Deals with player's play time on server.
+        if (playTimes.containsKey(cpLayer.getName())) {
+            double hoursPlayed = (System.currentTimeMillis() - playTimes.remove(cpLayer.getName())) / 1000d / 60 / 60;
+            cpLayer.alterHoursPlayed(hoursPlayed);
+        }
+    }
+
     public void onPlayerJoin(Player player) {
         ClanManager clanManager = HSClans.instance.getClanManager();
         CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
@@ -101,6 +121,8 @@ public class MonitorListener implements Listener {
             clanManager.createPlayer(player.getName());
         } else {
             cpLayer.losePowerFromBeingOffline();
+            cpLayer.setLastPowerUpdateTime(System.currentTimeMillis());
+            clanManager.updatePlayer(cpLayer);
         }
         playTimes.put(player.getName(), System.currentTimeMillis());
     }

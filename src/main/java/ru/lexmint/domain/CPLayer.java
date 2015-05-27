@@ -61,11 +61,6 @@ public class CPLayer {
     private double hoursPlayedWeek;
 
     /**
-     * Last time player's hoursPlayedWeek count was restarted. Used while checking hoursPlayedWeek for reset.
-     */
-    private long lastPlayedWeekUpdate;
-
-    /**
      * Number of kills player has made.
      */
     private int kills;
@@ -92,7 +87,6 @@ public class CPLayer {
         this.power = power;
         lastPowerUpdateTime = System.currentTimeMillis();
         firstPlayed = System.currentTimeMillis();
-        lastPlayedWeekUpdate = System.currentTimeMillis();
         lastPlayed = System.currentTimeMillis();
         hoursPlayedTotal = 0;
         hoursPlayedWeek = 0;
@@ -116,7 +110,7 @@ public class CPLayer {
      * @param hoursPlayedTotal    Hours of time while player has been playing on server.
      * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, long lastPlayedWeekUpdate) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -129,7 +123,6 @@ public class CPLayer {
         this.firstPlayed = firstPlayed;
         this.hoursPlayedTotal = hoursPlayedTotal;
         this.hoursPlayedWeek = hoursPlayedWeek;
-        this.lastPlayedWeekUpdate = lastPlayedWeekUpdate;
         this.lastPlayed = lastPlayed;
     }
 
@@ -220,6 +213,7 @@ public class CPLayer {
         if (!isOnline()) {
             if (!HSClans.instance.getSettings().getBoolean("power.regen-offline")) {
                 losePowerFromBeingOffline();
+                HSClans.instance.getClanManager().updatePlayer(this);
                 return;
             }
         }
@@ -284,14 +278,18 @@ public class CPLayer {
 
             double loss = (hoursPassed / 24) * powerOfflineLossPerDay;
 
-            if (power - loss < powerOfflineLossLimit) {
+            if (power < powerOfflineLossLimit) {
+                return;
+            } else if (power - loss < powerOfflineLossLimit) {
                 power = powerOfflineLossLimit;
             } else {
                 alterPower(-loss);
             }
-
-            HSClans.instance.getClanManager().updatePlayer(this);
         }
+    }
+
+    public void setLastPowerUpdateTime(long time) {
+        lastPowerUpdateTime = time;
     }
 
     /**
@@ -402,11 +400,15 @@ public class CPLayer {
      */
     public void alterHoursPlayed(double alter) {
         hoursPlayedTotal += alter;
-        if ((System.currentTimeMillis() - lastPlayedWeekUpdate) / 1000 / 60 / 60 / 24 >= 7) {
-            hoursPlayedWeek = 0.0;
-            lastPlayedWeekUpdate = System.currentTimeMillis();
-        }
         hoursPlayedWeek += alter;
+    }
+
+
+    /**
+     * Sets hours played week to zero.
+     */
+    public void resetHoursPlayedWeek() {
+        hoursPlayedWeek = 0;
     }
 
     /**
@@ -498,13 +500,6 @@ public class CPLayer {
     }
 
     /**
-     * @return Last time player's hoursPlayedWeek count was restarted. Used while checking hoursPlayedWeek for reset.
-     */
-    public long getLastPlayedWeekUpdate() {
-        return lastPlayedWeekUpdate;
-    }
-
-    /**
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
      *
      * @return High Sky rate.
@@ -512,6 +507,7 @@ public class CPLayer {
     public double getHSRate() {
         return getPvPRate() * getOnlineRate() + getExpRate();
     }
+
 
     /**
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
