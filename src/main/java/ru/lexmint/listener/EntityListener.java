@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import ru.lexmint.HSClans;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
+import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.utils.Utils;
 
@@ -54,17 +55,17 @@ public class EntityListener implements Listener {
             return;
         }
 
-        boolean clanOnline = claim.getClan().hasPlayersOnline();
+        Clan clan = claim.getClan();
         // TODO: instanceof => entity.getType
-        if (exploder instanceof Creeper && !canExplode(ExplosionType.CREEPER, clanOnline)) {
+        if (exploder instanceof Creeper && !canExplode(ExplosionType.CREEPER, clan)) {
             event.setCancelled(true);
-        } else if (exploder instanceof Fireball && !canExplode(ExplosionType.FIREBALL, clanOnline)) {
+        } else if (exploder instanceof Fireball && !canExplode(ExplosionType.FIREBALL, clan)) {
             event.setCancelled(true);
-        } else if ((exploder instanceof WitherSkull || exploder instanceof Wither) && !canExplode(ExplosionType.WITHER, clanOnline)) {
+        } else if ((exploder instanceof WitherSkull || exploder instanceof Wither) && !canExplode(ExplosionType.WITHER, clan)) {
             event.setCancelled(true);
-        } else if (exploder instanceof TNTPrimed && !canExplode(ExplosionType.TNT, clanOnline)) {
+        } else if (exploder instanceof TNTPrimed && !canExplode(ExplosionType.TNT, clan)) {
             event.setCancelled(true);
-        } else if (exploder instanceof ExplosiveMinecart && !canExplode(ExplosionType.MINECART, clanOnline)) {
+        } else if (exploder instanceof ExplosiveMinecart && !canExplode(ExplosionType.MINECART, clan)) {
             event.setCancelled(true);
         } else if (exploder instanceof TNTPrimed || exploder instanceof ExplosiveMinecart) {
             handleTNTExploit(location);
@@ -105,13 +106,24 @@ public class EntityListener implements Listener {
      * Check whether explosion of given explosion type can explode.
      *
      * @param explosionType Type of an explosion.
-     * @param clanOnline    Even if one clan member is online or more, it should be true. Otherwise, false.
+     * @param clan          Clan, which claim belongs to.
      * @return True if explosion can happen. Otherwise, false.
      */
-    private boolean canExplode(ExplosionType explosionType, boolean clanOnline) {
+    private boolean canExplode(ExplosionType explosionType, Clan clan) {
         if (deniedExplosions.contains(explosionType)) {
             return false;
-        } else if (!clanOnline && deniedExplosionsOffline.contains(explosionType)) {
+        } else if (!clan.hasPlayersOnline() && deniedExplosionsOffline.contains(explosionType)) {
+
+            if (HSClans.instance.getSettings().getBoolean("claims.explosion-exploit.handle")) {
+                Long lastClanPlayed = clan.getLastPlayed();
+                if (lastClanPlayed != null) {
+                    long time = (System.currentTimeMillis() - lastClanPlayed) / 1000;
+                    if (time <= HSClans.instance.getSettings().getInt("claims.explosion-exploit.time")) {
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
         return true;

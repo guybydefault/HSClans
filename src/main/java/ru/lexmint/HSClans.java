@@ -97,7 +97,6 @@ public class HSClans extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("ENABLING " + getDescription().getName() + " " + getDescription().getVersion() + "!");
         long startingTime = System.currentTimeMillis();
 
         instance = this;
@@ -234,6 +233,14 @@ public class HSClans extends JavaPlugin {
      */
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public MonitorListener getMonitorListener() {
+        return monitorListener;
+    }
+
+    public EntityListener getEntityListener() {
+        return entityListener;
     }
 
 }

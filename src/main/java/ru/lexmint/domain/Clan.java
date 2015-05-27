@@ -19,34 +19,42 @@ public class Clan {
      * Set of all clan's members.
      */
     private final Set<String> members = new HashSet<>();
+
     /**
      * Set of all players invited to the clan.
      */
     private final Set<String> invites = new HashSet<>();
+
     /**
      * Claims of a clan.
      */
     private final Set<Claim> claims = new HashSet<>();
+
     /**
      * Time when a clan was created.
      */
     private final long createdTime;
+
     /**
      * Set which contains clan allies (clans which are requested to be allies with this clan).
      */
     private final Set<Clan> alliances;
+
     /**
      * Name of a clan, tag.
      */
     private String name;
+
     /**
      * Description of a clan.
      */
     private String description;
+
     /**
      * Power of a clan, has an influence on territory claim.
      */
     private double power;
+
     /**
      * Home location of a clan.
      */
@@ -56,6 +64,11 @@ public class Clan {
      * Boost which is added to clan's power (may be fine to clan when player with negative power leaves it).
      */
     private double powerBoost;
+
+    /**
+     * Time when the last of clan members left the server. May be null.
+     */
+    private Long lastPlayed;
 
     /**
      * Basic constructor for creating a clan.
@@ -513,6 +526,17 @@ public class Clan {
 
     public Level getLevel() {
         return Level.getLevelByRate(Level.LevelType.CLAN, getHSRate());
+    }
+
+    /**
+     * @return Time when the last of clan members left the server. May be null if not have been initialized.
+     */
+    public Long getLastPlayed() {
+        return lastPlayed;
+    }
+
+    public void setLastPlayed(Long lastPlayed) {
+        this.lastPlayed = lastPlayed;
     }
 
 }

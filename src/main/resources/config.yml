@@ -22,7 +22,7 @@ player:
   # Number of hours (play time) required to create a clan. Set to 0 if you want to allow creating of clan to anyone.
   create-hours: 4.0
   auto-leave:
-    # This feature kick player from clan if he has been inactive for more than <hours_inactive>.
+    # This feature kicks player from clan if he has been inactive for more than <hours_inactive>.
     enabled: true
     hours-inactive: 48.0
     # Period between task is executed (in hours).
@@ -64,6 +64,7 @@ clan:
   home:
     # Minimal height where player can set his home. He will be unable to set it lower than this.
     min-height: 50.0
+    # Will clan players respawn at clan's home after they have died?
     respawn: true
   levels:
     '1':
@@ -100,15 +101,23 @@ pvp:
   - WEAKNESS
   - WITHER
 claims:
+  # Describes situation when clain leaves the game and players who have been attacking their castle, can't do
+  # anything because of offline explosion protection.
+  explosion-exploit:
+    handle: true
+    # Time in seconds. During this time after last clan player has left the game, the clan is considered to
+    # be online to allow others attack clan with primed TNT and etc.
+    time: 600
   teleport-from:
-    # If true - player will be able to teleport from enemy claims when owners are offline.
+    # If true - player will be able to teleport from enemy claims when owners is offline.
     offline: true
-    # If true - player will be able to teleport from enemy claims when owner are online.
+    # If true - player will be able to teleport from enemy claims when owner is online.
     online: true
     # If there are enemies within this distance (value) (inclusive) teleport will be denied.
     distance:
       enabled: true
       value: 32.0
+  # Worlds where claimings is banned.
   denied-worlds:
   - 'world_nether'
   deny:

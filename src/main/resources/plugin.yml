@@ -95,3 +95,5 @@ permissions:
     description:
   hsclans.command.playerlist:
     description:
+  hsclans.command.timereset:
+    description:

@@ -433,4 +433,21 @@ public class ClanManager {
         }
         return clanPlayers;
     }
+
+    /**
+     * Makes a request to database to set hours played week to zero to all players.
+     */
+    public void resetHoursPlayedWeek() {
+        for (CPLayer cpLayer : getAllPlayers()) {
+            cpLayer.resetHoursPlayedWeek();
+        }
+        storageManager.resetHoursPlayedWeek();
+    }
+
+    /**
+     * @return Collection of all players who are in a cache.
+     */
+    public Collection<CPLayer> getAllPlayers() {
+        return clanPlayersByName.values();
+    }
 }
