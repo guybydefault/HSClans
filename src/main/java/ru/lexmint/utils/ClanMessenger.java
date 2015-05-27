@@ -13,11 +13,9 @@ import java.util.Set;
  * Class used for sending messages to players (supports color codes, etc).
  */
 public class ClanMessenger extends Messenger {
-    private final Config lang;
 
     public ClanMessenger(Config lang, Debug debug) {
         super(lang, debug, lang.getString("chat.message-prefix"), lang.getString("chat.broadcast-prefix"));
-        this.lang = lang;
     }
 
     /**
@@ -30,6 +28,21 @@ public class ClanMessenger extends Messenger {
      */
     public void broadcastToClan(String path, Clan clan, String... replaces) {
         String msg = getMessage(path);
+        msg = appendPrefix(msg, lang.getString("chat.clan-broadcast"));
+        msg = replaceVariables(msg, replaces);
+        msg = translateColorCodes(msg);
+        sendToPlayers(msg, clan.getMembersOnline());
+    }
+
+    /**
+     * Message with unbounded number of replacements. Every argument (replaces) will be replaced on letter %s% in a message
+     * in order you will send them.
+     *
+     * @param msg      message
+     * @param clan     clan which players will see this message
+     * @param replaces things you want to replace in a message
+     */
+    public void broadcastToClan(Clan clan, String msg, String... replaces) {
         msg = appendPrefix(msg, lang.getString("chat.clan-broadcast"));
         msg = replaceVariables(msg, replaces);
         msg = translateColorCodes(msg);
