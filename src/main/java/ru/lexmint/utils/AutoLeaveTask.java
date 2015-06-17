@@ -46,7 +46,7 @@ public class AutoLeaveTask extends BukkitRunnable {
                 for (CPLayer member : clan.getCMembers()) {
                     if (newLeader == null
                             || (member.getClanRole() == ClanRole.MODERATOR && newLeader.getClanRole() != ClanRole.MODERATOR)
-                            || member.getHSRate() > newLeader.getHSRate()) {
+                            || member.getHSRateView() > newLeader.getHSRateView()) {
                         newLeader = member;
                     }
                 }

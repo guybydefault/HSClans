@@ -1,5 +1,6 @@
 package ru.lexmint.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,9 +12,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.cmd.AutoclaimCommand;
+import ru.lexmint.cmd.BypassCommand;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
 import ru.lexmint.domain.ClanManager;
+import ru.lexmint.events.PowerLossDeathEvent;
 
 import java.util.HashMap;
 
@@ -99,6 +102,12 @@ public class MonitorListener implements Listener {
         if (HSClans.instance.getSettings().getBoolean("performance.cache-clear-on-leave")) {
             clanManager.clearPlayerCache(player.getName());
         }
+
+        /**
+         * Fix of exploit. When we kicked one bad moderator from his role, removed permissions, then, he joined the
+         * server and with bypass mode he disbanded a lot of clans.
+         */
+        BypassCommand.removeBypass(player.getName());
     }
 
     /**
@@ -131,8 +140,12 @@ public class MonitorListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         ClanManager clanManager = HSClans.instance.getClanManager();
         CPLayer cpLayer = clanManager.getPlayer(event.getEntity().getName(), true);
-        // Updating power.
-        cpLayer.onDeath();
+        // Updating power (providing API for other plugins to cancel player power loss)
+        PowerLossDeathEvent deathEvent = new PowerLossDeathEvent(cpLayer);
+        Bukkit.getServer().getPluginManager().callEvent(deathEvent);
+        if (!deathEvent.isCancelled()) {
+            cpLayer.onDeath();
+        }
         // Incrementing deaths
         cpLayer.incrementDeaths();
         clanManager.updatePlayer(cpLayer);

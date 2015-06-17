@@ -31,6 +31,7 @@ public class ChatListener implements Listener {
         }
         clanInfo = clanInfo.replaceFirst("%clan_role_tag%", cpLayer.getClanRole().getTag());
         clanInfo = clanInfo.replaceFirst("%player_level%", cpLayer.getLevel().getName());
+        clanInfo = clanInfo.replaceFirst("%rate%", String.valueOf(cpLayer.getHSRateView()));
 
         clanInfo = HSClans.instance.getMessenger().translateColorCodes(clanInfo);
         return clanInfo;

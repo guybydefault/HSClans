@@ -51,4 +51,8 @@ public class BypassCommand extends HSCCommand {
             HSClans.instance.getMessenger().message("commands.bypass.enabled", sender);
         }
     }
+
+    public static void removeBypass(String playerName) {
+        bypassPlayers.remove(playerName);
+    }
 }

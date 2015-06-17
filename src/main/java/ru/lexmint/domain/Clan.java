@@ -6,8 +6,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,6 +69,16 @@ public class Clan {
     private Long lastPlayed;
 
     /**
+     * Number of times when this clan won matches on arena.
+     */
+    private int arenaWins;
+
+    /**
+     * Number of times when this clan lost matches on arena.
+     */
+    private int arenaDefeats;
+
+    /**
      * Basic constructor for creating a clan.
      *
      * @param name Name of a clan.
@@ -78,6 +86,24 @@ public class Clan {
     Clan(String name, long createdTime) {
         this.name = name;
         this.createdTime = createdTime;
+        alliances = new HashSet<>();
+    }
+
+    /**
+     * This constructor is used when importing clan from database.
+     *
+     * @param name
+     * @param createdTime
+     * @param description
+     * @param arenaWins
+     * @param arenaDefeats
+     */
+    Clan(String name, long createdTime, String description, int arenaWins, int arenaDefeats) {
+        this.name = name;
+        this.createdTime = createdTime;
+        this.description = description;
+        this.arenaWins = arenaWins;
+        this.arenaDefeats = arenaDefeats;
         alliances = new HashSet<>();
     }
 
@@ -495,33 +521,47 @@ public class Clan {
      *
      * @return High Sky rate.
      */
-    public double getHSRate() {
+    public int getHSRate() {
         ClanManager clanManager = HSClans.instance.getClanManager();
         double hsRate = 0.0;
         for (String member : getMembers()) {
-            hsRate += clanManager.getPlayer(member, false).getHSRate();
+            hsRate += clanManager.getPlayer(member, false).getHSRateReal();
         }
-        hsRate *= getExpRate();
-        return hsRate;
-    }
 
-    /**
-     * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
-     *
-     * @param roundScale How many digits after comma should be in returned value.
-     * @return Rounded value of HSR. Rounding rule is set to maths (half up).
-     */
-    public double getHSRate(int roundScale) {
-        return new BigDecimal(getHSRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+        if (getMembersSize() <= 3) {
+            /* To prevent clans with one cool players that are top. */
+            hsRate /= getMembersSize() * 2;
+        } else {
+            hsRate /= getMembersSize();
+        }
+
+        hsRate += getExpRate();
+        hsRate += getArenaRate();
+
+        return (int) (hsRate * 100);
     }
 
     public double getExpRate() {
-        double expRate = getDaysSinceCreated() / 14d;
-        if (expRate > 1.0) {
-            return 1.0;
-        } else {
-            return expRate;
+        double expRate = getDaysSinceCreated() / 5d;
+        if (expRate > 5) {
+            expRate = 5.0;
         }
+        return expRate;
+    }
+
+    public double getArenaRate() {
+        double arenaRate;
+        if (getArenaDefeats() != 0) {
+            arenaRate = getArenaWins() / getArenaDefeats();
+        } else {
+            arenaRate = getArenaWins();
+        }
+
+        if (arenaRate > 5) {
+            arenaRate = 5.0;
+        }
+
+        return arenaRate;
     }
 
     public Level getLevel() {
@@ -539,4 +579,21 @@ public class Clan {
         this.lastPlayed = lastPlayed;
     }
 
+    public void incrementArenaWins() {
+        arenaWins++;
+        HSClans.instance.getClanManager().updateClan(this);
+    }
+
+    public void incrementArenaDefeats() {
+        arenaDefeats++;
+        HSClans.instance.getClanManager().updateClan(this);
+    }
+
+    public int getArenaWins() {
+        return arenaWins;
+    }
+
+    public int getArenaDefeats() {
+        return arenaDefeats;
+    }
 }

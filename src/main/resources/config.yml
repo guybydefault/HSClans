@@ -30,34 +30,34 @@ player:
   levels:
     '1':
       name: '&7-'
-      rate: 0.0
+      rate: 0
     '2':
-      name: '&7Рекрут'
-      rate: 0.01
+      name: '&dРекрут'
+      rate: 100
     '3':
-      name: '&7Боец'
-      rate: 0.05
+      name: '&eБоец'
+      rate: 200
     '4':
-      name: '&2Бывалый'
-      rate: 0.08
+      name: '&eБывалый'
+      rate: 300
     '5':
-      name: '&2Гладиатор'
-      rate: 0.1
+      name: '&3Гладиатор'
+      rate: 400
     '6':
-      name: '&aЧемпион'
-      rate: 0.2
+      name: '&6Чемпион'
+      rate: 500
     '7':
-      name: '&aГерой'
-      rate: 0.3
+      name: '&6Герой'
+      rate: 600
     '8':
-      name: '&dЛегенда'
-      rate: 0.5
+      name: '&6Легенда'
+      rate: 700
     '9':
-      name: '&dПовелитель'
-      rate: 0.7
+      name: '&6Повелитель'
+      rate: 800
     '10':
-      name: '&eБогоподобный'
-      rate: 1.0
+      name: '&6Богоподобный'
+      rate: 1000
 clan:
   # Maximum number of clan allies.
   max-allies: 3
@@ -72,22 +72,22 @@ clan:
       rate: 0.0
     '2':
       name: Новички
-      rate: 0.15
+      rate: 100
     '3':
       name: Ученики
-      rate: 0.3
+      rate: 250
     '4':
-      name: Знатоки
-      rate: 0.6
+      name: Бывалые
+      rate: 400
     '5':
-      name: Профи
-      rate: 1.2
-    '6':
       name: Мастера
-      rate: 2.4
+      rate: 650
+    '6':
+      name: Ветераны
+      rate: 750
     '7':
       name: Топ клан
-      rate: 4.8
+      rate: 950
 pvp:
   # These potions are treated as harmful. It means that they will be blocked when attacker damages allies/friends with these ones.
   bad-potions:

@@ -76,6 +76,16 @@ public class CPLayer {
     private int deaths;
 
     /**
+     * Number of times when player won matches on arena.
+     */
+    private int arenaWins;
+
+    /**
+     * Number of times when player lost matches on arena.
+     */
+    private int arenaDefeats;
+
+    /**
      * Constructor for player without clan.
      *
      * @param name  Name of the player.
@@ -93,6 +103,8 @@ public class CPLayer {
         kills = 0;
         points = 0;
         deaths = 0;
+        arenaWins = 0;
+        arenaDefeats = 0;
     }
 
     /**
@@ -110,7 +122,7 @@ public class CPLayer {
      * @param hoursPlayedTotal    Hours of time while player has been playing on server.
      * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, int arenaWins, int arenaDefeats) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -124,6 +136,8 @@ public class CPLayer {
         this.hoursPlayedTotal = hoursPlayedTotal;
         this.hoursPlayedWeek = hoursPlayedWeek;
         this.lastPlayed = lastPlayed;
+        this.arenaWins = arenaWins;
+        this.arenaDefeats = arenaDefeats;
     }
 
     /**
@@ -502,34 +516,37 @@ public class CPLayer {
     /**
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
      *
-     * @return High Sky rate.
+     * @return High Sky rate to show it players (in the interface).
      */
-    public double getHSRate() {
-        return getPvPRate() * getOnlineRate() + getExpRate();
+    public int getHSRateView() {
+        return (int) (getHSRateReal() * 100);
     }
 
-
     /**
+     * /**
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
      *
-     * @param roundScale How many digits after comma should be in returned value.
-     * @return Rounded value of player's HSR. Rounding rule is set to maths (half up).
+     * @return High Sky rate in full form (double).
      */
-    public double getHSRate(int roundScale) {
-        return new BigDecimal(getHSRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    public double getHSRateReal() {
+        return getPvPRate() + getOnlineRate() + getExpRate() + getArenaRate();
     }
 
     public Level getLevel() {
-        return Level.getLevelByRate(Level.LevelType.PLAYER, getHSRate());
+        return Level.getLevelByRate(Level.LevelType.PLAYER, getHSRateView());
     }
 
     public double getPvPRate() {
-        double pvpRate = 0;
-        if (getKills() > 10) {
-            /** Points per kill. */
-            pvpRate = getPoints() / getKills();
+        double pvpRate = 0.0;
+        if (getPoints() > 15) {
             if (getDeaths() != 0) {
-                pvpRate /= getDeaths();
+                pvpRate = getPoints() / getDeaths();
+            } else {
+                pvpRate = getPoints();
+            }
+
+            if (pvpRate > 5) {
+                pvpRate = 5.0;
             }
         }
         return pvpRate;
@@ -540,7 +557,11 @@ public class CPLayer {
     }
 
     public double getOnlineRate() {
-        return getHoursPlayedWeek() / 14d;
+        double onlineRate = getHoursPlayedWeek() / 7d;
+        if (onlineRate > 5) {
+            onlineRate = 5.0;
+        }
+        return onlineRate;
     }
 
     public double getOnlineRate(int roundScale) {
@@ -548,11 +569,48 @@ public class CPLayer {
     }
 
     public double getExpRate() {
-        return (getHoursPlayedTotal() - getHoursPlayedWeek()) / 100d;
+        double expRate = (getHoursPlayedTotal() - getHoursPlayedWeek()) / 50d;
+        if (expRate > 5) {
+            expRate = 5.0;
+        }
+        return expRate;
     }
 
 
     public double getExpRate(int roundScale) {
         return new BigDecimal(getExpRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    public double getArenaRate() {
+        double arenaRate;
+        if (getArenaDefeats() != 0) {
+            arenaRate = getArenaWins() / getArenaDefeats();
+        } else {
+            arenaRate = getArenaWins();
+        }
+
+        if (arenaRate > 5) {
+            arenaRate = 5.0;
+        }
+
+        return arenaRate;
+    }
+
+    public void incrementArenaWins() {
+        arenaWins++;
+        HSClans.instance.getClanManager().updatePlayer(this);
+    }
+
+    public void incrementArenaDefeats() {
+        arenaDefeats++;
+        HSClans.instance.getClanManager().updatePlayer(this);
+    }
+
+    public int getArenaWins() {
+        return arenaWins;
+    }
+
+    public int getArenaDefeats() {
+        return arenaDefeats;
     }
 }

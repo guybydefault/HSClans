@@ -47,9 +47,9 @@ public class PlayerListCommand extends HSCCommand {
         Collections.sort(playersList, new Comparator<CPLayer>() {
             @Override
             public int compare(CPLayer o1, CPLayer o2) {
-                if (o1.getHSRate() < o2.getHSRate()) {
+                if (o1.getHSRateView() < o2.getHSRateView()) {
                     return 1;
-                } else if (o1.getHSRate() > o2.getHSRate()) {
+                } else if (o1.getHSRateView() > o2.getHSRateView()) {
                     return -1;
                 } else {
                     return 0;
@@ -76,7 +76,7 @@ public class PlayerListCommand extends HSCCommand {
                     String.valueOf(cpLayer.getHoursPlayedWeekRounded()),
                     String.valueOf(cpLayer.getHoursPlayedTotalRounded()),
                     cpLayer.getLevel().getName(),
-                    String.valueOf(cpLayer.getHSRate(2)));
+                    String.valueOf(cpLayer.getHSRateView()));
         }
     }
 }

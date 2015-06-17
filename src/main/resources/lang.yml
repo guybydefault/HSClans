@@ -3,13 +3,14 @@ chat:
   message-prefix: ''
   clan-broadcast: '&7[&eКлан&7] '
   # Format of clan chat
-  clan-format: '&aⒸ&r &7(&2%clan_role%&7) &r%name%&7 >> &r'
+  clan-format: '&aⒸ&r &7(&2%clan_role%&7) &r%name%&7: &r'
   # Format of ally chat
-  ally-format: '&5Ⓐ&r &7(&2%clan_role%&7 из &2%clan_name%&r) %name%&7 >> &r'
-  # Format of public (standart) chat. Replace of tag {CLAN_INFO}. Available tag: %player_level% %clan% %clan_role_tag%
+  ally-format: '&5Ⓐ&r &7(&2%clan_role%&7 из &2%clan_name%&r) %name%&7: &r'
+  # Format of public (standart) chat. Replace of tag {CLAN_INFO}.
+  # Available tags: %rate% - HSR rate, %player_level% - player rank, %clan% %clan_role_tag%
   clan-info:
-    no-clan: '&7[&e%player_level%&7]&r'
-    clan: '&7[&e%player_level%&7]&r %clan_role_tag%%clan%&r'
+    no-clan: '&7(&e%rate%&7)&r'
+    clan: '&7(&e%rate%&7)&7 [&r%clan%%clan_role_tag%&7]&r'
 clan:
   description: '&7описание не установлено'
   roles:
@@ -116,6 +117,7 @@ commands:
     alliances: '&6Альянсы: %s%&6.'
     no-allies: '&6Альянсы: &7- отсутствуют -'
     level: '&6Уровень: &e%s%&6 (HSR: &e%s%&6).'
+    arena-stats: '&6Побед на арене: &e%s%&6 Поражений: &e%s%&6'
     size: '&6Онлайн в клане &a%s%&6 из &e%s%&6 человек.'
     members: '&6Состав: %s%.'
   player:
