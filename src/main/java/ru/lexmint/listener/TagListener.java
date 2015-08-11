@@ -3,6 +3,7 @@ package ru.lexmint.listener;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 import ru.lexmint.HSClans;
@@ -17,7 +18,7 @@ public class TagListener implements Listener {
      * Integrated with TagAPI.
      * @param event Event fired when player is going to receive name tag.
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerTagChange(AsyncPlayerReceiveNameTagEvent event) {
         ClanManager clanManager = HSClans.instance.getClanManager();
         Player namedPlayer = event.getNamedPlayer();

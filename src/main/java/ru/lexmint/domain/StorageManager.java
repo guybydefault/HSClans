@@ -61,11 +61,11 @@ public class StorageManager {
                     "name VARCHAR(8) NOT NULL, " +
                     "description VARCHAR(92), " +
                     "members VARCHAR(1000) NOT NULL, " +
-                    "claims_number SMALLINT NOT NULL, " +
+                    "claims_number SMALLINT UNSIGNED NOT NULL, " +
                     "time_created BIGINT(16) NOT NULL, " +
                     "alliances VARCHAR(26) NOT NULL, " +
-                    "arena_wins MEDIUMINT NOT NULL, " +
-                    "arena_defeats MEDIUMINT NOT NULL, " +
+                    "arena_wins MEDIUMINT UNSIGNED NOT NULL, " +
+                    "arena_defeats MEDIUMINT UNSIGNED NOT NULL, " +
                     "home_x DOUBLE, " +
                     "home_y DOUBLE, " +
                     "home_z DOUBLE, " +
@@ -82,15 +82,15 @@ public class StorageManager {
                     "power DOUBLE NOT NULL, " +
                     "power_boost DOUBLE NOT NULL, " +
                     "last_power_update BIGINT(16) NOT NULL, " +
-                    "kills MEDIUMINT NOT NULL," +
-                    "points MEDIUMINT NOT NULL," +
-                    "deaths MEDIUMINT NOT NULL, " +
-                    "arena_wins MEDIUMINT NOT NULL, " +
-                    "arena_defeats MEDIUMINT NOT NULL, " +
+                    "kills MEDIUMINT UNSIGNED NOT NULL," +
+                    "points MEDIUMINT UNSIGNED NOT NULL," +
+                    "deaths MEDIUMINT UNSIGNED NOT NULL, " +
+                    "arena_wins MEDIUMINT UNSIGNED NOT NULL, " +
+                    "arena_defeats MEDIUMINT UNSIGNED NOT NULL, " +
                     "first_played BIGINT(16) NOT NULL, " +
                     "last_played BIGINT(16) NOT NULL, " +
-                    "hours_played DOUBLE NOT NULL, " +
-                    "hours_played_week DOUBLE NOT NULL, " +
+                    "hours_played DOUBLE UNSIGNED NOT NULL, " +
+                    "hours_played_week DOUBLE UNSIGNED NOT NULL, " +
                     "PRIMARY KEY (Name)" +
                     ") CHARACTER SET utf8");
 

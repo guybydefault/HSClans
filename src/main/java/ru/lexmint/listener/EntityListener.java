@@ -87,8 +87,11 @@ public class EntityListener implements Listener {
             List<Block> targets = new ArrayList<Block>();
             targets.add(center.getRelative(0, 0, 1));
             targets.add(center.getRelative(0, 0, -1));
+
             targets.add(center.getRelative(0, 1, 0));
             targets.add(center.getRelative(0, -1, 0));
+
+
             targets.add(center.getRelative(1, 0, 0));
             targets.add(center.getRelative(-1, 0, 0));
             for (Block target : targets) {
