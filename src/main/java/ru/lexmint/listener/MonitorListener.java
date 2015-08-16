@@ -15,6 +15,7 @@ import ru.lexmint.cmd.AutoclaimCommand;
 import ru.lexmint.cmd.BypassCommand;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
+import ru.lexmint.domain.Clan;
 import ru.lexmint.domain.ClanManager;
 import ru.lexmint.events.PowerLossDeathEvent;
 
@@ -127,12 +128,21 @@ public class MonitorListener implements Listener {
         ClanManager clanManager = HSClans.instance.getClanManager();
         CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         if (cpLayer == null) {
-            clanManager.createPlayer(player.getName());
+            cpLayer = clanManager.createPlayer(player.getName());
         } else {
             cpLayer.losePowerFromBeingOffline();
             cpLayer.setLastPowerUpdateTime(System.currentTimeMillis());
             clanManager.updatePlayer(cpLayer);
         }
+
+        /* TODO Tournament feature */
+        if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
+            if (!cpLayer.hasClan() && !player.hasPermission("hsclans.command.bypass")) {
+                player.kickPlayer(HSClans.instance.getMessenger().format("messages.errors.tournament-join"));
+            }
+        }
+        /* Tournament feature */
+
         playTimes.put(player.getName(), System.currentTimeMillis());
     }
 
@@ -148,7 +158,6 @@ public class MonitorListener implements Listener {
         }
         // Incrementing deaths
         cpLayer.incrementDeaths();
-        clanManager.updatePlayer(cpLayer);
 
         Player killer = event.getEntity().getKiller();
         if (killer != null) {
@@ -156,7 +165,23 @@ public class MonitorListener implements Listener {
             kPlayer.incrementKills();
             kPlayer.alterPoints(cpLayer);
             clanManager.updatePlayer(kPlayer);
+
+            /* TODO Tournament Feature */
+            if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
+                if (kPlayer.hasClan() && cpLayer.hasClan()) {
+                    Clan clan = kPlayer.getClan();
+                    clan.incrementPoints();
+                    /* Ban player who has been killed, it's hardcore! */
+                    event.getEntity().setBanned(true);
+                    cpLayer.leaveTournament();
+                    event.getEntity().kickPlayer(HSClans.instance.getMessenger().format("messages.errors.tournament-died"));
+                    HSClans.instance.getDebug().info("[TOURNAMENT] " + kPlayer.getName() + " from clan " + clan.getName() + " killed player " + cpLayer.getName() + " from clan " + cpLayer.getClan().getName());
+                }
+            }
+            /* Tournament Feature */
         }
+
+        clanManager.updatePlayer(cpLayer);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

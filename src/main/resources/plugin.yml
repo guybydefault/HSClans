@@ -97,3 +97,5 @@ permissions:
     description:
   hsclans.command.timereset:
     description:
+  hsclans.command.tournament:
+    description:

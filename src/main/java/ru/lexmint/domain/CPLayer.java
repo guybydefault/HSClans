@@ -86,6 +86,11 @@ public class CPLayer {
     private int arenaDefeats;
 
     /**
+     * If it's true - player is participating in the tournament now. False - he has been eliminated or he is not participating.
+     */
+    private boolean tournamentState;
+
+    /**
      * Constructor for player without clan.
      *
      * @param name  Name of the player.
@@ -105,6 +110,7 @@ public class CPLayer {
         deaths = 0;
         arenaWins = 0;
         arenaDefeats = 0;
+        tournamentState = false;
     }
 
     /**
@@ -122,7 +128,7 @@ public class CPLayer {
      * @param hoursPlayedTotal    Hours of time while player has been playing on server.
      * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, int arenaWins, int arenaDefeats) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, int arenaWins, int arenaDefeats, boolean tournamentState) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -138,6 +144,7 @@ public class CPLayer {
         this.lastPlayed = lastPlayed;
         this.arenaWins = arenaWins;
         this.arenaDefeats = arenaDefeats;
+        this.tournamentState = tournamentState;
     }
 
     /**
@@ -529,7 +536,7 @@ public class CPLayer {
      * @return High Sky rate in full form (double).
      */
     public double getHSRateReal() {
-        return getPvPRate() + getOnlineRate() + getExpRate() + getArenaRate();
+        return getPvPRate() + getOnlineRate() + getExpRate();
     }
 
     public Level getLevel() {
@@ -612,5 +619,24 @@ public class CPLayer {
 
     public int getArenaDefeats() {
         return arenaDefeats;
+    }
+
+    public boolean getTournamentState() {
+        return tournamentState;
+    }
+
+    /**
+     * Makes player join the tournament. Updates info in database!
+     */
+    public void joinTournament() {
+        tournamentState = true;
+        HSClans.instance.getClanManager().updatePlayer(this);
+    }
+
+    /**
+     * Makes player leave the tournament. Does not update info in database, you need to do it by yourself.
+     */
+    public void leaveTournament() {
+        tournamentState = false;
     }
 }

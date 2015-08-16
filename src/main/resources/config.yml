@@ -217,3 +217,5 @@ performance:
 integration:
   # Integration with essentials homes (cooldown, delay, etc).
   essentials: true
+tournament:
+  enable: false

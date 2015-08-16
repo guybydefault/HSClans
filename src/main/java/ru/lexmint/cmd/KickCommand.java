@@ -28,6 +28,13 @@ public class KickCommand extends HSCCommand {
 
     @Override
     public void perform(CommandSender sender, String[] subargs) {
+        /** TODO Tournament feature */
+        if (HSClans.instance.getSettings().getBoolean("tournament.enable") && !sender.hasPermission("hsclans.command.bypass")) {
+            HSClans.instance.getMessenger().message("messages.errors.tournament-deny", sender);
+            return;
+        }
+        /* Tournament feature */
+
         String playerName = subargs[1];
         ClanManager clanManager = HSClans.instance.getClanManager();
 

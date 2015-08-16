@@ -79,6 +79,11 @@ public class Clan {
     private int arenaDefeats;
 
     /**
+     * Clan points (is used during the tournament).
+     */
+    private int points;
+
+    /**
      * Basic constructor for creating a clan.
      *
      * @param name Name of a clan.
@@ -98,13 +103,14 @@ public class Clan {
      * @param arenaWins
      * @param arenaDefeats
      */
-    Clan(String name, long createdTime, String description, int arenaWins, int arenaDefeats) {
+    Clan(String name, long createdTime, String description, int arenaWins, int arenaDefeats, int points) {
         this.name = name;
         this.createdTime = createdTime;
         this.description = description;
         this.arenaWins = arenaWins;
         this.arenaDefeats = arenaDefeats;
         alliances = new HashSet<>();
+        this.points = points;
     }
 
 
@@ -595,5 +601,14 @@ public class Clan {
 
     public int getArenaDefeats() {
         return arenaDefeats;
+    }
+
+    public void incrementPoints() {
+        points++;
+        HSClans.instance.getClanManager().updateClan(this);
+    }
+
+    public int getPoints() {
+        return points;
     }
 }

@@ -44,6 +44,7 @@ public class CommandManager implements CommandExecutor {
     private HSCCommand map;
     private HSCCommand playerList;
     private HSCCommand timeReset;
+    private HSCCommand tournament;
 
     public CommandManager() {
         create = new CreateCommand(true, ClanRole.OUTLAW, "hsclans.command.create", 1, "commands.create.usage");
@@ -74,6 +75,7 @@ public class CommandManager implements CommandExecutor {
         map = new MapCommand(true, ClanRole.OUTLAW, "hsclans.command.map", 0, "commands.map.usage");
         playerList = new PlayerListCommand(false, ClanRole.OUTLAW, "hsclans.command.playerlist", 0, "commands.player-list.usage");
         timeReset = new TimeResetCommand(false, ClanRole.OUTLAW, "hsclans.command.timereset", 0, "commands.time-reset.usage");
+        tournament = new TournamentCommand(false, ClanRole.OUTLAW, "hsclans.command.tournament", 0, "commands.tournament.usage");
 
         commandHashMap.put("create", create);
 
@@ -123,6 +125,7 @@ public class CommandManager implements CommandExecutor {
         commandHashMap.put("plist", playerList);
 
         commandHashMap.put("timereset", timeReset);
+        commandHashMap.put("tournament", tournament);
     }
 
     @Override

@@ -66,6 +66,7 @@ public class StorageManager {
                     "alliances VARCHAR(26) NOT NULL, " +
                     "arena_wins MEDIUMINT UNSIGNED NOT NULL, " +
                     "arena_defeats MEDIUMINT UNSIGNED NOT NULL, " +
+                    "points MEDIUMINT UNSIGNED NOT NULL, " +
                     "home_x DOUBLE, " +
                     "home_y DOUBLE, " +
                     "home_z DOUBLE, " +
@@ -91,6 +92,7 @@ public class StorageManager {
                     "last_played BIGINT(16) NOT NULL, " +
                     "hours_played DOUBLE UNSIGNED NOT NULL, " +
                     "hours_played_week DOUBLE UNSIGNED NOT NULL, " +
+                    "tournament_state BOOLEAN NOT NULL, " +
                     "PRIMARY KEY (Name)" +
                     ") CHARACTER SET utf8");
 
@@ -130,8 +132,9 @@ public class StorageManager {
                 String homeWorld = rs.getString("home_world");
                 int arenaWins = rs.getInt("arena_wins");
                 int arenaDefeats = rs.getInt("arena_defeats");
+                int points = rs.getInt("points");
 
-                Clan clan = new Clan(name, timeCreated, description, arenaWins, arenaDefeats);
+                Clan clan = new Clan(name, timeCreated, description, arenaWins, arenaDefeats, points);
 
                 if (homeWorld != null) {
                     double homeX = rs.getDouble("home_x");
@@ -238,12 +241,13 @@ public class StorageManager {
                 long lastPlayed = rs.getLong("last_played");
                 int arenaWins = rs.getInt("arena_wins");
                 int arenaDefeats = rs.getInt("arena_defeats");
+                boolean tournamentState = rs.getBoolean("tournament_state");
 
                 Clan clan = null;
                 if (clanName != null) {
                     clan = HSClans.instance.getClanManager().getClan(clanName);
                 }
-                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, arenaWins, arenaDefeats);
+                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, arenaWins, arenaDefeats, tournamentState);
                 return cpLayer;
             }
         } catch (SQLException e) {
@@ -268,8 +272,8 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "players " +
                             "(name, role, clan, points, power, power_boost, last_power_update, kills, deaths, first_played, " +
-                            "hours_played, hours_played_week, last_played, arena_wins, arena_defeats) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "hours_played, hours_played_week, last_played, arena_wins, arena_defeats, tournament_state) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     ps.setString(1, cpLayer.getName());
                     ps.setString(2, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
@@ -289,6 +293,7 @@ public class StorageManager {
                     ps.setLong(13, cpLayer.getLastPlayed());
                     ps.setInt(14, cpLayer.getArenaWins());
                     ps.setInt(15, cpLayer.getArenaDefeats());
+                    ps.setBoolean(16, cpLayer.getTournamentState());
 
                     ps.execute();
                     connection.commit();
@@ -316,7 +321,7 @@ public class StorageManager {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "players SET " +
                             "role=?, clan=?, points=?, power=?, power_boost=?, last_power_update=?, kills=?, deaths=?, " +
                             "hours_played=?, hours_played_week=?, " +
-                            "last_played=?, arena_wins=?, arena_defeats=? WHERE name=?");
+                            "last_played=?, arena_wins=?, arena_defeats=?, tournament_state=? WHERE name=?");
                     ps.setString(1, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
                         ps.setString(2, cpLayer.getClan().getName());
@@ -334,7 +339,8 @@ public class StorageManager {
                     ps.setLong(11, cpLayer.getLastPlayed());
                     ps.setInt(12, cpLayer.getArenaWins());
                     ps.setInt(13, cpLayer.getArenaDefeats());
-                    ps.setString(14, cpLayer.getName());
+                    ps.setBoolean(14, cpLayer.getTournamentState());
+                    ps.setString(15, cpLayer.getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -361,24 +367,24 @@ public class StorageManager {
                     if (clan.getHome() != null) {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
                                 "description=?, members=?, claims_number=?, alliances=?, " +
-                                "arena_wins=?, arena_defeats=?, " +
+                                "arena_wins=?, arena_defeats=?, points=?, " +
                                 "home_x=?, home_y=?, home_z=?, home_pitch=?," +
                                 "home_yaw=?, home_world=? WHERE name=?");
 
                         Location homeLocation = clan.getHome();
-                        ps.setDouble(7, homeLocation.getX());
-                        ps.setDouble(8, homeLocation.getY());
-                        ps.setDouble(9, homeLocation.getZ());
-                        ps.setFloat(10, homeLocation.getPitch());
-                        ps.setFloat(11, homeLocation.getYaw());
-                        ps.setString(12, homeLocation.getWorld().getName());
-                        ps.setString(13, clan.getName());
+                        ps.setDouble(8, homeLocation.getX());
+                        ps.setDouble(9, homeLocation.getY());
+                        ps.setDouble(10, homeLocation.getZ());
+                        ps.setFloat(11, homeLocation.getPitch());
+                        ps.setFloat(12, homeLocation.getYaw());
+                        ps.setString(13, homeLocation.getWorld().getName());
+                        ps.setString(14, clan.getName());
                     } else {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
                                 "description=?, members=?, claims_number=?, alliances=?, " +
-                                "arena_wins=?, arena_defeats=? WHERE name=?");
+                                "arena_wins=?, arena_defeats=?, points=? WHERE name=?");
 
-                        ps.setString(7, clan.getName());
+                        ps.setString(8, clan.getName());
                     }
 
                     if (clan.getDescription() != null && clan.getDescription() != HSClans.instance.getLangConfig().getString("clan.description")) {
@@ -391,6 +397,7 @@ public class StorageManager {
                     ps.setString(4, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
                     ps.setInt(5, clan.getArenaWins());
                     ps.setInt(6, clan.getArenaDefeats());
+                    ps.setInt(7, clan.getPoints());
 
                     ps.execute();
                     connection.commit();
@@ -417,8 +424,8 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "clans " +
-                            "(name, description, members, claims_number, time_created, alliances, arena_wins, arena_defeats) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                            "(name, description, members, claims_number, time_created, alliances, arena_wins, arena_defeats, points) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
                     ps.setString(1, clan.getName());
                     ps.setString(2, clan.getDescription());
@@ -428,6 +435,7 @@ public class StorageManager {
                     ps.setString(6, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
                     ps.setInt(7, clan.getArenaWins());
                     ps.setInt(8, clan.getArenaDefeats());
+                    ps.setInt(9, clan.getPoints());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -542,6 +550,28 @@ public class StorageManager {
             connection.commit();
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while resetting hoursPlayedWeek in ClanSQLManager. " + e);
+            onSQLException();
+        } finally {
+            closeStatement(ps);
+        }
+    }
+
+
+    /**
+     * Sets tournament state for all players.
+     *
+     * @param tournamentState
+     */
+    public void setTournamentState(boolean tournamentState) {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement("UPDATE " + tablePrefix + "players " +
+                    "SET tournament_state=? ");
+            ps.setBoolean(1, tournamentState);
+            ps.execute();
+            connection.commit();
+        } catch (SQLException e) {
+            HSClans.instance.getDebug().error("SQL Error while setting tournament state in ClanSQLManager. " + e);
             onSQLException();
         } finally {
             closeStatement(ps);

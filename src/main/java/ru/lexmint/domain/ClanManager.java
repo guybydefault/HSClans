@@ -438,7 +438,7 @@ public class ClanManager {
      * Makes a request to database to set hours played week to zero to all players.
      */
     public void resetHoursPlayedWeek() {
-        for (CPLayer cpLayer : getAllPlayers()) {
+        for (CPLayer cpLayer : getCachedPlayers()) {
             cpLayer.resetHoursPlayedWeek();
         }
         storageManager.resetHoursPlayedWeek();
@@ -447,7 +447,20 @@ public class ClanManager {
     /**
      * @return Collection of all players who are in a cache.
      */
-    public Collection<CPLayer> getAllPlayers() {
+    public Collection<CPLayer> getCachedPlayers() {
         return clanPlayersByName.values();
+    }
+
+    public void disableTournament() {
+        for (CPLayer cpLayer : getCachedPlayers()) {
+            cpLayer.leaveTournament();
+        }
+        storageManager.setTournamentState(false);
+    }
+
+    public void enableTournament() {
+        for (CPLayer cpLayer : HSClans.instance.getClanManager().getClanPlayers()) {
+            cpLayer.joinTournament();
+        }
     }
 }
