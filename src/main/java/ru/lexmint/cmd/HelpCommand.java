@@ -37,6 +37,10 @@ public class HelpCommand extends HSCCommand {
         if (subargs.length >= 2) {
             try {
                 pageNumber = Integer.valueOf(subargs[1]);
+                if (pageNumber <= 0) {
+                    HSClans.instance.getMessenger().message("commands.help.wrong-page-number", sender);
+                    return;
+                }
             } catch (NumberFormatException exc) {
                 HSClans.instance.getMessenger().message("commands.help.wrong-page-number", sender);
                 return;

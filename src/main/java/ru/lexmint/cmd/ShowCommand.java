@@ -125,7 +125,7 @@ public class ShowCommand extends HSCCommand {
             clanMessenger.message("commands.show.no-allies", sender);
         }
         clanMessenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate()));
-        clanMessenger.message("commands.show.arena-stats", sender, String.valueOf(clan.getArenaWins()), String.valueOf(clan.getArenaDefeats()));
+//        clanMessenger.message("commands.show.arena-stats", sender, String.valueOf(clan.getArenaWins()), String.valueOf(clan.getArenaDefeats()));
         clanMessenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
         clanMessenger.message("commands.show.members", sender, members.toString());
     }

@@ -37,6 +37,10 @@ public class ListCommand extends HSCCommand {
         if (subargs.length >= 2) {
             try {
                 pageNumber = Integer.valueOf(subargs[1]);
+                if (pageNumber <= 0) {
+                    HSClans.instance.getMessenger().message("commands.help.wrong-page-number", sender);
+                    return;
+                }
             } catch (NumberFormatException exc) {
                 HSClans.instance.getMessenger().message("commands.list.wrong-page-number", sender);
             }
@@ -57,6 +61,7 @@ public class ListCommand extends HSCCommand {
                 }
             }
         });
+        /** Sorting by HSR **/
 
         HSClans.instance.getMessenger().message("commands.list.header", sender, String.valueOf(pageNumber),
                 ((clanList.size() % clansPerPage) > 0)
@@ -72,7 +77,6 @@ public class ListCommand extends HSCCommand {
                     String.valueOf(clan.getPowerRounded()),
                     String.valueOf(clan.getPowerMaxRounded()),
                     clan.getLevel().getName());
-
         }
     }
 }

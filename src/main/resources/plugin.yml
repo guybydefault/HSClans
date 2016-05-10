@@ -3,7 +3,7 @@ version: 1.0
 main: ru.lexmint.HSClans
 authors: [Lexmint]
 website: http://lexmint.ru/
-softdepend: [WorldGuard, WorldBorder, Essentials, EssentialsChat]
+softdepend: [WorldGuard, WorldBorder, Essentials, EssentialsChat, ProtocolLib]
 depend: [HSCore]
 commands:
   factions:

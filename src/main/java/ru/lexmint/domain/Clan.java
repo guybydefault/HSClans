@@ -536,13 +536,13 @@ public class Clan {
 
         if (getMembersSize() <= 3) {
             /* To prevent clans with one cool players that are top. */
-            hsRate /= getMembersSize() * 2;
+            hsRate /= getMembersSize() * 3;
         } else {
             hsRate /= getMembersSize();
         }
 
         hsRate += getExpRate();
-        hsRate += getArenaRate();
+        // hsRate += getArenaRate();
 
         return (int) (hsRate * 100);
     }
