@@ -85,7 +85,7 @@ public class MonitorListener implements Listener {
         ClanManager clanManager = HSClans.instance.getClanManager();
         final CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
         // Make sure player has actual value of his power before logout (update power), save it.
-        cpLayer.getPower();
+        cpLayer.getPower(true);
 
         /** Last player in clan leaves the server. */
         if (cpLayer.hasClan()) {
@@ -154,7 +154,7 @@ public class MonitorListener implements Listener {
         PowerLossDeathEvent deathEvent = new PowerLossDeathEvent(cpLayer);
         Bukkit.getServer().getPluginManager().callEvent(deathEvent);
         if (!deathEvent.isCancelled()) {
-            cpLayer.onDeath();
+            cpLayer.losePowerOnDeath();
         }
         // Incrementing deaths
         cpLayer.incrementDeaths();
@@ -164,7 +164,15 @@ public class MonitorListener implements Listener {
             CPLayer kPlayer = clanManager.getPlayer(killer.getName(), false);
             kPlayer.incrementKills();
             kPlayer.alterPoints(cpLayer);
+
+            /** HS Rate System */
+            int HSR = (int) (0.08 * cpLayer.getHSRate());
+            cpLayer.alterHSRate(-HSR);
+            kPlayer.alterHSRate(HSR);
+            /** HS Rate System */
+
             clanManager.updatePlayer(kPlayer);
+
 
             /* TODO Tournament Feature */
             if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
@@ -188,6 +196,6 @@ public class MonitorListener implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         CPLayer cpLayer = HSClans.instance.getClanManager().getPlayer(event.getPlayer().getName(), true);
         // Make sure player has not got any power while he was dead.
-        cpLayer.getPower();
+        cpLayer.getPower(true);
     }
 }

@@ -7,10 +7,7 @@ import ru.lexmint.domain.io.MySQL;
 import ru.lexmint.utils.Utils;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class used to interact with MySQL Database more easily.
@@ -92,6 +89,9 @@ public class StorageManager {
                     "last_played BIGINT(16) NOT NULL, " +
                     "hours_played DOUBLE UNSIGNED NOT NULL, " +
                     "hours_played_week DOUBLE UNSIGNED NOT NULL, " +
+                    "hours_played_prev_week DOUBLE UNSIGNED NOT NULL, " +
+                    "hsr MEDIUMINT UNSIGNED NOT NULL, " +
+                    "hsr_view MEDIUMINT UNSIGNED NOT NULL, " +
                     "tournament_state BOOLEAN NOT NULL, " +
                     "PRIMARY KEY (Name)" +
                     ") CHARACTER SET utf8");
@@ -238,6 +238,9 @@ public class StorageManager {
                 long firstPlayed = rs.getLong("first_played");
                 double hoursPlayed = rs.getDouble("hours_played");
                 double hoursPlayedWeek = rs.getDouble("hours_played_week");
+                double hoursPlayedPreviousWeek = rs.getDouble("hours_played_prev_week");
+                int HSR = rs.getInt("hsr");
+                int HSRView = rs.getInt("hsr_view");
                 long lastPlayed = rs.getLong("last_played");
                 int arenaWins = rs.getInt("arena_wins");
                 int arenaDefeats = rs.getInt("arena_defeats");
@@ -247,9 +250,30 @@ public class StorageManager {
                 if (clanName != null) {
                     clan = HSClans.instance.getClanManager().getClan(clanName);
                 }
-                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, arenaWins, arenaDefeats, tournamentState);
+                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, hoursPlayedPreviousWeek, HSR, HSRView, arenaWins, arenaDefeats, tournamentState);
                 return cpLayer;
             }
+        } catch (SQLException e) {
+            HSClans.instance.getDebug().error("SQL Error while getting CLAN PLAYER in ClanSQLManager. " + e);
+            onSQLException();
+        } finally {
+            closeStatement(ps);
+        }
+        return null;
+    }
+
+    public List<CPLayer> getAllCPLayers() {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement("SELECT * FROM " + tablePrefix + "players");
+            ResultSet rs = ps.executeQuery();
+
+            List<CPLayer> cpLayerList = new LinkedList<>();
+            while (rs.next()) {
+                String name = rs.getString("name");
+                cpLayerList.add(HSClans.instance.getClanManager().getPlayer(name, false));
+            }
+            return cpLayerList;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while getting CLAN PLAYER in ClanSQLManager. " + e);
             onSQLException();
@@ -272,8 +296,8 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "players " +
                             "(name, role, clan, points, power, power_boost, last_power_update, kills, deaths, first_played, " +
-                            "hours_played, hours_played_week, last_played, arena_wins, arena_defeats, tournament_state) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "hours_played, hours_played_week, hours_played_prev_week, hsr, hsr_view, last_played, arena_wins, arena_defeats, tournament_state) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     ps.setString(1, cpLayer.getName());
                     ps.setString(2, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
@@ -282,7 +306,7 @@ public class StorageManager {
                         ps.setString(3, null);
                     }
                     ps.setInt(4, cpLayer.getPoints());
-                    ps.setDouble(5, cpLayer.getPower());
+                    ps.setDouble(5, cpLayer.getPower(false));
                     ps.setDouble(6, cpLayer.getPowerBoost());
                     ps.setLong(7, cpLayer.getLastPowerUpdateTime());
                     ps.setInt(8, cpLayer.getKills());
@@ -290,10 +314,13 @@ public class StorageManager {
                     ps.setLong(10, cpLayer.getFirstPlayed());
                     ps.setDouble(11, cpLayer.getHoursPlayedTotal());
                     ps.setDouble(12, cpLayer.getHoursPlayedWeek());
-                    ps.setLong(13, cpLayer.getLastPlayed());
-                    ps.setInt(14, cpLayer.getArenaWins());
-                    ps.setInt(15, cpLayer.getArenaDefeats());
-                    ps.setBoolean(16, cpLayer.getTournamentState());
+                    ps.setDouble(13, cpLayer.getHoursPlayedPreviousWeek());
+                    ps.setInt(14, cpLayer.getHSRate());
+                    ps.setInt(15, cpLayer.getHSRateView());
+                    ps.setLong(16, cpLayer.getLastPlayed());
+                    ps.setInt(17, cpLayer.getArenaWins());
+                    ps.setInt(18, cpLayer.getArenaDefeats());
+                    ps.setBoolean(19, cpLayer.getTournamentState());
 
                     ps.execute();
                     connection.commit();
@@ -320,7 +347,7 @@ public class StorageManager {
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "players SET " +
                             "role=?, clan=?, points=?, power=?, power_boost=?, last_power_update=?, kills=?, deaths=?, " +
-                            "hours_played=?, hours_played_week=?, " +
+                            "hours_played=?, hours_played_week=?, hours_played_prev_week=?, hsr=?, hsr_view=?, " +
                             "last_played=?, arena_wins=?, arena_defeats=?, tournament_state=? WHERE name=?");
                     ps.setString(1, cpLayer.getClanRole().toString());
                     if (cpLayer.getClan() != null) {
@@ -329,18 +356,21 @@ public class StorageManager {
                         ps.setString(2, null);
                     }
                     ps.setInt(3, cpLayer.getPoints());
-                    ps.setDouble(4, cpLayer.getPower());
+                    ps.setDouble(4, cpLayer.getPower(false));
                     ps.setDouble(5, cpLayer.getPowerBoost());
                     ps.setLong(6, cpLayer.getLastPowerUpdateTime());
                     ps.setInt(7, cpLayer.getKills());
                     ps.setInt(8, cpLayer.getDeaths());
                     ps.setDouble(9, cpLayer.getHoursPlayedTotal());
                     ps.setDouble(10, cpLayer.getHoursPlayedWeek());
-                    ps.setLong(11, cpLayer.getLastPlayed());
-                    ps.setInt(12, cpLayer.getArenaWins());
-                    ps.setInt(13, cpLayer.getArenaDefeats());
-                    ps.setBoolean(14, cpLayer.getTournamentState());
-                    ps.setString(15, cpLayer.getName());
+                    ps.setDouble(11, cpLayer.getHoursPlayedPreviousWeek());
+                    ps.setInt(12, cpLayer.getHSRate());
+                    ps.setInt(13, cpLayer.getHSRateView());
+                    ps.setLong(14, cpLayer.getLastPlayed());
+                    ps.setInt(15, cpLayer.getArenaWins());
+                    ps.setInt(16, cpLayer.getArenaDefeats());
+                    ps.setBoolean(17, cpLayer.getTournamentState());
+                    ps.setString(18, cpLayer.getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -387,7 +417,7 @@ public class StorageManager {
                         ps.setString(8, clan.getName());
                     }
 
-                    if (clan.getDescription() != null && clan.getDescription() != HSClans.instance.getLangConfig().getString("clan.description")) {
+                    if (clan.getDescription() != null && !clan.getDescription().equals(HSClans.instance.getLangConfig().getString("clan.description"))) {
                         ps.setString(1, clan.getDescription());
                     } else {
                         ps.setString(1, null);
@@ -473,9 +503,8 @@ public class StorageManager {
         MySQL.instance.getExecutor().submit(new Runnable() {
             @Override
             public void run() {
-                PreparedStatement ps = null;
                 try {
-                    ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "claims " +
+                    PreparedStatement ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "claims " +
                             "(x, z, world, clan) " +
                             "VALUES (?, ?, ?, ?)");
                     ps.setInt(1, claim.getClaimLocation().getX());
@@ -541,19 +570,25 @@ public class StorageManager {
     }
 
     public void resetHoursPlayedWeek() {
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement("UPDATE " + tablePrefix + "players " +
-                    "SET hours_played_week=? ");
-            ps.setDouble(1, 0);
-            ps.execute();
-            connection.commit();
-        } catch (SQLException e) {
-            HSClans.instance.getDebug().error("SQL Error while resetting hoursPlayedWeek in ClanSQLManager. " + e);
-            onSQLException();
-        } finally {
-            closeStatement(ps);
-        }
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("UPDATE " + tablePrefix + "players " +
+                            "SET hours_played_prev_week=`hours_played_week`, hours_played_week=?");
+                    ps.setDouble(1, 0);
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while resetting hoursPlayedWeek in ClanSQLManager. " + e);
+                    onSQLException();
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+
     }
 
 
@@ -562,20 +597,26 @@ public class StorageManager {
      *
      * @param tournamentState
      */
-    public void setTournamentState(boolean tournamentState) {
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement("UPDATE " + tablePrefix + "players " +
-                    "SET tournament_state=? ");
-            ps.setBoolean(1, tournamentState);
-            ps.execute();
-            connection.commit();
-        } catch (SQLException e) {
-            HSClans.instance.getDebug().error("SQL Error while setting tournament state in ClanSQLManager. " + e);
-            onSQLException();
-        } finally {
-            closeStatement(ps);
-        }
+    public void setTournamentState(final boolean tournamentState) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                PreparedStatement ps = null;
+                try {
+                    ps = connection.prepareStatement("UPDATE " + tablePrefix + "players " +
+                            "SET tournament_state=? ");
+                    ps.setBoolean(1, tournamentState);
+                    ps.execute();
+                    connection.commit();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while setting tournament state in ClanSQLManager. " + e);
+                    onSQLException();
+                } finally {
+                    closeStatement(ps);
+                }
+            }
+        });
+
     }
 
 
@@ -607,15 +648,21 @@ public class StorageManager {
      *
      * @param statement Statement. May be null, method checks it.
      */
-    private void closeStatement(Statement statement) {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                HSClans.instance.getDebug().error("SQL Error. Statement can't be closed. " + e);
-                onSQLException();
+    private void closeStatement(final Statement statement) {
+        MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                if (statement != null) {
+                    try {
+                        statement.close();
+                    } catch (SQLException e) {
+                        HSClans.instance.getDebug().error("SQL Error. Statement can't be closed. " + e);
+                        onSQLException();
+                    }
+                }
             }
-        }
+        });
+
     }
 
 

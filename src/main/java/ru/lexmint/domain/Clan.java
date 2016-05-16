@@ -249,7 +249,7 @@ public class Clan {
         power = 0;
         for (String memberName : members) {
             CPLayer member = clanManager.getPlayer(memberName, false);
-            power += member.getPower();
+            power += member.getPower(true);
         }
     }
 
@@ -478,10 +478,7 @@ public class Clan {
      * contained given clan.
      */
     public boolean addAlliance(Clan clan) {
-        if (alliances.size() >= HSClans.instance.getSettings().getInt("clan.max-allies")) {
-            return false;
-        }
-        return alliances.add(clan);
+        return alliances.size() < HSClans.instance.getSettings().getInt("clan.max-allies") && alliances.add(clan);
     }
 
     /**
@@ -531,7 +528,7 @@ public class Clan {
         ClanManager clanManager = HSClans.instance.getClanManager();
         double hsRate = 0.0;
         for (String member : getMembers()) {
-            hsRate += clanManager.getPlayer(member, false).getHSRateReal();
+            hsRate += clanManager.getPlayer(member, false).getHSRate();
         }
 
         if (getMembersSize() <= 3) {

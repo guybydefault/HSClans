@@ -179,6 +179,7 @@ public class HSClans extends JavaPlugin {
 
         getServer().getScheduler().cancelTasks(this);
         HandlerList.unregisterAll(this);
+
         MySQL.instance.disconnect();
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " has been disabled!");
     }

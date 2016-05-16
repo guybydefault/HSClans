@@ -423,7 +423,7 @@ public class ClanManager {
     }
 
     /**
-     * @return Players who belong to some clan.
+     * @return List of players who belong to some clan.
      */
     public List<CPLayer> getClanPlayers() {
         Collection<Clan> clans = getClans();
@@ -462,5 +462,12 @@ public class ClanManager {
         for (CPLayer cpLayer : HSClans.instance.getClanManager().getClanPlayers()) {
             cpLayer.joinTournament();
         }
+    }
+
+    /**
+     * @return List of all CPlayers on server. Some of them may be not cached, some are cached (who are in clans).
+     */
+    public List<CPLayer> getAllCPLayers() {
+        return storageManager.getAllCPLayers();
     }
 }

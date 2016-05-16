@@ -56,11 +56,8 @@ public class WorldGuard {
         BlockVector maxChunk = new BlockVector(maxChunkX, worldHeight, maxChunkZ);
         ProtectedCuboidRegion region = new ProtectedCuboidRegion("wgoverlapcheckhsc", minChunk, maxChunk);
         ApplicableRegionSet set = regionManager.getApplicableRegions(region);
-        if (set.size() >= 1) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return set.size() >= 1;
     }
 
     /**

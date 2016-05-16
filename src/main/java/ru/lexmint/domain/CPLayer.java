@@ -3,9 +3,6 @@ package ru.lexmint.domain;
 import org.bukkit.entity.Player;
 import ru.lexmint.HSClans;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 /**
  * Class, describing a player who is or was in a clan.
  */
@@ -61,6 +58,11 @@ public class CPLayer {
     private double hoursPlayedWeek;
 
     /**
+     * Hours of time while player has been playing on server during previous week.
+     */
+    private double hoursPlayedPreviousWeek;
+
+    /**
      * Number of kills player has made.
      */
     private int kills;
@@ -91,6 +93,16 @@ public class CPLayer {
     private boolean tournamentState;
 
     /**
+     * High Sky Rate (for the current period of time - week, etc.)
+     */
+    private int HSR;
+
+    /**
+     * High Sky Rate which is displayed everywhere to show skills of the player. It's HSR for the end of the last period of time (week).
+     */
+    private int HSRView;
+
+    /**
      * Constructor for player without clan.
      *
      * @param name  Name of the player.
@@ -105,6 +117,9 @@ public class CPLayer {
         lastPlayed = System.currentTimeMillis();
         hoursPlayedTotal = 0;
         hoursPlayedWeek = 0;
+        hoursPlayedPreviousWeek = 0;
+        HSR = 0;
+        HSRView = 0;
         kills = 0;
         points = 0;
         deaths = 0;
@@ -116,19 +131,21 @@ public class CPLayer {
     /**
      * Standard constructor for creating a CPLayer.
      *
-     * @param name                Name of the player.
-     * @param clan                Player's clan.
-     * @param clanRole            Player's role in the given clan.
-     * @param power               Power of the player.
-     * @param powerBoost          Boost which is added to player's basic power.
-     * @param lastPowerUpdateTime Last time when player's power was updated.
-     * @param kills               Number of kills this player has made.
-     * @param deaths              Number of player's deaths.
-     * @param points              Points player has gained from killing other players.
-     * @param hoursPlayedTotal    Hours of time while player has been playing on server.
-     * @param hoursPlayedWeek     Hours of time while player has been playing on server during this week.
+     * @param name                    Name of the player.
+     * @param clan                    Player's clan.
+     * @param clanRole                Player's role in the given clan.
+     * @param power                   Power of the player.
+     * @param powerBoost              Boost which is added to player's basic power.
+     * @param lastPowerUpdateTime     Last time when player's power was updated.
+     * @param kills                   Number of kills this player has made.
+     * @param HSR                     Rate of the player.
+     * @param deaths                  Number of player's deaths.
+     * @param points                  Points player has gained from killing other players.
+     * @param hoursPlayedTotal        Hours of time while player has been playing on server.
+     * @param hoursPlayedWeek         Hours of time while player has been playing on server during this week.
+     * @param hoursPlayedPreviousWeek Hours of time while player has been playing on server during previous week.
      */
-    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, int arenaWins, int arenaDefeats, boolean tournamentState) {
+    CPLayer(String name, Clan clan, ClanRole clanRole, double power, double powerBoost, long lastPowerUpdateTime, int kills, int points, int deaths, long firstPlayed, long lastPlayed, double hoursPlayedTotal, double hoursPlayedWeek, double hoursPlayedPreviousWeek, int HSR, int HSRView, int arenaWins, int arenaDefeats, boolean tournamentState) {
         this.name = name;
         this.clan = clan;
         this.clanRole = clanRole;
@@ -141,6 +158,9 @@ public class CPLayer {
         this.firstPlayed = firstPlayed;
         this.hoursPlayedTotal = hoursPlayedTotal;
         this.hoursPlayedWeek = hoursPlayedWeek;
+        this.hoursPlayedPreviousWeek = hoursPlayedPreviousWeek;
+        this.HSR = HSR;
+        this.HSRView = HSRView;
         this.lastPlayed = lastPlayed;
         this.arenaWins = arenaWins;
         this.arenaDefeats = arenaDefeats;
@@ -202,15 +222,6 @@ public class CPLayer {
     }
 
     /**
-     * Returns if player can join clan.
-     *
-     * @return True if player can join clan. Otherwise (if he is not allowed to or he is already in clan), false.
-     */
-    public boolean canJoinClan() {
-        return (clanRole == ClanRole.OUTLAW);
-    }
-
-    /**
      * @return True if player has clan, otherwise false.
      */
     public boolean hasClan() {
@@ -220,10 +231,13 @@ public class CPLayer {
     /**
      * Get power of a player. Before getting it, this method updates power of a player to actual value.
      *
+     * @param updatePower Set TRUE if you want to know actual player's power. FALSE - only for database.
      * @return power of a player
      */
-    public double getPower() {
-        updatePower();
+    public double getPower(boolean updatePower) {
+        if (updatePower) {
+            updatePower();
+        }
         return power;
     }
 
@@ -234,7 +248,6 @@ public class CPLayer {
         if (!isOnline()) {
             if (!HSClans.instance.getSettings().getBoolean("power.regen-offline")) {
                 losePowerFromBeingOffline();
-                HSClans.instance.getClanManager().updatePlayer(this);
                 return;
             }
         }
@@ -246,14 +259,11 @@ public class CPLayer {
         Player player = getPlayer();
         if (player != null && player.isDead()) {
             /* Dead players can't regen their power! */
-            HSClans.instance.getClanManager().updatePlayer(this);
             return;
         }
 
         int millisPerMinute = 60 * 1000;
         alterPower(millisPassed * HSClans.instance.getSettings().getDouble("power.per-minute") / millisPerMinute);
-
-        HSClans.instance.getClanManager().updatePlayer(this);
     }
 
     /**
@@ -268,6 +278,8 @@ public class CPLayer {
         } else if (power < getPowerMin()) {
             power = getPowerMin();
         }
+        // TODO it's not necessary
+        HSClans.instance.getClanManager().updatePlayer(this);
     }
 
     /**
@@ -302,7 +314,8 @@ public class CPLayer {
             if (power < powerOfflineLossLimit) {
                 return;
             } else if (power - loss < powerOfflineLossLimit) {
-                power = powerOfflineLossLimit;
+                /** Equal to power = powerOfflineLossLimit */
+                alterPower(power - powerOfflineLossLimit);
             } else {
                 alterPower(-loss);
             }
@@ -328,10 +341,11 @@ public class CPLayer {
     }
 
     /**
-     * @return Rounded to int value of player's power.
+     * @return Rounded to int value of player's power (actual power, this method updates it)
      */
     public int getPowerRounded() {
-        return (int) Math.round(this.getPower());
+        /** Method getPowerRounded() is used only in game for displaying info - so we need to update power's value. */
+        return (int) Math.round(this.getPower(true));
     }
 
     /**
@@ -351,7 +365,7 @@ public class CPLayer {
     /**
      * Manages player's power update on his death.
      */
-    public void onDeath() {
+    public void losePowerOnDeath() {
         updatePower();
         alterPower(-HSClans.instance.getSettings().getDouble("power.loss-per-death"));
     }
@@ -429,7 +443,12 @@ public class CPLayer {
      * Sets hours played week to zero.
      */
     public void resetHoursPlayedWeek() {
+        setHoursPlayedPreviousWeek(getHoursPlayedWeek());
         hoursPlayedWeek = 0;
+    }
+
+    public void setHoursPlayedPreviousWeek(double hoursPlayedPreviousWeek) {
+        this.hoursPlayedPreviousWeek = hoursPlayedPreviousWeek;
     }
 
     /**
@@ -451,6 +470,13 @@ public class CPLayer {
      */
     public double getHoursPlayedWeek() {
         return hoursPlayedWeek;
+    }
+
+    /**
+     * @return Hours of time while player has been playing on server during the previous week.
+     */
+    public double getHoursPlayedPreviousWeek() {
+        return hoursPlayedPreviousWeek;
     }
 
     /**
@@ -521,71 +547,84 @@ public class CPLayer {
     }
 
     /**
+     * This HSR is temporary (for the current week)! This Rate is changing during the week. So, to display
+     * player's skills it's better to use HSRateView.
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
      *
-     * @return High Sky rate to show it players (in the interface).
+     * @return High Sky rate.
      */
-    public int getHSRateView() {
-        return (int) (getHSRateReal() * 100);
+    public int getHSRate() {
+        return HSR;
     }
 
     /**
-     * /**
      * HSR - High Sky Rate - is a scale which defines player or clan's skills and experience on server.
+     * This HSR is actual for the previous period of time (week) and should be used to display player's skills.
      *
-     * @return High Sky rate in full form (double).
+     * @return High Sky rate.
      */
-    public double getHSRateReal() {
-        return getPvPRate() + getOnlineRate() + getExpRate();
+    public int getHSRateView() {
+        return HSRView;
     }
 
     public Level getLevel() {
         return Level.getLevelByRate(Level.LevelType.PLAYER, getHSRateView());
     }
 
-    public double getPvPRate() {
-        double pvpRate = 0.0;
-        if (getPoints() > 15) {
-            if (getDeaths() != 0) {
-                pvpRate = getPoints() / getDeaths();
-            } else {
-                pvpRate = getPoints();
-            }
-
-            if (pvpRate > 5) {
-                pvpRate = 5.0;
-            }
+    public int getPvPRate() {
+        int prevExpRate = getExpRate(getHoursPlayedTotal() - getHoursPlayedWeek() - getHoursPlayedPreviousWeek());
+        int prevOnlineRate = getOnlineRate(getHoursPlayedPreviousWeek());
+        int pvpRate = getHSRate() - prevExpRate - prevOnlineRate;
+        if (pvpRate > 500) {
+            pvpRate = 500;
+        } else if (pvpRate < 0) {
+            pvpRate = 0;
         }
         return pvpRate;
     }
 
-    public double getPvPRate(int roundScale) {
-        return new BigDecimal(getPvPRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
-    }
-
-    public double getOnlineRate() {
-        double onlineRate = getHoursPlayedWeek() / 7d;
+    /**
+     * @param hours which are taken into account.
+     * @return
+     */
+    public int getOnlineRate(double hours) {
+        /* Max valued hours = 21. Max online rate = 500. Then we need 4.2 here. */
+        double onlineRate = hours / 4.2;
         if (onlineRate > 5) {
             onlineRate = 5.0;
         }
-        return onlineRate;
+        return (int) (onlineRate * 100);
     }
 
-    public double getOnlineRate(int roundScale) {
-        return new BigDecimal(getOnlineRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+    /**
+     * This method must be used in the end of period (week) when time resets and stats needs to be updated.
+     * Updates (resets) HSR rate of the player. IMPORTANT! This method also does a request to database so there
+     * is no need to update database by hand.
+     */
+    public void updateHSRate() {
+        HSRView = HSR;
+        HSR = getExpRate(getHoursPlayedTotal() - getHoursPlayedWeek()) + getOnlineRate(getHoursPlayedWeek()) + getPvPRate();
+        // TODO it's not necessary
+        HSClans.instance.getClanManager().updatePlayer(this);
     }
 
-    public double getExpRate() {
-        double expRate = (getHoursPlayedTotal() - getHoursPlayedWeek()) / 50d;
+    public void alterHSRate(int HSR) {
+        this.HSR += HSR;
+        if (HSR > 1500) {
+            this.HSR = 1500;
+        }
+    }
+
+    /**
+     * @param hours which are taken into account.
+     * @return
+     */
+    public int getExpRate(double hours) {
+        double expRate = hours / 50d;
         if (expRate > 5) {
             expRate = 5.0;
         }
-        return expRate;
-    }
-
-
-    public double getExpRate(int roundScale) {
-        return new BigDecimal(getExpRate()).setScale(roundScale, RoundingMode.HALF_UP).doubleValue();
+        return (int) (expRate * 100);
     }
 
     public double getArenaRate() {
@@ -630,6 +669,7 @@ public class CPLayer {
      */
     public void joinTournament() {
         tournamentState = true;
+        // TODO it's not necessary
         HSClans.instance.getClanManager().updatePlayer(this);
     }
 

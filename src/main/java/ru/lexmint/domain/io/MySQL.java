@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Class which responses for managing sql connection and providing plugin with it.
@@ -76,16 +77,23 @@ public class MySQL {
      * all previous operations with database will be finished and only then connection will close.
      */
     public void disconnect() {
-        executor.submit(new Runnable() {
+        Future future = executor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
+                    connection.commit();
                     connection.close();
                 } catch (SQLException e) {
-
                     HSClans.instance.getDebug().error("Error while disconnecting from MySQL. " + e);
                 }
             }
         });
+        while (!future.isDone()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

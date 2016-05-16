@@ -63,7 +63,7 @@ public class Utils {
             if (material != null) {
                 materials.add(Material.getMaterial(material));
             } else {
-                HSClans.instance.getDebug().error("Material " + material + " is null. Path in config: " + path);
+                HSClans.instance.getDebug().error("Material is null. Path in config: " + path);
             }
         }
         return materials;
@@ -81,7 +81,7 @@ public class Utils {
             if (potion != null) {
                 potions.add(PotionEffectType.getByName(potion));
             } else {
-                HSClans.instance.getDebug().error("Potion " + potion + " is null. Path in config: " + path);
+                HSClans.instance.getDebug().error("Potion is null. Path in config: " + path);
             }
         }
         return potions;
@@ -98,7 +98,7 @@ public class Utils {
             if (explosion != null) {
                 explosions.add(EntityListener.ExplosionType.valueOf(explosion));
             } else {
-                HSClans.instance.getDebug().error("Explosion " + explosion + " is null. Path in config: " + path);
+                HSClans.instance.getDebug().error("Explosion is null. Path in config: " + path);
             }
         }
         return explosions;

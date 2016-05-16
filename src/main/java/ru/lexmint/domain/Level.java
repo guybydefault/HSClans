@@ -90,6 +90,6 @@ public class Level {
 
     public enum LevelType {
         CLAN,
-        PLAYER;
+        PLAYER
     }
 }

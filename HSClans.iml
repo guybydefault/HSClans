@@ -19,7 +19,7 @@
     <orderEntry type="library" name="TagAPI" level="project" />
     <orderEntry type="library" name="spigot-1.6.4-R2.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Essentials" level="project" />
-    <orderEntry type="library" name="Essentials1" level="project" />
+    <orderEntry type="library" name="EssentialsChat" level="project" />
   </component>
 </module>
 

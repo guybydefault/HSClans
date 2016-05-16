@@ -33,6 +33,9 @@ public class TimeResetCommand extends HSCCommand {
             HSClans.instance.getMonitorListener().updateHoursPlayed(cPlayer);
             HSClans.instance.getMonitorListener().getPlayTimes().put(player.getName(), System.currentTimeMillis());
         }
+        for (CPLayer cpLayer : HSClans.instance.getClanManager().getAllCPLayers()) {
+            cpLayer.updateHSRate();
+        }
         HSClans.instance.getClanManager().resetHoursPlayedWeek();
         HSClans.instance.getMessenger().message("commands.time-reset.success", commandSender);
     }

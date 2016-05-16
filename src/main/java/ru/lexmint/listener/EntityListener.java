@@ -84,7 +84,7 @@ public class EntityListener implements Listener {
         Block center = location.getBlock();
         if (center.isLiquid()) {
             /** A single surrounding block in all 6 directions is broken if the material is weak enough. **/
-            List<Block> targets = new ArrayList<Block>();
+            List<Block> targets = new ArrayList<>();
             targets.add(center.getRelative(0, 0, 1));
             targets.add(center.getRelative(0, 0, -1));
 
