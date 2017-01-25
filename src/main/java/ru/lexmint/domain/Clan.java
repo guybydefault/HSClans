@@ -526,28 +526,20 @@ public class Clan {
      */
     public int getHSRate() {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        double hsRate = 0.0;
+        int hsRate = 0;
         for (String member : getMembers()) {
-            hsRate += clanManager.getPlayer(member, false).getHSRate();
+            hsRate += clanManager.getPlayer(member, false).getHSRateView();
         }
 
-        if (getMembersSize() <= 3) {
-            /* To prevent clans with one cool players that are top. */
-            hsRate /= getMembersSize() * 3;
-        } else {
-            hsRate /= getMembersSize();
-        }
+        hsRate *= getExpRate();
 
-        hsRate += getExpRate();
-        // hsRate += getArenaRate();
-
-        return (int) (hsRate * 100);
+        return hsRate;
     }
 
     public double getExpRate() {
-        double expRate = getDaysSinceCreated() / 5d;
-        if (expRate > 5) {
-            expRate = 5.0;
+        double expRate = getDaysSinceCreated() / 21d;
+        if (expRate > 1) {
+            expRate = 1.0;
         }
         return expRate;
     }

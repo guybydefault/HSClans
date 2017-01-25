@@ -589,11 +589,11 @@ public class CPLayer {
      */
     public int getOnlineRate(double hours) {
         /* Max valued hours = 21. Max online rate = 500. Then we need 4.2 here. */
-        double onlineRate = hours / 4.2;
-        if (onlineRate > 5) {
-            onlineRate = 5.0;
+        int onlineRate = (int) ((hours / 4.2) * 100);
+        if (onlineRate > 500) {
+            onlineRate = 500;
         }
-        return (int) (onlineRate * 100);
+        return onlineRate;
     }
 
     /**
@@ -602,17 +602,18 @@ public class CPLayer {
      * is no need to update database by hand.
      */
     public void updateHSRate() {
-        HSRView = HSR;
+        if (getHSRate() > 1500) {
+            HSRView = 1500;
+        } else {
+            HSRView = getHSRate();
+        }
         HSR = getExpRate(getHoursPlayedTotal() - getHoursPlayedWeek()) + getOnlineRate(getHoursPlayedWeek()) + getPvPRate();
         // TODO it's not necessary
         HSClans.instance.getClanManager().updatePlayer(this);
     }
 
-    public void alterHSRate(int HSR) {
-        this.HSR += HSR;
-        if (HSR > 1500) {
-            this.HSR = 1500;
-        }
+    public void alterHSRate(int delta) {
+        HSR += delta;
     }
 
     /**
@@ -620,11 +621,11 @@ public class CPLayer {
      * @return
      */
     public int getExpRate(double hours) {
-        double expRate = hours / 50d;
-        if (expRate > 5) {
-            expRate = 5.0;
+        int expRate = (int) ((hours / 50d) * 100);
+        if (expRate > 500) {
+            expRate = 500;
         }
-        return (int) (expRate * 100);
+        return expRate;
     }
 
     public double getArenaRate() {
