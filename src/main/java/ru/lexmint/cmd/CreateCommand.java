@@ -8,6 +8,8 @@ import ru.lexmint.domain.ClanRole;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -28,14 +30,27 @@ public class CreateCommand extends HSCCommand {
         super(senderIsPlayer, requiredClanRole, permission, arguments, usage);
     }
 
+    private Map<String, Long> createAttempts = new HashMap<>();
+
     @Override
     public void perform(CommandSender sender, String[] subargs) {
-        /** TODO Tournament feature */
-        if (HSClans.instance.getSettings().getBoolean("tournament.enable") && !sender.hasPermission("hsclans.command.bypass")) {
-            HSClans.instance.getMessenger().message("messages.errors.tournament-deny", sender);
-            return;
+        if (!sender.hasPermission("hsclans.command.bypass")) {
+            Long lastTimeCreated = createAttempts.get(sender.getName().toLowerCase());
+            if (lastTimeCreated != null) {
+                long timePassed = System.currentTimeMillis() - lastTimeCreated;
+                if ((int) timePassed / 1000 < HSClans.instance.getConfig().getInt("player.create-interval")) {
+                    HSClans.instance.getMessenger().message("commands.create.interval", sender);
+                    return;
+                }
+            }
+
+            /** TODO Tournament feature */
+            if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
+                HSClans.instance.getMessenger().message("messages.errors.tournament-deny", sender);
+                return;
+            }
+            /* Tournament feature */
         }
-        /* Tournament feature */
 
         ClanManager clanManager = HSClans.instance.getClanManager();
         Pattern pattern = Pattern.compile("[A-Z][A-Za-z]+");
@@ -50,6 +65,7 @@ public class CreateCommand extends HSCCommand {
                         || BypassCommand.isBypassing(cpLayer.getName())) {
                     clanManager.createClan(subargs[1], sender.getName());
                     HSClans.instance.getMessenger().broadcastToAll("commands.create.success", sender.getName(), subargs[1]);
+                    createAttempts.put(sender.getName().toLowerCase(), System.currentTimeMillis());
                 } else {
                     double hoursRequired = new BigDecimal(HSClans.instance.getConfig().getDouble("player.create-hours") - cpLayer.getHoursPlayedTotal())
                             .setScale(1, RoundingMode.HALF_UP).doubleValue();

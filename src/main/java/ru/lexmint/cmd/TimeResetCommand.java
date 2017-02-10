@@ -35,8 +35,10 @@ public class TimeResetCommand extends HSCCommand {
         }
         for (CPLayer cpLayer : HSClans.instance.getClanManager().getAllCPLayers()) {
             cpLayer.updateHSRate();
+            cpLayer.resetHoursPlayedWeek();
+            HSClans.instance.getClanManager().updatePlayer(cpLayer);
         }
-        HSClans.instance.getClanManager().resetHoursPlayedWeek();
+//        HSClans.instance.getClanManager().resetHoursPlayedWeek();
         HSClans.instance.getMessenger().message("commands.time-reset.success", commandSender);
     }
 }

@@ -21,6 +21,8 @@ power:
 player:
   # Number of hours (play time) required to create a clan. Set to 0 if you want to allow creating of clan to anyone.
   create-hours: 4.0
+  # Amount of time (in seconds) which should be passed before player will be able to create clan again.
+  create-interval: 120
   auto-leave:
     # This feature kicks player from clan if he has been inactive for more than <hours_inactive>.
     enabled: true

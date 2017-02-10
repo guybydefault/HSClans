@@ -8,6 +8,7 @@ import ru.lexmint.utils.Utils;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Future;
 
 /**
  * Class used to interact with MySQL Database more easily.
@@ -109,7 +110,6 @@ public class StorageManager {
 
     }
 
-
     /**
      * Get clans list.
      *
@@ -177,6 +177,24 @@ public class StorageManager {
             closeStatement(ps);
         }
         return null;
+    }
+
+    /**
+     * Submits dull task to make sure that all previous jobs on database have been done.
+     */
+    public void synchronize() {
+        Future future = MySQL.instance.getExecutor().submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connection.isClosed();
+                } catch (SQLException e) {
+                    HSClans.instance.getDebug().error("SQL Error while synchronizing. " + e);
+                    onSQLException();
+                }
+            }
+        });
+        future.isDone();
     }
 
     /**

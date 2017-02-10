@@ -51,7 +51,7 @@ public class PlayerCommand extends HSCCommand {
             }
             HSClans.instance.getMessenger().message("commands.player.header", sender, name);
             HSClans.instance.getMessenger().message("commands.player.first-played", sender, String.valueOf(cpLayer.getDaysSinceFirstPlayed()));
-            HSClans.instance.getMessenger().message("commands.player.time-played", sender, String.valueOf(cpLayer.getHoursPlayedTotalRounded()), String.valueOf(cpLayer.getHoursPlayedWeekRounded()));
+            HSClans.instance.getMessenger().message("commands.player.time-played", sender, String.valueOf(cpLayer.getHoursPlayedTotalRounded()), String.valueOf(cpLayer.getHoursPlayedWeekRounded()), String.valueOf(cpLayer.getHoursPlayedPreviousWeekRounded()));
             HSClans.instance.getMessenger().message("commands.player.power", sender, String.valueOf(cpLayer.getPowerRounded()), String.valueOf(cpLayer.getPowerMaxRounded()));
             HSClans.instance.getMessenger().message("commands.player.level", sender, cpLayer.getLevel().getName(), String.valueOf(cpLayer.getHSRateView()));
 //            HSClans.instance.getMessenger().message("commands.player.arena-stats", sender, String.valueOf(cpLayer.getArenaWins()), String.valueOf(cpLayer.getArenaDefeats()));

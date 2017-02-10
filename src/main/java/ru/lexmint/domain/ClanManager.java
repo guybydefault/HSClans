@@ -434,15 +434,17 @@ public class ClanManager {
         return clanPlayers;
     }
 
-    /**
-     * Makes a request to database to set hours played week to zero to all players.
-     */
-    public void resetHoursPlayedWeek() {
-        for (CPLayer cpLayer : getCachedPlayers()) {
-            cpLayer.resetHoursPlayedWeek();
-        }
-        storageManager.resetHoursPlayedWeek();
-    }
+//    /**
+//     * Makes a request to database to set hours played week to zero to all players.
+//     */
+//    public void resetHoursPlayedWeek() {
+//        storageManager.synchronize();
+//        for (CPLayer cpLayer : getCachedPlayers()) {
+//            cpLayer.resetHoursPlayedWeek();
+//            System.out.println("RESETTED " + cpLayer.getName() + " PrevWeek: " + cpLayer.getHoursPlayedPreviousWeek());
+//        }
+//        storageManager.resetHoursPlayedWeek();
+//    }
 
     /**
      * @return Collection of all players who are in a cache.

@@ -487,6 +487,13 @@ public class CPLayer {
     }
 
     /**
+     * @return Rounded time while player has been playing on server during the previous week.
+     */
+    public int getHoursPlayedPreviousWeekRounded() {
+        return (int) Math.round(getHoursPlayedPreviousWeek());
+    }
+
+    /**
      * @return Number of kills player has made.
      */
     public int getKills() {
@@ -608,8 +615,6 @@ public class CPLayer {
             HSRView = getHSRate();
         }
         HSR = getExpRate(getHoursPlayedTotal() - getHoursPlayedWeek()) + getOnlineRate(getHoursPlayedWeek()) + getPvPRate();
-        // TODO it's not necessary
-        HSClans.instance.getClanManager().updatePlayer(this);
     }
 
     public void alterHSRate(int delta) {
