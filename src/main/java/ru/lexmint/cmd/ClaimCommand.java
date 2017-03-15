@@ -36,6 +36,16 @@ public class ClaimCommand extends HSCCommand {
         int chunkX = player.getLocation().getChunk().getX();
         World world = player.getLocation().getWorld();
 
+        ClanRole minRole = ClanRole.USER;
+        try {
+            if (subargs.length > 1) {
+                minRole = ClanRole.valueOf(subargs[1].toUpperCase());
+            }
+        } catch (IllegalArgumentException exc) {
+            HSClans.instance.getMessenger().message("commands.claim.wrong-role", sender);
+            return;
+        }
+
         ClanManager clanManager = HSClans.instance.getClanManager();
 
         CPLayer cPlayer = clanManager.getPlayer(sender.getName(), true);
@@ -45,13 +55,18 @@ public class ClaimCommand extends HSCCommand {
         if (claim != null) {
             Clan owner = claim.getClan();
             if (owner == clan) {
-                HSClans.instance.getMessenger().message("commands.claim.already-own", sender);
+                if (minRole != claim.getMinRole()) {
+                    clanManager.changeClaimMinRole(claim, minRole);
+                    HSClans.instance.getMessenger().message("commands.claim.role-changed-success", sender);
+                } else {
+                    HSClans.instance.getMessenger().message("commands.claim.already-own", sender);
+                }
             } else if (clan.isAlliedWith(owner)) {
                 HSClans.instance.getMessenger().message("commands.claim.ally", sender, owner.getName());
             } else if (owner.canHoldClaim()) {
                 HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
             } else if (clan.canClaim(1)) {
-                clanManager.changeClaimClan(claim, clan);
+                clanManager.changeClaimClan(claim, clan, minRole);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
                         clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
@@ -65,7 +80,7 @@ public class ClaimCommand extends HSCCommand {
             } else if (deniedWorlds.contains(world.getName())) {
                 HSClans.instance.getMessenger().message("commands.claim.denied-world", sender);
             } else if (clan.canClaim(1)) {
-                clanManager.addClaim(chunkX, chunkZ, world, clan);
+                clanManager.addClaim(chunkX, chunkZ, world, clan, minRole);
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
                         String.valueOf(chunkZ));
             } else {

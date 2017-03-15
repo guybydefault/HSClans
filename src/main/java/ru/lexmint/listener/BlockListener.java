@@ -16,7 +16,6 @@ import ru.lexmint.cmd.BypassCommand;
 import ru.lexmint.domain.CPLayer;
 import ru.lexmint.domain.Claim;
 import ru.lexmint.domain.ClanManager;
-import ru.lexmint.domain.ClanRole;
 
 /**
  * Class which protects clan's claims.
@@ -110,7 +109,7 @@ public class BlockListener implements Listener {
         } else {
             CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
             if (claim.getClan() == cpLayer.getClan()) {
-                if (cpLayer.getClanRole().getLevel() <= ClanRole.NEWBIE.getLevel()) {
+                if (cpLayer.getClanRole().getLevel() < claim.getMinRole().getLevel()) {
                     HSClans.instance.getMessenger().message("messages.build.not-enough-perms", player, cpLayer.getClanRole().getName());
                     return false;
                 } else {

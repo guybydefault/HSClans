@@ -14,7 +14,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import ru.lexmint.HSClans;
 import ru.lexmint.cmd.BypassCommand;
-import ru.lexmint.domain.*;
+import ru.lexmint.domain.CPLayer;
+import ru.lexmint.domain.Claim;
+import ru.lexmint.domain.Clan;
+import ru.lexmint.domain.ClanManager;
 import ru.lexmint.utils.Utils;
 
 import java.util.Set;
@@ -155,7 +158,7 @@ public class PlayerListener implements Listener {
                 }
             }
         } else {
-            if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
+            if (cpLayer.getClanRole().getLevel() < claim.getMinRole().getLevel()) {
                 if (deniedInteractNewbie.contains(material)) {
                     HSClans.instance.getMessenger().message("messages.interact.deny-newbie", player, owner.getName());
                     return false;
@@ -190,7 +193,7 @@ public class PlayerListener implements Listener {
         CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
 
         if (claim.getClan() == cpLayer.getClan()) {
-            if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
+            if (cpLayer.getClanRole().getLevel() < claim.getMinRole().getLevel()) {
                 if (deniedUsageNewbie.contains(material)) {
                     HSClans.instance.getMessenger().message("messages.use.deny-newbie", player, cpLayer.getClanRole().getName());
                     return false;

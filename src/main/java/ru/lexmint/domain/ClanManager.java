@@ -278,8 +278,8 @@ public class ClanManager {
      * @param world World where this claim is
      * @return Claim which has been created and storaged
      */
-    public Claim addClaim(int x, int z, World world, Clan clan) {
-        Claim claim = new Claim(x, z, world, clan);
+    public Claim addClaim(int x, int z, World world, Clan clan, ClanRole minRole) {
+        Claim claim = new Claim(x, z, world, clan, minRole);
 
         claims.add(claim);
         clan.addClaim(claim);
@@ -293,14 +293,20 @@ public class ClanManager {
      * @param claim Claim which owner needs to be changed
      * @param clan  Clan which given claim is supposed to be belonged to
      */
-    public void changeClaimClan(Claim claim, Clan clan) {
+    public void changeClaimClan(Claim claim, Clan clan, ClanRole minRole) {
         claim.getClan().removeClaim(claim);
         updateClan(claim.getClan());
 
         claim.setClan(clan);
+        claim.setMinRole(minRole);
         clan.addClaim(claim);
         updateClan(clan);
 
+        updateClaim(claim);
+    }
+
+    public void changeClaimMinRole(Claim claim, ClanRole minRole) {
+        claim.setMinRole(minRole);
         updateClaim(claim);
     }
 
@@ -310,7 +316,7 @@ public class ClanManager {
      * @param claim Claim which needs to be updated.
      */
     public void updateClaim(Claim claim) {
-        storageManager.updateClaimClan(claim);
+        storageManager.updateClaim(claim);
     }
 
     /**

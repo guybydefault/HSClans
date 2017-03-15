@@ -17,14 +17,20 @@ public class Claim {
     private Clan clan;
 
     /**
+     * Min role which is required to interact with the land.
+     */
+    private ClanRole minRole;
+
+    /**
      * Main constructor for creating a clam object.
      *
      * @param claimLocation
      * @param clan          Clan which this claim is belonged to
      */
-    Claim(ClaimLocation claimLocation, Clan clan) {
+    Claim(ClaimLocation claimLocation, Clan clan, ClanRole minRole) {
         this.claimLocation = claimLocation;
         this.clan = clan;
+        this.minRole = minRole;
     }
 
     /**
@@ -35,9 +41,10 @@ public class Claim {
      * @param world World where this claim is
      * @param clan  Clan which this claim is belonged to
      */
-    Claim(int x, int z, World world, Clan clan) {
+    Claim(int x, int z, World world, Clan clan, ClanRole minRole) {
         claimLocation = new ClaimLocation(x, z, world);
         this.clan = clan;
+        this.minRole = minRole;
     }
 
     /**
@@ -52,6 +59,17 @@ public class Claim {
      */
     public Clan getClan() {
         return clan;
+    }
+
+    void setMinRole(ClanRole minRole) {
+        this.minRole = minRole;
+    }
+
+    /**
+     * @return Min role which is required to interact with the land.
+     */
+    public ClanRole getMinRole() {
+        return minRole;
     }
 
 

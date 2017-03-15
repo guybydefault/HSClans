@@ -129,6 +129,10 @@ public class RegenCommand extends HSCCommand {
                     if (clanManager.getClaim(currentChunkX, currentChunkZ, world) == null
                             && !WorldGuard.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
                         if (world.regenerateChunk(currentChunkX, currentChunkZ)) {
+                            // Doesn't make any difference. It doesn't work! TODO
+//                            for (BlockPopulator blockPopulator : world.getPopulators()) {
+//                                blockPopulator.populate(world, new Random(), world.getChunkAt(currentChunkX, currentChunkZ));
+//                            }
                             chunksGen++;
                         }
                     }

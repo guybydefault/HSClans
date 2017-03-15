@@ -59,12 +59,12 @@ public class MonitorListener implements Listener {
         /**
          * Checks if owner of the land is the same or not. If the same - returns.
          */
-        if ((from == null && to == null) || (from != null && to != null && from.getClan() == to.getClan())) {
+        if ((from == null && to == null) || (from != null && to != null && from.getClan() == to.getClan() && from.getMinRole() == to.getMinRole())) {
             return;
         }
 
         if (to != null) {
-            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getMinRole().getName(), to.getClan().getDescription());
         } else {
             HSClans.instance.getMessenger().message("land.wilderness", player);
 

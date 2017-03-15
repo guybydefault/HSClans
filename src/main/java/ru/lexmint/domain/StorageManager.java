@@ -101,6 +101,7 @@ public class StorageManager {
                     "x SMALLINT NOT NULL, " +
                     "z SMALLINT NOT NULL, " +
                     "world VARCHAR(32) NOT NULL, " +
+                    "min_role VARCHAR(16) DEFAULT 'USER' NOT NULL, " +
                     "clan VARCHAR(8) NOT NULL" +
                     ") CHARACTER SET utf8");
         } catch (SQLException e) {
@@ -213,12 +214,13 @@ public class StorageManager {
                 int z = rs.getInt("z");
                 String clanName = rs.getString("clan");
                 String world = rs.getString("world");
+                ClanRole minRole = ClanRole.valueOf(rs.getString("min_role"));
                 Clan clan = HSClans.instance.getClanManager().getClan(clanName);
                 if (clan == null) {
                     HSClans.instance.getDebug().error("Clan in method importClaims() (StorageManager) is null!");
                     continue;
                 }
-                Claim claim = new Claim(x, z, Bukkit.getWorld(world), clan);
+                Claim claim = new Claim(x, z, Bukkit.getWorld(world), clan, minRole);
                 claimSet.add(claim);
             }
             return claimSet;
@@ -523,12 +525,14 @@ public class StorageManager {
             public void run() {
                 try {
                     PreparedStatement ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "claims " +
-                            "(x, z, world, clan) " +
-                            "VALUES (?, ?, ?, ?)");
+                            "(x, z, world, clan, min_role) " +
+                            "VALUES (?, ?, ?, ?, ?)");
                     ps.setInt(1, claim.getClaimLocation().getX());
                     ps.setInt(2, claim.getClaimLocation().getZ());
                     ps.setString(3, claim.getClaimLocation().getWorld().getName());
                     ps.setString(4, claim.getClan().getName());
+                    ps.setString(5, claim.getMinRole().toString());
+
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
@@ -562,19 +566,25 @@ public class StorageManager {
         });
     }
 
-    public void updateClaimClan(final Claim claim) {
+    /**
+     * Updates claim's clan and min role required to interact with the claim.
+     *
+     * @param claim
+     */
+    public void updateClaim(final Claim claim) {
         MySQL.instance.getExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("UPDATE " + tablePrefix + "claims " +
-                            "SET clan=? " +
+                            "SET clan=?, min_role=? " +
                             "WHERE x=? AND z=? AND world=?");
                     ps.setString(1, claim.getClan().getName());
-                    ps.setInt(2, claim.getClaimLocation().getX());
-                    ps.setInt(3, claim.getClaimLocation().getZ());
-                    ps.setString(4, claim.getClaimLocation().getWorld().getName());
+                    ps.setString(2, claim.getMinRole().toString());
+                    ps.setInt(3, claim.getClaimLocation().getX());
+                    ps.setInt(4, claim.getClaimLocation().getZ());
+                    ps.setString(5, claim.getClaimLocation().getWorld().getName());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {

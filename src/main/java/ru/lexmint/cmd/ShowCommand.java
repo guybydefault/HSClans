@@ -74,8 +74,46 @@ public class ShowCommand extends HSCCommand {
         }
 
         Set<CPLayer> membersSet = clan.getCMembers();
-        List<CPLayer> membersList = new LinkedList<>(membersSet);
-        Collections.sort(membersList, new Comparator<CPLayer>() {
+        List<CPLayer> membersList = new LinkedList<>();
+        List<CPLayer> academyList = new LinkedList<>();
+        for (CPLayer cpLayer : membersSet) {
+            if (cpLayer.getClanRole() == ClanRole.NEWBIE) {
+                academyList.add(cpLayer);
+            } else {
+                membersList.add(cpLayer);
+            }
+        }
+        sortCPlayerList(academyList);
+        sortCPlayerList(membersList);
+        String academy = buildMembersString(academyList);
+        String members = buildMembersString(membersList);
+
+        clanMessenger.message("commands.show.header", sender, clan.getName());
+        clanMessenger.message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
+        clanMessenger.message("commands.show.description", sender, description);
+        if (clan.getPowerBoost() < 0) {
+            clanMessenger.message("commands.show.power.fine", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getPowerBoostRounded()));
+        } else {
+            clanMessenger.message("commands.show.power.normal", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
+        }
+        if (!allies.toString().isEmpty()) {
+            clanMessenger.message("commands.show.alliances", sender, allies.toString());
+        } else {
+            clanMessenger.message("commands.show.no-allies", sender);
+        }
+        clanMessenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate()));
+//        clanMessenger.message("commands.show.arena-stats", sender, String.valueOf(clan.getArenaWins()), String.valueOf(clan.getArenaDefeats()));
+        clanMessenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
+        if (!academyList.isEmpty()) {
+            clanMessenger.message("commands.show.academy", sender, academy.toString());
+        } else {
+            clanMessenger.message("commands.show.no-academy", sender, academy.toString());
+        }
+        clanMessenger.message("commands.show.members", sender, members.toString());
+    }
+
+    private void sortCPlayerList(List<CPLayer> cpLayerList) {
+        Collections.sort(cpLayerList, new Comparator<CPLayer>() {
             @Override
             public int compare(CPLayer o1, CPLayer o2) {
                 if (o1.isOnline() && !o2.isOnline()) {
@@ -97,36 +135,22 @@ public class ShowCommand extends HSCCommand {
                 }
             }
         });
+    }
+
+    private String buildMembersString(List<CPLayer> cpLayerList) {
         StringBuilder members = new StringBuilder();
-        Iterator<CPLayer> memberIt = membersList.iterator();
+        Iterator<CPLayer> memberIt = cpLayerList.iterator();
         while (memberIt.hasNext()) {
             CPLayer member = memberIt.next();
             if (member.isOnline()) {
-                members.append(clanMessenger.format("commands.show.member.online", member.getClanRole().getName(), member.getName()));
+                members.append(HSClans.instance.getMessenger().format("commands.show.member.online", member.getClanRole().getName(), member.getName()));
             } else {
-                members.append(clanMessenger.format("commands.show.member.offline", member.getClanRole().getName(), member.getName()));
+                members.append(HSClans.instance.getMessenger().format("commands.show.member.offline", member.getClanRole().getName(), member.getName()));
             }
             if (memberIt.hasNext()) {
                 members.append(", ");
             }
         }
-
-        clanMessenger.message("commands.show.header", sender, clan.getName());
-        clanMessenger.message("commands.show.age", sender, String.valueOf(clan.getDaysSinceCreated()));
-        clanMessenger.message("commands.show.description", sender, description);
-        if (clan.getPowerBoost() < 0) {
-            clanMessenger.message("commands.show.power.fine", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()), String.valueOf(clan.getPowerBoostRounded()));
-        } else {
-            clanMessenger.message("commands.show.power.normal", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()), String.valueOf(clan.getPowerMaxRounded()));
-        }
-        if (!allies.toString().isEmpty()) {
-            clanMessenger.message("commands.show.alliances", sender, allies.toString());
-        } else {
-            clanMessenger.message("commands.show.no-allies", sender);
-        }
-        clanMessenger.message("commands.show.level", sender, clan.getLevel().getName(), String.valueOf(clan.getHSRate()));
-//        clanMessenger.message("commands.show.arena-stats", sender, String.valueOf(clan.getArenaWins()), String.valueOf(clan.getArenaDefeats()));
-        clanMessenger.message("commands.show.size", sender, String.valueOf(clan.getMembersOnline().size()), String.valueOf(clan.getMembersSize()));
-        clanMessenger.message("commands.show.members", sender, members.toString());
+        return members.toString();
     }
 }

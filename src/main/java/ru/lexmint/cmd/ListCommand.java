@@ -63,20 +63,55 @@ public class ListCommand extends HSCCommand {
         });
         /** Sorting by HSR **/
 
-        HSClans.instance.getMessenger().message("commands.list.header", sender, String.valueOf(pageNumber),
-                ((clanList.size() % clansPerPage) > 0)
-                        ? String.valueOf(clanList.size() / clansPerPage + 1)
-                        : String.valueOf(clanList.size() / clansPerPage));
-        for (int i = (pageNumber - 1) * clansPerPage; i < pageNumber * clansPerPage && i < clanList.size(); i++) {
-            Clan clan = clanList.get(i);
-            HSClans.instance.getMessenger().message("commands.list.clan", sender,
-                    clan.getName(),
-                    String.valueOf(clan.getMembersOnline().size()),
-                    String.valueOf(clan.getMembersSize()),
-                    String.valueOf(clan.getClaimsNumber()),
-                    String.valueOf(clan.getPowerRounded()),
-                    String.valueOf(clan.getPowerMaxRounded()),
-                    clan.getLevel().getName());
+        /** Sorting by points (Tournament feature) **/
+        if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
+            Collections.sort(clanList, new Comparator<Clan>() {
+                @Override
+                public int compare(Clan o1, Clan o2) {
+                    if (o1.getPoints() < o2.getPoints()) {
+                        return 1;
+                    } else if (o1.getPoints() > o2.getPoints()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+        }
+        /** Sorting by points **/
+
+        if (HSClans.instance.getSettings().getBoolean("tournament.enable")) {
+            HSClans.instance.getMessenger().message("commands.list.header-tournament", sender, String.valueOf(pageNumber),
+                    ((clanList.size() % clansPerPage) > 0)
+                            ? String.valueOf(clanList.size() / clansPerPage + 1)
+                            : String.valueOf(clanList.size() / clansPerPage));
+            for (int i = (pageNumber - 1) * clansPerPage; i < pageNumber * clansPerPage && i < clanList.size(); i++) {
+                Clan clan = clanList.get(i);
+                HSClans.instance.getMessenger().message("commands.list.clan-tournament", sender,
+                        clan.getName(),
+                        String.valueOf(clan.getMembersOnline().size()),
+                        String.valueOf(clan.getMembersSize()),
+                        String.valueOf(clan.getClaimsNumber()),
+                        String.valueOf(clan.getPowerRounded()),
+                        String.valueOf(clan.getPowerMaxRounded()),
+                        String.valueOf(clan.getPoints()));
+            }
+        } else {
+            HSClans.instance.getMessenger().message("commands.list.header", sender, String.valueOf(pageNumber),
+                    ((clanList.size() % clansPerPage) > 0)
+                            ? String.valueOf(clanList.size() / clansPerPage + 1)
+                            : String.valueOf(clanList.size() / clansPerPage));
+            for (int i = (pageNumber - 1) * clansPerPage; i < pageNumber * clansPerPage && i < clanList.size(); i++) {
+                Clan clan = clanList.get(i);
+                HSClans.instance.getMessenger().message("commands.list.clan", sender,
+                        clan.getName(),
+                        String.valueOf(clan.getMembersOnline().size()),
+                        String.valueOf(clan.getMembersSize()),
+                        String.valueOf(clan.getClaimsNumber()),
+                        String.valueOf(clan.getPowerRounded()),
+                        String.valueOf(clan.getPowerMaxRounded()),
+                        clan.getLevel().getName());
+            }
         }
     }
 }
