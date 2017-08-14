@@ -1,0 +1,101 @@
+name: HSClans
+version: 1.0
+main: ru.lexmint.HSClans
+authors: [Lexmint]
+website: http://lexmint.ru/
+softdepend: [WorldGuard, WorldBorder, Essentials, EssentialsChat, ProtocolLib]
+depend: [HSCore]
+commands:
+  factions:
+    description: Базовая команда плагина.
+    aliases: [f]
+permissions:
+  hsclans.kit.player:
+    description: Все права для рядового игрока.
+    children:
+      hsclans.command.create: true
+      hsclans.command.description: true
+      hsclans.command.join: true
+      hsclans.command.invite: true
+      hsclans.command.help: true
+      hsclans.command.leave: true
+      hsclans.command.uninvite: true
+      hsclans.command.show: true
+      hsclans.command.player: true
+      hsclans.command.claim: true
+      hsclans.command.unclaim: true
+      hsclans.command.kick: true
+      hsclans.command.promote: true
+      hsclans.command.demote: true
+      hsclans.command.home: true
+      hsclans.command.sethome: true
+      hsclans.command.clanchat: true
+      hsclans.command.list: true
+      hsclans.command.ally: true
+      hsclans.command.allychat: true
+      hsclans.command.autoclaim: true
+      hsclans.command.map: true
+      hsclans.command.playerlist: true
+  hsclans.kit.admin:
+    description: Все права для Администратора (кроме регена).
+    children:
+      hsclans.command.bypass: true
+      hsclans.command.disband: true
+  hsclans.command.create:
+    description:
+  hsclans.command.description:
+    description:
+  hsclans.command.join:
+    description:
+  hsclans.command.invite:
+    description:
+  hsclans.command.help:
+    description:
+  hsclans.command.leave:
+    description:
+  hsclans.command.uninvite:
+    description:
+  hsclans.command.show:
+    description:
+  hsclans.command.player:
+    description:
+  hsclans.command.claim:
+    description:
+  hsclans.command.unclaim:
+    description:
+  hsclans.command.kick:
+    description:
+  hsclans.command.promote:
+    description:
+  hsclans.command.demote:
+    description:
+  hsclans.command.home:
+    description:
+  hsclans.command.sethome:
+    description:
+  hsclans.command.clanchat:
+    description:
+  hsclans.command.regen:
+    description:
+  hsclans.command.list:
+    description:
+  hsclans.command.ally:
+    description:
+  hsclans.command.allychat:
+    description:
+  hsclans.command.disband:
+    description:
+  hsclans.command.bypass:
+    description:
+  hsclans.command.autoclaim:
+    description:
+  hsclans.command.reload:
+    description:
+  hsclans.command.map:
+    description:
+  hsclans.command.playerlist:
+    description:
+  hsclans.command.timereset:
+    description:
+  hsclans.command.tournament:
+    description:

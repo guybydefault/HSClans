@@ -1,0 +1,223 @@
+mysql:
+  host: '37.187.71.101:3306'
+  user: test
+  password: test
+  database: test
+  table-prefix: 'hsc_'
+power:
+  regen-offline: false
+  # Power regeneration per minute.
+  per-minute: 0.2
+  # Value of power which is set to player when he joins a server for the first time. It is better that it is zero because
+  # some clans can use multi-accounts to regenerate power in/after the battles.
+  start-value: 0.0
+  max-value: 10.0
+  min-value: -10.0
+  loss-per-death: 5.0
+  offline:
+    loss-per-day: 5.0
+    # Minimal value of power which can be set if player has been offline for a couple of days.
+    loss-limit: 0.0
+player:
+  # Number of hours (play time) required to create a clan. Set to 0 if you want to allow creating of clan to anyone.
+  create-hours: 4.0
+  # Amount of time (in seconds) which should be passed before player will be able to create clan again.
+  create-interval: 120
+  auto-leave:
+    # This feature kicks player from clan if he has been inactive for more than <hours_inactive>.
+    enabled: true
+    hours-inactive: 48.0
+    # Period between task is executed (in hours).
+    period: 12.0
+  levels:
+    '1':
+      name: '&7-'
+      rate: 0
+    '2':
+      name: '&dРекрут'
+      rate: 100
+    '3':
+      name: '&eБоец'
+      rate: 200
+    '4':
+      name: '&eБывалый'
+      rate: 300
+    '5':
+      name: '&3Гладиатор'
+      rate: 400
+    '6':
+      name: '&6Чемпион'
+      rate: 500
+    '7':
+      name: '&6Герой'
+      rate: 600
+    '8':
+      name: '&6Легенда'
+      rate: 700
+    '9':
+      name: '&6Повелитель'
+      rate: 800
+    '10':
+      name: '&6Богоподобный'
+      rate: 1000
+clan:
+  # Maximum number of clan allies.
+  max-allies: 3
+  home:
+    # Minimal height where player can set his home. He will be unable to set it lower than this.
+    min-height: 50.0
+    # Will clan players respawn at clan's home after they have died?
+    respawn: true
+  levels:
+    '1':
+      name: '-'
+      rate: 0.0
+    '2':
+      name: Новички
+      rate: 100
+    '3':
+      name: Ученики
+      rate: 250
+    '4':
+      name: Бывалые
+      rate: 400
+    '5':
+      name: Мастера
+      rate: 650
+    '6':
+      name: Ветераны
+      rate: 750
+    '7':
+      name: Топ клан
+      rate: 950
+pvp:
+  # These potions are treated as harmful. It means that they will be blocked when attacker damages allies/friends with these ones.
+  bad-potions:
+  - BLINDNESS
+  - CONFUSION
+  - HARM
+  - HUNGER
+  - POISON
+  - SLOW
+  - SLOW_DIGGING
+  - WEAKNESS
+  - WITHER
+claims:
+  # Describes situation when clain leaves the game and players who have been attacking their castle, can't do
+  # anything because of offline explosion protection.
+  explosion-exploit:
+    handle: true
+    # Time in seconds. During this time after last clan player has left the game, the clan is considered to
+    # be online to allow others attack clan with primed TNT and etc.
+    time: 600
+  teleport-from:
+    # If true - player will be able to teleport from enemy claims when owners is offline.
+    offline: true
+    # If true - player will be able to teleport from enemy claims when owner is online.
+    online: true
+    # If there are enemies within this distance (value) (inclusive) teleport will be denied.
+    distance:
+      enabled: true
+      value: 32.0
+  # Worlds where claimings is banned.
+  denied-worlds:
+  - 'world_nether'
+  deny:
+    enderman-grief: true
+    wither-grief: true
+    # Explosion types: CREEPER, FIREBALL, WITHER, TNT, MINECART
+    explosion:
+      always:
+      - CREEPER
+      - FIREBALL
+      - WITHER
+      - MINECART
+      offline:
+      - TNT
+    usage:
+      # Usage of these items will be blocked whenever clan is offline or online.
+      always:
+      - LAVA_BUCKET
+    # Usage of these items will be blocked when clan is offline.
+      offline:
+      - BUCKET
+      - FIREBALL
+      - WATER_BUCKET
+      - FLINT_AND_STEEL
+      # Usage of these items will be blocked for newbie (player whose clan role is the lowest in clan).
+      newbie:
+      - WATER_BUCKET
+      - LAVA_BUCKET
+      allie:
+      - LAVA_BUCKET
+      - WATER_BUCKET
+      - BUCKET
+      - FIREBALL
+    interact:
+      # Interaction with these items will be blocked whenever clan is offline or online.
+      always:
+      - WOODEN_DOOR
+      - TRAP_DOOR
+      - FENCE_GATE
+      - DISPENSER
+      - CHEST
+      - FURNACE
+      - BURNING_FURNACE
+      - DIODE_BLOCK_OFF
+      - DIODE_BLOCK_ON
+      - JUKEBOX
+      - BREWING_STAND
+      - ENCHANTMENT_TABLE
+      - CAULDRON
+      - SOIL
+      - BEACON
+      - ANVIL
+      - TRAPPED_CHEST
+      - LOCKED_CHEST
+      - DROPPER
+      - HOPPER
+      # Interaction with these items will be blocked when clan is online.
+      offline:
+      # Interaction with these items will be blocked when clan is online.
+      newbie:
+      - DISPENSER
+      - CHEST
+      - FURNACE
+      - BURNING_FURNACE
+      - JUKEBOX
+      - BREWING_STAND
+      - CAULDRON
+      - SOIL
+      - BEACON
+      # Trapped chest has been removed from here to allow newbies interacting with it.
+      - LOCKED_CHEST
+      - DROPPER
+      - HOPPER
+      allie:
+      - DISPENSER
+      - CHEST
+      - FURNACE
+      - BURNING_FURNACE
+      - JUKEBOX
+      - BREWING_STAND
+      - CAULDRON
+      - SOIL
+      - BEACON
+      - TRAPPED_CHEST
+      - DROPPER
+      - HOPPER
+map:
+  height: 7
+  width: 28
+performance:
+  # Cache all players (when plugin tries to get player info from MySQL, it caches it so that future requests to this info will be faster)
+  cache-on-request: false
+  # Load players who is in a clan to cache on plugin load. By default, only online players are added to cache.
+  cache-clan-players: true
+  # Should player's cache be cleared when he leaves a server or not.
+  cache-clear-on-leave: false
+integration:
+  # Integration with essentials homes (cooldown, delay, etc).
+  essentials: true
+tournament:
+  enable: false
