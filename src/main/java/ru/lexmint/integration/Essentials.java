@@ -21,6 +21,7 @@ public class Essentials {
     public static void setup() {
         Plugin ess = Bukkit.getPluginManager().getPlugin("Essentials");
         if (ess != null) {
+            int i = 0;
             essentials = (IEssentials) ess;
             try {
                 Chat.setup();
