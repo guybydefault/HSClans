@@ -1,6 +1,6 @@
 name: HSClans
 version: 1.0
-main: ru.lexmint.HSClans
+main: ru.lexmint.hsclans.HSClans
 authors: [Lexmint]
 website: http://lexmint.ru/
 softdepend: [WorldGuard, WorldBorder, Essentials, EssentialsChat, ProtocolLib]

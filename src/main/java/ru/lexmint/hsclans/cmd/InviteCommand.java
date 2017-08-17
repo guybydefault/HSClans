@@ -1,0 +1,55 @@
+package ru.lexmint.hsclans.cmd;
+
+import org.bukkit.entity.Player;
+import ru.lexmint.hsclans.HSClans;
+import ru.lexmint.hsclans.domain.CPLayer;
+import ru.lexmint.hsclans.domain.Clan;
+import ru.lexmint.hsclans.domain.ClanManager;
+import ru.lexmint.hsclans.domain.ClanRole;
+
+/**
+ * InviteCommand used for inviting players to the faction.
+ */
+class InviteCommand extends AbstractClanPlayerCommand {
+
+
+    /**
+     * Main constructor for creating a command.
+     *
+     * @param aliases
+     * @param requiredClanRole Minimal role in a clan for executing the command.
+     *                         required for executing the command.
+     * @param permission       Required permission for executing this command.
+     * @param arguments        Minimal number of sub arguments (command label is not included),
+     * @param usage            String which contains information how to use this command.
+     */
+    public InviteCommand(String[] aliases, ClanRole requiredClanRole, String permission, int arguments, String usage) {
+        super(aliases, requiredClanRole, permission, arguments, usage);
+    }
+
+    @Override
+    public void perform(Player sender, String[] subargs) {
+        Player player = HSClans.instance.getServer().getPlayer(subargs[1]);
+        if (player != null) {
+            ClanManager clanManager = HSClans.instance.getClanManager();
+            Clan clan = clanManager.getPlayer(sender.getName(), true).getClan();
+            if (clan.containsMember(player.getName())) {
+                HSClans.instance.getMessenger().message("commands.invite.already-joined", sender, player.getName());
+            } else if (clan.addInvite(player.getName())) {
+                CPLayer cpLayer = clanManager.getPlayer(player.getName(), true);
+                Clan playerClan = cpLayer.getClan();
+                if (playerClan != null) {
+                    HSClans.instance.getMessenger().message("commands.invite.success-busy", sender, player.getName(), playerClan.getName());
+                    HSClans.instance.getMessenger().message("commands.invite.invitation-busy", player, sender.getName(), clan.getName());
+                } else {
+                    HSClans.instance.getMessenger().message("commands.invite.success", sender, player.getName());
+                    HSClans.instance.getMessenger().message("commands.invite.invitation", player, sender.getName(), clan.getName(), clan.getName());
+                }
+            } else {
+                HSClans.instance.getMessenger().message("commands.invite.already-invited", sender, player.getName());
+            }
+        } else {
+            HSClans.instance.getMessenger().message("commands.invite.player-not-found", sender);
+        }
+    }
+}
