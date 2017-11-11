@@ -13,7 +13,7 @@ public class ClanManager {
     /**
      * Map of all clan players existing on the server by their name.
      */
-    private final HashMap<String, CPLayer> clanPlayersByName = new HashMap<>();
+    private HashMap<String, CPLayer> clanPlayersByName = new HashMap<>();
     /**
      * Object, which deals with MySQL interactions and queries.
      */
@@ -48,14 +48,7 @@ public class ClanManager {
         /**
          * Adds players in clans to player cache for performance needs if it's configured in config.
          */
-        if (HSClans.instance.getSettings().getBoolean("performance.cache-clan-players")) {
-            for (Clan clan : clansByName.values()) {
-                for (String clanMember : clan.getMembers()) {
-                    getPlayer(clanMember, true);
-                }
-            }
-        }
-
+        clanPlayersByName = storageManager.importClanPlayers(HSClans.instance.getSettings().getBoolean("performance.cache-all"));
     }
 
     /**

@@ -41,10 +41,10 @@ public class StorageManager {
     }
 
     /**
-     * When server runs into an exception while reading/writing information to SQL Database, it shutdowns to
-     * prevent data loosing and problems.
+     * When server runs into an exception while reading/writing information to SQL Database or there was data corruption in DB,
+     * it shutdowns to prevent data loosing and problems.
      */
-    private void onSQLException() {
+    private void onCriticalException() {
         HSClans.instance.getServer().shutdown();
     }
 
@@ -58,8 +58,6 @@ public class StorageManager {
             statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "clans (" +
                     "name VARCHAR(8) NOT NULL, " +
                     "description VARCHAR(92), " +
-                    "members VARCHAR(1000) NOT NULL, " +
-                    "claims_number SMALLINT UNSIGNED NOT NULL, " +
                     "time_created BIGINT(16) NOT NULL, " +
                     "alliances VARCHAR(26) NOT NULL, " +
                     "arena_wins MEDIUMINT UNSIGNED NOT NULL, " +
@@ -106,7 +104,7 @@ public class StorageManager {
                     ") CHARACTER SET utf8");
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while preparing MySQL DB. " + e);
-            onSQLException();
+            onCriticalException();
         }
 
     }
@@ -147,13 +145,6 @@ public class StorageManager {
                     clan.setHome(homeLocation);
                 }
 
-                String members = rs.getString("members");
-                if (!members.isEmpty()) {
-                    for (String member : members.split(",")) {
-                        clan.addPlayer(member);
-                    }
-                }
-
                 /** Adding clan's alliances to temporary map **/
                 String alliances = rs.getString("alliances");
                 if (!alliances.isEmpty()) {
@@ -173,7 +164,63 @@ public class StorageManager {
             return clansByName;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while importing CLANS in ClanSQLManager. " + e);
-            onSQLException();
+            onCriticalException();
+        } finally {
+            closeStatement(ps);
+        }
+        return null;
+    }
+
+    public HashMap<String, CPLayer> importClanPlayers(boolean cacheAll) {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement
+                    ("SELECT * FROM " + tablePrefix + "players");
+            ResultSet rs = ps.executeQuery();
+            HashMap<String, CPLayer> playersByName = new HashMap<>();
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String clanName = rs.getString("clan");
+                Clan clan = null;
+                if (clanName == null) {
+                    if (!cacheAll) {
+                        continue;
+                    }
+                } else {
+                    clan = HSClans.instance.getClanManager().getClan(clanName);
+                    if (clan == null) {
+                        HSClans.instance.getDebug().error("Player " + name + " had clan + " + clanName + " but it has not been found in DB table for clans. Resetting clan to null for him.");
+                    }
+                }
+
+                String role = rs.getString("role");
+                double power = rs.getDouble("power");
+                double powerBoost = rs.getDouble("power_boost");
+                long lastPowerUpdateTime = rs.getLong("last_power_update");
+                int kills = rs.getInt("kills");
+                int points = rs.getInt("points");
+                int deaths = rs.getInt("deaths");
+                long firstPlayed = rs.getLong("first_played");
+                double hoursPlayed = rs.getDouble("hours_played");
+                double hoursPlayedWeek = rs.getDouble("hours_played_week");
+                double hoursPlayedPreviousWeek = rs.getDouble("hours_played_prev_week");
+                int HSR = rs.getInt("hsr");
+                int HSRView = rs.getInt("hsr_view");
+                long lastPlayed = rs.getLong("last_played");
+                int arenaWins = rs.getInt("arena_wins");
+                int arenaDefeats = rs.getInt("arena_defeats");
+                boolean tournamentState = rs.getBoolean("tournament_state");
+
+                CPLayer cpLayer = new CPLayer(name, clan, ClanRole.valueOf(role), power, powerBoost, lastPowerUpdateTime, kills, points, deaths, firstPlayed, lastPlayed, hoursPlayed, hoursPlayedWeek, hoursPlayedPreviousWeek, HSR, HSRView, arenaWins, arenaDefeats, tournamentState);
+                playersByName.put(cpLayer.getName().toLowerCase(), cpLayer);
+                if (clan != null) {
+                    clan.addPlayer(cpLayer.getName());
+                }
+            }
+            return playersByName;
+        } catch (SQLException e) {
+            HSClans.instance.getDebug().error("SQL Error while importing PLAYERS in ClanSQLManager. " + e);
+            onCriticalException();
         } finally {
             closeStatement(ps);
         }
@@ -191,7 +238,7 @@ public class StorageManager {
                     connection.isClosed();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while synchronizing. " + e);
-                    onSQLException();
+                    onCriticalException();
                 }
             }
         });
@@ -226,7 +273,7 @@ public class StorageManager {
             return claimSet;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while importing CLAIMS in ClanSQLManager. " + e);
-            onSQLException();
+            onCriticalException();
         } finally {
             closeStatement(ps);
         }
@@ -275,7 +322,7 @@ public class StorageManager {
             }
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while getting CLAN PLAYER in ClanSQLManager. " + e);
-            onSQLException();
+            onCriticalException();
         } finally {
             closeStatement(ps);
         }
@@ -296,7 +343,7 @@ public class StorageManager {
             return cpLayerList;
         } catch (SQLException e) {
             HSClans.instance.getDebug().error("SQL Error while getting CLAN PLAYER in ClanSQLManager. " + e);
-            onSQLException();
+            onCriticalException();
         } finally {
             closeStatement(ps);
         }
@@ -346,7 +393,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAN PLAYER in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -395,7 +442,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while updating CLAN PLAYER in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -416,25 +463,25 @@ public class StorageManager {
                 try {
                     if (clan.getHome() != null) {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
-                                "description=?, members=?, claims_number=?, alliances=?, " +
+                                "description=?, alliances=?, " +
                                 "arena_wins=?, arena_defeats=?, points=?, " +
                                 "home_x=?, home_y=?, home_z=?, home_pitch=?," +
                                 "home_yaw=?, home_world=? WHERE name=?");
 
                         Location homeLocation = clan.getHome();
-                        ps.setDouble(8, homeLocation.getX());
-                        ps.setDouble(9, homeLocation.getY());
-                        ps.setDouble(10, homeLocation.getZ());
-                        ps.setFloat(11, homeLocation.getPitch());
-                        ps.setFloat(12, homeLocation.getYaw());
-                        ps.setString(13, homeLocation.getWorld().getName());
-                        ps.setString(14, clan.getName());
+                        ps.setDouble(6, homeLocation.getX());
+                        ps.setDouble(7, homeLocation.getY());
+                        ps.setDouble(8, homeLocation.getZ());
+                        ps.setFloat(9, homeLocation.getPitch());
+                        ps.setFloat(10, homeLocation.getYaw());
+                        ps.setString(11, homeLocation.getWorld().getName());
+                        ps.setString(12, clan.getName());
                     } else {
                         ps = connection.prepareStatement("UPDATE " + tablePrefix + "clans SET " +
-                                "description=?, members=?, claims_number=?, alliances=?, " +
+                                "description=?, alliances=?, " +
                                 "arena_wins=?, arena_defeats=?, points=? WHERE name=?");
 
-                        ps.setString(8, clan.getName());
+                        ps.setString(6, clan.getName());
                     }
 
                     if (clan.getDescription() != null && !clan.getDescription().equals(HSClans.instance.getLangConfig().getString("clan.description"))) {
@@ -442,18 +489,16 @@ public class StorageManager {
                     } else {
                         ps.setString(1, null);
                     }
-                    ps.setString(2, Utils.convertToString(clan.getMembers(), false));
-                    ps.setInt(3, clan.getClaimsNumber());
-                    ps.setString(4, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
-                    ps.setInt(5, clan.getArenaWins());
-                    ps.setInt(6, clan.getArenaDefeats());
-                    ps.setInt(7, clan.getPoints());
+                    ps.setString(2, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
+                    ps.setInt(3, clan.getArenaWins());
+                    ps.setInt(4, clan.getArenaDefeats());
+                    ps.setInt(5, clan.getPoints());
 
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while updating CLAN in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -474,23 +519,21 @@ public class StorageManager {
                 PreparedStatement ps = null;
                 try {
                     ps = connection.prepareStatement("INSERT INTO " + tablePrefix + "clans " +
-                            "(name, description, members, claims_number, time_created, alliances, arena_wins, arena_defeats, points) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "(name, description, time_created, alliances, arena_wins, arena_defeats, points) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?)");
 
                     ps.setString(1, clan.getName());
                     ps.setString(2, clan.getDescription());
-                    ps.setString(3, Utils.convertToString(clan.getMembers(), false));
-                    ps.setInt(4, clan.getClaimsNumber());
-                    ps.setLong(5, clan.getCreatedTime());
-                    ps.setString(6, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
-                    ps.setInt(7, clan.getArenaWins());
-                    ps.setInt(8, clan.getArenaDefeats());
-                    ps.setInt(9, clan.getPoints());
+                    ps.setLong(3, clan.getCreatedTime());
+                    ps.setString(4, Utils.convertToString(Utils.getClanNames(clan.getAlliances()), false));
+                    ps.setInt(5, clan.getArenaWins());
+                    ps.setInt(6, clan.getArenaDefeats());
+                    ps.setInt(7, clan.getPoints());
                     ps.execute();
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAN in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -511,7 +554,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -537,7 +580,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while inserting new CLAIM in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 }
             }
         });
@@ -558,7 +601,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -589,7 +632,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -610,7 +653,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while resetting hoursPlayedWeek in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -638,7 +681,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while setting tournament state in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -661,7 +704,7 @@ public class StorageManager {
                     connection.commit();
                 } catch (SQLException e) {
                     HSClans.instance.getDebug().error("SQL Error while deleting CLAN PLAYER in ClanSQLManager. " + e);
-                    onSQLException();
+                    onCriticalException();
                 } finally {
                     closeStatement(ps);
                 }
@@ -685,7 +728,7 @@ public class StorageManager {
                         statement.close();
                     } catch (SQLException e) {
                         HSClans.instance.getDebug().error("SQL Error. Statement can't be closed. " + e);
-                        onSQLException();
+                        onCriticalException();
                     }
                 }
             }

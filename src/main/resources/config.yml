@@ -212,8 +212,8 @@ map:
 performance:
   # Cache all players (when plugin tries to get player info from MySQL, it caches it so that future requests to this info will be faster)
   cache-on-request: false
-  # Load players who is in a clan to cache on plugin load. By default, only online players are added to cache.
-  cache-clan-players: true
+  # Load all players into the cache
+  cache-all: false
   # Should player's cache be cleared when he leaves a server or not.
   cache-clear-on-leave: false
 integration:

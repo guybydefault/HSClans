@@ -19,8 +19,7 @@
     <orderEntry type="library" name="EssentialsChat" level="project" />
     <orderEntry type="library" name="bukkit-1.7.9-R0.2" level="project" />
     <orderEntry type="library" name="Essentials" level="project" />
-    <orderEntry type="library" name="worldguard-6.1" level="project" />
-    <orderEntry type="library" name="worldedit-bukkit-6.1.3" level="project" />
     <orderEntry type="library" name="HSCore" level="project" />
+    <orderEntry type="library" name="WorldEdit" level="project" />
   </component>
 </module>
