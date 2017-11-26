@@ -10,7 +10,7 @@ import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.listener.ChatListener;
 
 /**
- * Deals with old versioned essentials chat.
+ * Deals with old versioned (1.5.2 and before) essentials chat.
  */
 public class Chat {
     private static EssentialsChat essentialsChat;

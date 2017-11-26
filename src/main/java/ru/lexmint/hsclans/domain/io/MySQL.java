@@ -35,6 +35,7 @@ public class MySQL {
             properties.setProperty("user", user);
             properties.setProperty("password", password);
             properties.setProperty("useUnicode", "true");
+            properties.setProperty("connectTimeout", "2000");
             properties.setProperty("characterEncoding", "utf-8");
 
             connection = DriverManager.getConnection(url, properties);
