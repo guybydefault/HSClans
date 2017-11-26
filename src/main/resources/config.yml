@@ -63,6 +63,7 @@ player:
 clan:
   # Maximum number of clan allies.
   max-allies: 3
+  max-leaders: 1
   home:
     # Minimal height where player can set his home. He will be unable to set it lower than this.
     min-height: 50.0

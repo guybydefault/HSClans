@@ -46,6 +46,11 @@ class ClaimCommand extends AbstractClanPlayerCommand {
             return;
         }
 
+        if (minRole == ClanRole.LEADER) {
+            HSClans.instance.getMessenger().message("commands.claim.leader-claim", sender);
+            return;
+        }
+
         ClanManager clanManager = HSClans.instance.getClanManager();
 
         CPLayer cPlayer = clanManager.getPlayer(sender.getName(), true);

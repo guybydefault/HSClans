@@ -3,6 +3,7 @@ package ru.lexmint.hsclans.cmd;
 import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.CPLayer;
+import ru.lexmint.hsclans.domain.Clan;
 import ru.lexmint.hsclans.domain.ClanManager;
 import ru.lexmint.hsclans.domain.ClanRole;
 
@@ -32,17 +33,22 @@ class PromoteCommand extends AbstractClanPlayerCommand {
 
         CPLayer promoter = clanManager.getPlayer(sender.getName(), true);
         CPLayer player = clanManager.getPlayer(subargs[1], false);
+        Clan clan = promoter.getClan();
 
         if (player == null) {
             HSClans.instance.getMessenger().message("commands.promote.player-not-found", sender, subargs[1]);
         } else if (clanManager.areInTheSameClan(promoter, player)) {
             if (promoter.getClanRole() == ClanRole.LEADER || promoter.getClanRole().getLevel() > player.getClanRole().getLevel() + 1
                     || BypassCommand.isBypassing(sender.getName())) {
-                if (clanManager.promoteClanPlayer(player)) {
-                    HSClans.instance.getMessenger().broadcastToClan("commands.promote.success", promoter.getClan(), promoter.getClanRole().getName(),
-                            promoter.getName(), player.getName(), player.getClanRole().getName());
+                if (player.getClanRole() == ClanRole.getClanRoleByLevel(ClanRole.LEADER.getLevel() - 1) && clan.getLeadersNumber() + 1 > HSClans.instance.getSettings().getInt("clan.max-leaders")) {
+                    HSClans.instance.getMessenger().message("commands.promote.leaders-limit", sender, player.getName(), String.valueOf(HSClans.instance.getSettings().getInt("clan.max-leaders")));
                 } else {
-                    HSClans.instance.getMessenger().message("commands.promote.highest-rank", sender, player.getName(), player.getClanRole().getName());
+                    if (clanManager.promoteClanPlayer(player)) {
+                        HSClans.instance.getMessenger().broadcastToClan("commands.promote.success", promoter.getClan(), promoter.getClanRole().getName(),
+                                promoter.getName(), player.getName(), player.getClanRole().getName());
+                    } else {
+                        HSClans.instance.getMessenger().message("commands.promote.highest-rank", sender, player.getName(), player.getClanRole().getName());
+                    }
                 }
             } else {
                 HSClans.instance.getMessenger().message("commands.promote.low-rank", sender, player.getName(), player.getClanRole().getName(), promoter.getClanRole().getName());
