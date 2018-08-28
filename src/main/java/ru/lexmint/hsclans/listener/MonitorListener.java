@@ -56,18 +56,37 @@ public class MonitorListener implements Listener {
         Claim from = clanManager.getClaim(event.getFrom().getChunk().getX(), event.getFrom().getChunk().getZ(), event.getFrom().getWorld());
         Claim to = clanManager.getClaim(event.getTo().getChunk().getX(), event.getTo().getChunk().getZ(), event.getTo().getWorld());
 
-        /**
-         * Checks if owner of the land is the same or not. If the same - returns.
-         */
-        if ((from == null && to == null) || (from != null && to != null && from.getClan() == to.getClan() && from.getMinRole() == to.getMinRole())) {
-            return;
+
+        if (to == null) {
+            if (from == null) {
+                // Wilderness -> Wilderness
+                return;
+            } else {
+                // Clan -> Wilderness
+                HSClans.instance.getMessenger().message("land.wilderness", player);
+                return;
+            }
         }
 
-        if (to != null) {
-            HSClans.instance.getMessenger().message("land.clan", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getMinRole().getName(), to.getClan().getDescription());
-        } else {
-            HSClans.instance.getMessenger().message("land.wilderness", player);
+        CPLayer cPLayer = clanManager.getPlayer(player.getName(), false);
 
+        if (cPLayer.getClan() == to.getClan()) {
+            /**
+             *  Wilderness -> Own land
+             *  Own land with minRole A -> Own land with minRole B
+             *  Enemy land -> Own land
+             */
+            if (from == null || from.getClan() != to.getClan() || from.getMinRole() != to.getMinRole()) {
+                HSClans.instance.getMessenger().message("land.clan.own", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getMinRole().getName(), to.getClan().getDescription());
+            }
+        } else {
+            /**
+             * Wilderness -> Enemy land
+             * Enemy land of clan A -> Enemy land of clan B
+             */
+            if (from == null || from.getClan() != to.getClan()) {
+                HSClans.instance.getMessenger().message("land.clan.other", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+            }
         }
     }
 
