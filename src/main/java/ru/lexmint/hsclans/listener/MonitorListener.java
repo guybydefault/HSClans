@@ -66,29 +66,29 @@ public class MonitorListener implements Listener {
                 HSClans.instance.getMessenger().message("land.wilderness", player);
                 return;
             }
-        }
-
-        CPLayer cPLayer = clanManager.getPlayer(player.getName(), false);
-
-        if (cPLayer.getClan() == to.getClan()) {
-            /**
-             *  Wilderness -> Own land
-             *  Own land with minRole A -> Own land with minRole B
-             *  Enemy land -> Own land
-             */
-            if (from == null || from.getClan() != to.getClan() || from.getMinRole() != to.getMinRole()) {
-                HSClans.instance.getMessenger().message("land.clan.own", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getMinRole().getName(), to.getClan().getDescription());
-            }
         } else {
-            /**
-             * Wilderness -> Enemy land
-             * Enemy land of clan A -> Enemy land of clan B
-             */
-            if (from == null || from.getClan() != to.getClan()) {
-                if (cPLayer.getClan() != null && cPLayer.getClan().isAlliedWith(to.getClan())) {
-                    HSClans.instance.getMessenger().message("land.clan.other.ally", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
-                } else {
-                    HSClans.instance.getMessenger().message("land.clan.other.enemy", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+            CPLayer cPLayer = clanManager.getPlayer(player.getName(), false);
+
+            if (cPLayer.getClan() == to.getClan()) {
+                /**
+                 *  Wilderness -> Own land
+                 *  Own land with minRole A -> Own land with minRole B
+                 *  Enemy land -> Own land
+                 */
+                if (from == null || from.getClan() != to.getClan() || from.getMinRole() != to.getMinRole()) {
+                    HSClans.instance.getMessenger().message("land.clan.own", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getMinRole().getName(), to.getClan().getDescription());
+                }
+            } else {
+                /**
+                 * Wilderness -> Enemy land
+                 * Enemy land of clan A -> Enemy land of clan B
+                 */
+                if (from == null || from.getClan() != to.getClan()) {
+                    if (cPLayer.getClan() != null && cPLayer.getClan().isAlliedWith(to.getClan())) {
+                        HSClans.instance.getMessenger().message("land.clan.other.ally", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+                    } else {
+                        HSClans.instance.getMessenger().message("land.clan.other.enemy", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+                    }
                 }
             }
         }

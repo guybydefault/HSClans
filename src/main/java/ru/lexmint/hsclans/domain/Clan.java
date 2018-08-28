@@ -478,7 +478,21 @@ public class Clan {
      * contained given clan.
      */
     public boolean addAlliance(Clan clan) {
-        return alliances.size() < HSClans.instance.getSettings().getInt("clan.max-allies") && alliances.add(clan);
+        return getNumberOfAlliedClans() < HSClans.instance.getSettings().getInt("clan.max-allies") && alliances.add(clan);
+    }
+
+    /**
+     *
+     * @return Number of clans which are in an alliance with this clan.
+     */
+    public int getNumberOfAlliedClans() {
+        int numberOfAlliedClans = 0;
+        for (Clan clan : getAlliances()) {
+            if (clan.isAlliedWith(this)) {
+                numberOfAlliedClans++;
+            }
+        }
+        return numberOfAlliedClans;
     }
 
     /**
