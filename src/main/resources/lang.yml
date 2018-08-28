@@ -31,7 +31,8 @@ clan:
       tag: '***'
 land:
   wilderness: '&e~ &2Свободные земли'
-  clan: '&e~ &7[&e%s%&7]&r %s% &7(&6Доступ &cNEW!&6: &e%s%&7)&r - %s%'
+  clan.own: '&e~ &7[&e%s%&7]&r %s% &7(&6Доступ: &e%s%&7)&r - %s%'
+  clan.other: '&e~ &7[&e%s%&7]&r %s% - %s%'
 commands:
   create:
     usage: '&e/f create <Название_Клана>&2 - Создать клан.'
