@@ -85,7 +85,11 @@ public class MonitorListener implements Listener {
              * Enemy land of clan A -> Enemy land of clan B
              */
             if (from == null || from.getClan() != to.getClan()) {
-                HSClans.instance.getMessenger().message("land.clan.other", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+                if (cPLayer.getClan() != null && cPLayer.getClan().isAlliedWith(to.getClan())) {
+                    HSClans.instance.getMessenger().message("land.clan.other.ally", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+                } else {
+                    HSClans.instance.getMessenger().message("land.clan.other.enemy", player, to.getClan().getLevel().getName(), to.getClan().getName(), to.getClan().getDescription());
+                }
             }
         }
     }

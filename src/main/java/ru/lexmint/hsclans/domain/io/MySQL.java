@@ -35,7 +35,11 @@ public class MySQL {
             properties.setProperty("user", user);
             properties.setProperty("password", password);
             properties.setProperty("useUnicode", "true");
-            properties.setProperty("connectTimeout", "2000");
+            properties.setProperty("connectTimeout", "1000");
+            properties.setProperty("socketTimeout", "1000");
+            properties.setProperty("autoReconnect", "true");
+            properties.setProperty("failOverReadOnly", "false");
+            properties.setProperty("maxReconnects", "10");
             properties.setProperty("characterEncoding", "utf-8");
 
             connection = DriverManager.getConnection(url, properties);
