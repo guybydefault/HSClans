@@ -1,6 +1,7 @@
 package ru.lexmint.hsclans.domain;
 
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
 
 import java.util.*;
@@ -127,6 +128,10 @@ public class ClanManager {
         return cpLayer;
     }
 
+    public CPLayer getPlayer(Player player) {
+        return getPlayer(player.getName(), true);
+    }
+
     /**
      * Removes a player from clan if he is a clan member.
      * <p/>
@@ -196,10 +201,11 @@ public class ClanManager {
      * Disclaims all clan claims.
      *
      * @param clan Clan which claim will be disclaimed.
-     * @return Number of claims disclaimed.
+     * @return Set of claims disclaimed.
      */
-    public int removeAllClaims(Clan clan) {
-        int disclaims = 0;
+    public Set<Claim> removeAllClaims(Clan clan) {
+        Set<Claim> claims = new HashSet<>(clan.getClaims());
+
         Iterator<Claim> it = clan.getClaims().iterator();
         while (it.hasNext()) {
             Claim claim = it.next();
@@ -207,10 +213,10 @@ public class ClanManager {
             it.remove();
             claims.remove(claim);
             storageManager.removeClaim(claim);
-            disclaims++;
         }
+
         updateClan(clan);
-        return disclaims;
+        return claims;
     }
 
     /**
@@ -424,7 +430,7 @@ public class ClanManager {
     /**
      * @return List of players who belong to some clan.
      */
-    public List<CPLayer> getClanPlayers() {
+    public List<CPLayer> getCPlayersInClan() {
         Collection<Clan> clans = getClans();
         List<CPLayer> clanPlayers = new LinkedList<>();
         for (Clan clan : clans) {
@@ -460,7 +466,7 @@ public class ClanManager {
     }
 
     public void enableTournament() {
-        for (CPLayer cpLayer : HSClans.instance.getClanManager().getClanPlayers()) {
+        for (CPLayer cpLayer : HSClans.instance.getClanManager().getCPlayersInClan()) {
             cpLayer.joinTournament();
         }
     }

@@ -6,11 +6,11 @@
 
     <groupId>ru.lexmint</groupId>
     <artifactId>HSClans</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <packaging>jar</packaging>
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -19,49 +19,244 @@
         <dependency>
             <groupId>ru.lexmint</groupId>
             <artifactId>HSCore</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>HSClans</artifactId>
+                    <groupId>ru.lexmint</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.6.4-R2.1</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bungeecord-chat</artifactId>
+                    <groupId>net.md-5</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>persistence-api</artifactId>
+                    <groupId>javax.persistence</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.earth2me</groupId>
-            <artifactId>Essentials</artifactId>
-            <version>1.6.4</version>
+            <groupId>org.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <scope>system</scope>
+            <version>6.2.2</version>
+            <systemPath>${basedir}/../Libraries/1.12/WorldGuard.jar</systemPath>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bukkit</artifactId>
+                    <groupId>org.bukkit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bukkit-classloader-check</artifactId>
+                    <groupId>org.sk89q.bukkit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>dummypermscompat</artifactId>
+                    <groupId>com.sk89q</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jchronic</artifactId>
+                    <groupId>com.sk89q</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>js</artifactId>
+                    <groupId>rhino</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>truezip</artifactId>
+                    <groupId>de.schlichtherle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jlibnoise</artifactId>
+                    <groupId>com.sk89q.lib</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>paranamer</artifactId>
+                    <groupId>com.thoughtworks.paranamer</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.earth2me</groupId>
-            <artifactId>EssentialsChat</artifactId>
-            <version>1.6.4</version>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.9.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.sk89q.worldguard</groupId>-->
+            <!--<artifactId>worldguard-legacy</artifactId>-->
+            <!--<version>6.2</version>-->
+            <!--<scope>provided</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>bukkit</artifactId>-->
+                    <!--<groupId>org.bukkit</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>bukkit-classloader-check</artifactId>-->
+                    <!--<groupId>com.sk89q.spigot</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>commandbook</artifactId>-->
+                    <!--<groupId>com.sk89q</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jsr305</artifactId>-->
+                    <!--<groupId>com.google.code.findbugs</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>js</artifactId>-->
+                    <!--<groupId>rhino</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>truezip</artifactId>-->
+                    <!--<groupId>de.schlichtherle</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jchronic</artifactId>-->
+                    <!--<groupId>com.sk89q</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>worldedit</artifactId>-->
+                    <!--<groupId>com.sk89q</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <scope>system</scope>
+            <version>6.2.2</version>
+            <systemPath>${basedir}/../Libraries/1.12/WorldEdit.jar</systemPath>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bukkit</artifactId>
+                    <groupId>org.bukkit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bukkit-classloader-check</artifactId>
+                    <groupId>org.sk89q.bukkit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>dummypermscompat</artifactId>
+                    <groupId>com.sk89q</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jchronic</artifactId>
+                    <groupId>com.sk89q</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>js</artifactId>
+                    <groupId>rhino</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>truezip</artifactId>
+                    <groupId>de.schlichtherle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jlibnoise</artifactId>
+                    <groupId>com.sk89q.lib</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>paranamer</artifactId>
+                    <groupId>com.thoughtworks.paranamer</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>WorldGuard</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>WorldEdit</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wimbli</groupId>
+            <groupId>com.wimbli.WorldBorder</groupId>
             <artifactId>WorldBorder</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.earth2me</groupId>
-            <artifactId>EssentialsChat</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kitteh</groupId>
-            <artifactId>TagAPI</artifactId>
-            <version>1.6.4</version>
+            <version>1.9.10 (beta)</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+        </repository>
+        <repository>
+            <id>ess-repo</id>
+            <url>http://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>maven.sk89q.com</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <id>repo.mikeprimm.com</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>mvdw-software</id>
+            <url>http://repo.mvdw-software.be/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>minecraft-libraries</id>
+            <name>Minecraft Libraries</name>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
@@ -70,32 +265,30 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-dependency-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-dependencies</id>-->
+                        <!--<phase>prepare-package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy-dependencies</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<outputDirectory>${project.build.directory}/lib</outputDirectory>-->
+                            <!--<overWriteReleases>false</overWriteReleases>-->
+                            <!--<overWriteSnapshots>false</overWriteSnapshots>-->
+                            <!--<overWriteIfNewer>true</overWriteIfNewer>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>

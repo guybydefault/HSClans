@@ -1,10 +1,12 @@
 package ru.lexmint.hsclans.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.*;
-import ru.lexmint.hsclans.integration.WorldGuard;
+import ru.lexmint.hsclans.events.ClaimCapturedEvent;
+import ru.lexmint.hsclans.integration.WorldGuardIntegration;
 
 import java.util.List;
 
@@ -72,6 +74,7 @@ class ClaimCommand extends AbstractClanPlayerCommand {
                 HSClans.instance.getMessenger().message("commands.claim.owner-can-hold", sender, owner.getName());
             } else if (clan.canClaim(1)) {
                 clanManager.changeClaimClan(claim, clan, minRole);
+                Bukkit.getServer().getPluginManager().callEvent(new ClaimCapturedEvent(claim, owner, clan));
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-lost", owner, cPlayer.getName(),
                         clan.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.claim-captured-win", clan, cPlayer.getClanRole().getName(),
@@ -80,12 +83,13 @@ class ClaimCommand extends AbstractClanPlayerCommand {
                 HSClans.instance.getMessenger().message("commands.claim.not-enough-power", sender, String.valueOf(clan.getClaimsNumber()), String.valueOf(clan.getPowerRounded()));
             }
         } else {
-            if (WorldGuard.checkForRegionsInChunk(player.getLocation().getChunk())) {
+            if (WorldGuardIntegration.checkForRegionsInChunk(player.getLocation().getChunk())) {
                 HSClans.instance.getMessenger().message("commands.claim.world-guard-region", sender);
             } else if (deniedWorlds.contains(world.getName())) {
                 HSClans.instance.getMessenger().message("commands.claim.denied-world", sender);
             } else if (clan.canClaim(1)) {
                 clanManager.addClaim(chunkX, chunkZ, world, clan, minRole);
+                Bukkit.getServer().getPluginManager().callEvent(new ClaimCapturedEvent(claim, null, clan));
                 HSClans.instance.getMessenger().broadcastToClan("commands.claim.success", clan, cPlayer.getClanRole().getName(), cPlayer.getName(), String.valueOf(chunkX),
                         String.valueOf(chunkZ));
             } else {

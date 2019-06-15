@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.CPLayer;
 import ru.lexmint.hsclans.domain.Claim;
@@ -95,8 +96,8 @@ public class EntityListener implements Listener {
             targets.add(center.getRelative(1, 0, 0));
             targets.add(center.getRelative(-1, 0, 0));
             for (Block target : targets) {
-                // TODO: Materials
-                int id = target.getTypeId();
+                // TODO: Materials, deprecated
+                int id = target.getType().getId();
                 // ignore air, bedrock, water, lava, obsidian, enchanting table, etc.... too bad we can't get a blast resistance value through Bukkit yet
                 if (id != 0 && (id < 7 || id > 11) && id != 49 && id != 90 && id != 116 && id != 119 && id != 120 && id != 130) {
                     target.breakNaturally();
@@ -156,10 +157,11 @@ public class EntityListener implements Listener {
             return;
         }
 
-        Entity thrower = event.getPotion().getShooter();
-        if (thrower == null) {
+        ProjectileSource projectileSource = event.getPotion().getShooter();
+        if (projectileSource == null || !(projectileSource instanceof Entity)) {
             return;
         }
+        Entity thrower = (Entity) projectileSource;
 
         /** Scanning through all affected entities to make sure they are all valid targets. **/
         Iterator<LivingEntity> it = event.getAffectedEntities().iterator();

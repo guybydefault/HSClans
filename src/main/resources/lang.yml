@@ -1,3 +1,11 @@
+scoreboard:
+  below-name:
+    power: 'Сила'
+  sidebar:
+    title: '§7Клан §6%s% §lHigh-Sky.Ru'
+    power: '§6Сила '
+    lands: '§6Земли '
+    members-online: '§6Онлайн '
 chat:
   broadcast-prefix: '&7[&6Новости&7] '
   message-prefix: ''
@@ -122,8 +130,8 @@ commands:
     level: '&6Уровень: &e%s%&6 (HSR: &e%s%&6).'
     arena-stats: '&6Побед на арене: &e%s%&6 Поражений: &e%s%&6'
     size: '&6Онлайн в клане &a%s%&6 из &e%s%&6 человек.'
-    academy: '&6Состав академии (&cNEW!&6): %s%'
-    no-academy: '&6Состав академии (&cNEW!&6): &7- отсутствует -'
+    academy: '&6Состав академии: %s%'
+    no-academy: '&6Состав академии: &7- отсутствует -'
     members: '&6Основной состав: %s%'
   player:
     usage: '&e/f player, p <Ник_Игрока>&6 - Информация об игроке.'

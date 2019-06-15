@@ -13,24 +13,14 @@ import ru.lexmint.hsclans.domain.CPLayer;
  * <p/>
  * This event
  */
-public class PowerLossDeathEvent extends Event implements Cancellable {
+public class PowerLossDeathEvent extends HSClansEvent implements Cancellable {
 
     private CPLayer cpLayer;
-
-    private static final HandlerList handlers = new HandlerList();
 
     private boolean cancelled;
 
     public PowerLossDeathEvent(CPLayer cpLayer) {
         this.cpLayer = cpLayer;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

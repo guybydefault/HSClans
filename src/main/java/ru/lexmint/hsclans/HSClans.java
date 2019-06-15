@@ -9,11 +9,13 @@ import ru.lexmint.hsclans.domain.ClanManager;
 import ru.lexmint.hsclans.domain.StorageManager;
 import ru.lexmint.hsclans.domain.io.MySQL;
 import ru.lexmint.hsclans.integration.Border;
+import ru.lexmint.hsclans.integration.ClansPlaceholderExpansion;
 import ru.lexmint.hsclans.integration.Essentials;
-import ru.lexmint.hsclans.integration.WorldGuard;
+import ru.lexmint.hsclans.integration.WorldGuardIntegration;
 import ru.lexmint.hsclans.listener.*;
 import ru.lexmint.hsclans.utils.AutoLeaveTask;
 import ru.lexmint.hsclans.utils.ClanMessenger;
+import ru.lexmint.hsclans.utils.ScoreboardManager;
 import ru.lexmint.hscore.utils.Config;
 import ru.lexmint.hscore.utils.Debug;
 
@@ -62,6 +64,8 @@ public class HSClans extends JavaPlugin {
      */
     private CommandManager commandManager;
 
+    private ScoreboardManager scoreboardManager;
+
     /**
      * Listener which logs info, updates player's power and something important stats.
      */
@@ -90,10 +94,6 @@ public class HSClans extends JavaPlugin {
      */
     private EntityListener entityListener;
 
-    /**
-     * Integration with tag api (color names).
-     */
-    private TagListener tagListener;
 
     @Override
     public void onEnable() {
@@ -129,6 +129,9 @@ public class HSClans extends JavaPlugin {
         }
         /* Registering command handling to CommandManager */
 
+        scoreboardManager = new ScoreboardManager();
+        scoreboardManager.onLoad();
+
         /* Registering listeners */
         monitorListener = new MonitorListener();
         chatListener = new ChatListener();
@@ -136,7 +139,6 @@ public class HSClans extends JavaPlugin {
         playerListener = new PlayerListener();
         blockListener = new BlockListener();
         entityListener = new EntityListener();
-        tagListener = new TagListener();
 
         getServer().getPluginManager().registerEvents(monitorListener, this);
         getServer().getPluginManager().registerEvents(chatListener, this);
@@ -144,7 +146,6 @@ public class HSClans extends JavaPlugin {
         getServer().getPluginManager().registerEvents(playerListener, this);
         getServer().getPluginManager().registerEvents(blockListener, this);
         getServer().getPluginManager().registerEvents(entityListener, this);
-        getServer().getPluginManager().registerEvents(tagListener, this);
         /* Registering listeners */
 
         /* We need to make sure that all online players are loaded to cache and the count down
@@ -162,8 +163,9 @@ public class HSClans extends JavaPlugin {
 
         /* Essentials integration */
         Essentials.setup();
-        WorldGuard.setup();
+        WorldGuardIntegration.setup();
         Border.setup();
+        ClansPlaceholderExpansion.setup();
 
         getLogger().info("" + getDescription().getName() + " " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " ENABLED! (" + (System.currentTimeMillis() - startingTime) + "MS)");
     }
@@ -242,6 +244,10 @@ public class HSClans extends JavaPlugin {
 
     public EntityListener getEntityListener() {
         return entityListener;
+    }
+
+    public ScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
     }
 
 }

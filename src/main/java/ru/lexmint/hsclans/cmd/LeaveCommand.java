@@ -1,11 +1,13 @@
 package ru.lexmint.hsclans.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.CPLayer;
 import ru.lexmint.hsclans.domain.Clan;
 import ru.lexmint.hsclans.domain.ClanManager;
 import ru.lexmint.hsclans.domain.ClanRole;
+import ru.lexmint.hsclans.events.ClanPlayerLeftEvent;
 import ru.lexmint.hsclans.listener.ExploitListener;
 
 /**
@@ -41,6 +43,7 @@ class LeaveCommand extends AbstractClanPlayerCommand {
         final CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
         final Clan clan = cpLayer.getClan();
         clanManager.removePlayerFromClan(cpLayer);
+        Bukkit.getServer().getPluginManager().callEvent(new ClanPlayerLeftEvent(cpLayer, clan));
 
         if (clan.hasLeader()) {
             HSClans.instance.getMessenger().message("commands.leave.success", sender, clan.getName());

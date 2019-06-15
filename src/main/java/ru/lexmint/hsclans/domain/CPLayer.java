@@ -553,6 +553,14 @@ public class CPLayer {
         return !cPlayer.hasClan() || (cPlayer.getClan() != getClan() && !cPlayer.getClan().isAlliedWith(getClan()));
     }
 
+    public boolean isAlly(CPLayer cpLayer) {
+        return hasClan() && cpLayer.hasClan() && cpLayer.getClan().isAlliedWith(getClan());
+    }
+
+    public boolean isInTheSameClan(CPLayer cpLayer) {
+        return hasClan() && cpLayer.hasClan() && cpLayer.getClan().equals(getClan());
+    }
+
     /**
      * This HSR is temporary (for the current week)! This Rate is changing during the week. So, to display
      * player's skills it's better to use HSRateView.

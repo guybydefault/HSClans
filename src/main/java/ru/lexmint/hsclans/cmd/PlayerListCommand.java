@@ -37,7 +37,7 @@ class PlayerListCommand extends AbstractCommand {
             }
         }
 
-        List<CPLayer> playersList = new ArrayList<>(HSClans.instance.getClanManager().getClanPlayers());
+        List<CPLayer> playersList = new ArrayList<>(HSClans.instance.getClanManager().getCPlayersInClan());
 
         /** Sorting by HSR **/
         Collections.sort(playersList, new Comparator<CPLayer>() {

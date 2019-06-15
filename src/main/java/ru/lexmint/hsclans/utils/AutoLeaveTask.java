@@ -19,7 +19,7 @@ public class AutoLeaveTask extends BukkitRunnable {
     @Override
     public void run() {
         ClanManager clanManager = HSClans.instance.getClanManager();
-        List<CPLayer> playerList = clanManager.getClanPlayers();
+        List<CPLayer> playerList = clanManager.getCPlayersInClan();
         double hoursInactive = HSClans.instance.getSettings().getDouble("player.auto-leave.hours-inactive");
         for (CPLayer cpLayer : playerList) {
             if (cpLayer.isOnline() || !cpLayer.hasClan()) {

@@ -1,11 +1,13 @@
 package ru.lexmint.hsclans.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.CPLayer;
 import ru.lexmint.hsclans.domain.Clan;
 import ru.lexmint.hsclans.domain.ClanManager;
 import ru.lexmint.hsclans.domain.ClanRole;
+import ru.lexmint.hsclans.events.ClanPlayerJoinedEvent;
 
 /**
  * Join the clan.
@@ -36,6 +38,7 @@ class JoinCommand extends AbstractClanPlayerCommand {
             if (clan != null) {
                 if (clan.pullInvitation(sender.getName()) || BypassCommand.isBypassing(sender.getName())) {
                     clanManager.addPlayerToClan(clan, cpLayer, ClanRole.NEWBIE);
+                    Bukkit.getServer().getPluginManager().callEvent(new ClanPlayerJoinedEvent(cpLayer, clan));
                     HSClans.instance.getMessenger().broadcastToClan("commands.join.broadcast-to-clan", clan, sender.getName(), clan.getName());
                 } else {
                     HSClans.instance.getMessenger().message("commands.join.not-invited", sender, clan.getName());

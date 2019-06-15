@@ -444,6 +444,10 @@ public class Clan {
         return playerSet;
     }
 
+    public int getNumberOfMembersOnline() {
+        return getMembersOnline().size();
+    }
+
     /**
      * @return True if even though one player of this clan is online.
      */

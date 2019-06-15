@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import ru.lexmint.hsclans.HSClans;
 import ru.lexmint.hsclans.domain.ClanManager;
 import ru.lexmint.hsclans.integration.Border;
-import ru.lexmint.hsclans.integration.WorldGuard;
+import ru.lexmint.hsclans.integration.WorldGuardIntegration;
 import ru.lexmint.hscore.cmd.AbstractCommand;
 
 /**
@@ -118,7 +118,7 @@ class RegenCommand extends AbstractCommand {
                 while (currentChunkZ <= chunkEndZ) {
                     chunks++;
                     if (clanManager.getClaim(currentChunkX, currentChunkZ, world) == null
-                            && !WorldGuard.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
+                            && !WorldGuardIntegration.checkForRegionsInChunk(world.getChunkAt(currentChunkX, currentChunkZ))) {
                         if (world.regenerateChunk(currentChunkX, currentChunkZ)) {
                             // Doesn't make any difference. It doesn't work! TODO
 //                            for (BlockPopulator blockPopulator : world.getPopulators()) {

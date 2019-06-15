@@ -1,5 +1,6 @@
 package ru.lexmint.hsclans.listener;
 
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -167,6 +168,8 @@ public class MonitorListener implements Listener {
         /* Tournament feature */
 
         playTimes.put(player.getName(), System.currentTimeMillis());
+
+        HSClans.instance.getScoreboardManager().update(player);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -203,7 +206,7 @@ public class MonitorListener implements Listener {
                     Clan clan = kPlayer.getClan();
                     clan.incrementPoints();
                     /* Ban player who has been killed, it's hardcore! */
-                    event.getEntity().setBanned(true);
+                    Bukkit.getBanList(BanList.Type.NAME).addBan(event.getEntity().getName(), "HSClans Tournament", null, "HSClans");
                     cpLayer.leaveTournament();
                     event.getEntity().kickPlayer(HSClans.instance.getMessenger().format("messages.errors.tournament-died"));
                     HSClans.instance.getDebug().info("[TOURNAMENT] " + kPlayer.getName() + " from clan " + clan.getName() + " killed player " + cpLayer.getName() + " from clan " + cpLayer.getClan().getName());

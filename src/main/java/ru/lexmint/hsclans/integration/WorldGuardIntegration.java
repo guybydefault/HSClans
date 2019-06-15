@@ -1,10 +1,10 @@
 package ru.lexmint.hsclans.integration;
 
 import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -15,12 +15,12 @@ import ru.lexmint.hsclans.HSClans;
 /**
  * Deals with world protection plugin - worldguard.
  */
-public class WorldGuard {
+public class WorldGuardIntegration {
     private static WorldGuardPlugin worldGuard;
 
     public static void setup() {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+        if (!(plugin instanceof WorldGuardPlugin)) {
             worldGuard = null;
             HSClans.instance.getLogger().severe("WorldGuard not found! Integration has failed.");
         } else {
@@ -42,6 +42,7 @@ public class WorldGuard {
             return false;
         }
 
+//        RegionManager regionManager = worldGuard.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(chunk.getWorld())); - for WG 7.0
         RegionManager regionManager = worldGuard.getRegionManager(chunk.getWorld());
 
         World world = chunk.getWorld();

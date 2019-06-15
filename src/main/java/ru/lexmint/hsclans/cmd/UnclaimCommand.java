@@ -1,11 +1,12 @@
 package ru.lexmint.hsclans.cmd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.lexmint.hsclans.HSClans;
-import ru.lexmint.hsclans.domain.CPLayer;
-import ru.lexmint.hsclans.domain.Claim;
-import ru.lexmint.hsclans.domain.ClanManager;
-import ru.lexmint.hsclans.domain.ClanRole;
+import ru.lexmint.hsclans.domain.*;
+import ru.lexmint.hsclans.events.ClaimUnclaimedEvent;
+
+import java.util.Set;
 
 /**
  * Command which unclaims chunk or many chunks of the clan.
@@ -33,10 +34,13 @@ class UnclaimCommand extends AbstractClanPlayerCommand {
         CPLayer cpLayer = clanManager.getPlayer(sender.getName(), true);
 
         if (subargs.length >= 2 && subargs[1].equalsIgnoreCase("all")) {
-            int unclaimedLand = clanManager.removeAllClaims(cpLayer.getClan());
-            if (unclaimedLand != 0) {
+            Set<Claim> removedClaims = clanManager.removeAllClaims(cpLayer.getClan());
+            if (removedClaims.size() != 0) {
+                for (Claim claim : removedClaims) {
+                    Bukkit.getServer().getPluginManager().callEvent(new ClaimUnclaimedEvent(cpLayer.getClan(), claim));
+                }
                 HSClans.instance.getMessenger().broadcastToClan("commands.unclaim.success-all", cpLayer.getClan(),
-                        cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(unclaimedLand));
+                        cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(removedClaims.size()));
             } else {
                 HSClans.instance.getMessenger().message("commands.unclaim.no-claims", sender);
             }
@@ -47,13 +51,15 @@ class UnclaimCommand extends AbstractClanPlayerCommand {
             int chunkZ = player.getLocation().getChunk().getZ();
 
             Claim claim = clanManager.getClaim(chunkX, chunkZ, player.getLocation().getWorld());
+            Clan owner = claim.getClan();
 
             if (claim == null) {
                 HSClans.instance.getMessenger().message("commands.unclaim.wilderness", sender);
-            } else if (claim.getClan() != cpLayer.getClan()) {
+            } else if (owner != cpLayer.getClan()) {
                 HSClans.instance.getMessenger().message("commands.unclaim.not-owned", sender, claim.getClan().getName());
             } else {
                 clanManager.removeClaim(claim);
+                Bukkit.getServer().getPluginManager().callEvent(new ClaimUnclaimedEvent(owner, claim));
                 HSClans.instance.getMessenger().broadcastToClan("commands.unclaim.success", cpLayer.getClan(),
                         cpLayer.getClanRole().getName(), cpLayer.getName(), String.valueOf(chunkX), String.valueOf(chunkZ));
             }
